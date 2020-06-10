@@ -7,9 +7,11 @@ const ProceedingsSchema = new Schema({
   },
   document: {
     type: Schema.Types.ObjectId,
+    ref: 'document',
   },
   user: {
     type: Schema.Types.ObjectId,
+    ref: 'user',
   },
   title: {
     type: String,

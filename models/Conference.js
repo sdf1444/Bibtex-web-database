@@ -7,9 +7,11 @@ const ConferenceSchema = new Schema({
   },
   document: {
     type: Schema.Types.ObjectId,
+    ref: 'document',
   },
   user: {
     type: Schema.Types.ObjectId,
+    ref: 'user',
   },
   author: {
     type: String,

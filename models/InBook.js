@@ -7,9 +7,11 @@ const InBookSchema = new Schema({
   },
   document: {
     type: Schema.Types.ObjectId,
+    ref: 'document',
   },
   user: {
     type: Schema.Types.ObjectId,
+    ref: 'inBook',
   },
   author: {
     type: String,
