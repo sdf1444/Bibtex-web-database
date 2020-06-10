@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const DocumentSchema = new Schema({
+const DocumentsSchema = new Schema({
   bibtexdatabasename: {
     type: String,
   },
@@ -477,4 +477,4 @@ const DocumentSchema = new Schema({
   ],
 });
 
-module.exports = Document = mongoose.model('document', DocumentSchema);
+module.exports = Documents = mongoose.model('documents', DocumentsSchema);

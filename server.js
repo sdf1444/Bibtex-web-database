@@ -14,6 +14,7 @@ app.get('/', (req, res) => res.send('API Running'));
 // Define Routes
 app.use('/api/users', require('./routes/api/users'));
 app.use('/api/auth', require('./routes/api/auth'));
+app.use('/api/documents', require('./routes/api/documents'));
 // app.use('/api/book', require('./routes/api/book'));
 // app.use('/api/booklet', require('./routes/api/booklet'));
 // app.use('/api/conference', require('./routes/api/conference'));

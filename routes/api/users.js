@@ -38,6 +38,13 @@ router.post(
           .json({ errors: [{ msg: 'User already exists' }] });
       }
 
+      user = new User({
+        name,
+        username,
+        email,
+        password,
+      });
+
       const salt = await bcrypt.genSalt(10);
 
       user.password = await bcrypt.hash(password, salt);
@@ -50,7 +57,7 @@ router.post(
         },
       };
 
-      jwt.sign(payload, config.get('jwtToken'), (err, token) => {
+      jwt.sign(payload, config.get('jwtSecret'), (err, token) => {
         if (err) throw err;
         res.json({ token });
       });
