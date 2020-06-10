@@ -10,15 +10,17 @@ const User = require('../../models/User');
 // @access  Private
 router.get('/me', auth, async (req, res) => {
   try {
-    const documents = await (
-      await Documents.findOne({ user: req.user.id })
-    ).populate('user');
+    const documents = await Documents.findOne({
+      user: req.user.id,
+    }).populate('user');
 
-    if (!profile) {
-      return res.status(400).json({ msg: 'There is no profile for this user' });
+    if (!documents) {
+      return res
+        .status(400)
+        .json({ msg: 'There is no bibtex database document(s) for this user' });
     }
 
-    res.json(profile);
+    res.json(documents);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
