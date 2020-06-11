@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const DatabasesSchema = new Schema({
+const DatabaseSchema = new Schema({
   bibtexdatabasename: {
     type: String,
   },
@@ -27,7 +27,7 @@ const DatabasesSchema = new Schema({
         required: true,
       },
       year: {
-        type: Date,
+        type: Number,
         required: true,
       },
       volume: {
@@ -37,7 +37,7 @@ const DatabasesSchema = new Schema({
         type: Number,
       },
       pages: {
-        type: Number,
+        type: String,
       },
       month: {
         type: String,
@@ -474,4 +474,4 @@ const DatabasesSchema = new Schema({
   ],
 });
 
-module.exports = Databases = mongoose.model('databases', DatabasesSchema);
+module.exports = Database = mongoose.model('database', DatabaseSchema);

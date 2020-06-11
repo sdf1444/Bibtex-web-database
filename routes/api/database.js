@@ -3,32 +3,32 @@ const router = express.Router();
 const auth = require('../../middleware/auth');
 const { check, validationResult } = require('express-validator');
 
-const Databases = require('../../models/Databases');
+const Database = require('../../models/Database');
 const User = require('../../models/User');
 
-// @route   GET api/databases/me
+// @route   GET api/database/me
 // @desc    Get current users database(s)
 // @access  Private
 router.get('/me', auth, async (req, res) => {
   try {
-    const databases = await Databases.findOne({
+    const database = await Database.findOne({
       user: req.user.id,
     }).populate('user');
 
-    if (!databases) {
+    if (!database) {
       return res
         .status(400)
         .json({ msg: 'There is no bibtex database(s) for this user' });
     }
 
-    res.json(databases);
+    res.json(database);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
   }
 });
 
-// @route   POST api/databases
+// @route   POST api/database
 // @desc    Create or update user database(s)
 // @access  Private
 router.post('/', [auth], async (req, res) => {
@@ -38,51 +38,51 @@ router.post('/', [auth], async (req, res) => {
   }
   const { bibtexdatabasename } = req.body;
 
-  const databasesFields = {
+  const databaseFields = {
     user: req.user.id,
     bibtexdatabasename,
   };
 
   try {
     // Using upsert option (creates new doc if no match is found):
-    let databases = await Databases.findOneAndUpdate(
+    let database = await Database.findOneAndUpdate(
       { user: req.user.id },
-      { $set: databasesFields },
+      { $set: databaseFields },
       { new: true, upsert: true }
     );
-    res.json(databases);
+    res.json(database);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
   }
 });
 
-// @route   GET api/databases
+// @route   GET api/database
 // @desc    Get all database(s)
 // @access  Public
 router.get('/', async (req, res) => {
   try {
-    const databases = await Databases.find().populate('user');
-    res.json(databases);
+    const database = await Database.find().populate('user');
+    res.json(database);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
   }
 });
 
-// @route   GET api/databases/user/:user_id
+// @route   GET api/database/user/:user_id
 // @desc    Get database(s) by user ID
 // @access  Public
 router.get('/user/:user_id', async (req, res) => {
   try {
-    const databases = await Documents.findOne({
+    const database = await Database.findOne({
       user: req.params.user_id,
     }).populate('user');
 
-    if (!databases)
+    if (!database)
       return res.status(400).json({ msg: 'Database(s) not found' });
 
-    res.json(databases);
+    res.json(database);
   } catch (err) {
     console.error(err.message);
     if (err.kind == 'ObjectId') {
@@ -98,7 +98,7 @@ router.get('/user/:user_id', async (req, res) => {
 router.delete('/', auth, async (req, res) => {
   try {
     // Remove database(s)
-    await Databases.findOneAndRemove({ user: req.user.id });
+    await Database.findOneAndRemove({ user: req.user.id });
     // Remove user
     await User.findOneAndRemove({ _id: req.user.id });
     res.json({ msg: 'User deleted' });
@@ -108,7 +108,7 @@ router.delete('/', auth, async (req, res) => {
   }
 });
 
-// @route   PUT api/databases/article
+// @route   PUT api/database/article
 // @desc    Add database(s) article(s)
 // @access  Private
 router.put(
@@ -151,13 +151,13 @@ router.put(
     };
 
     try {
-      const databases = await Databases.findOne({ user: req.user.id });
+      const database = await Database.findOne({ user: req.user.id });
 
-      databases.article.unshift(newArticle);
+      database.article.unshift(newArticle);
 
-      await databases.save();
+      await database.save();
 
-      res.json(databases);
+      res.json(database);
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');
@@ -165,7 +165,7 @@ router.put(
   }
 );
 
-// @route   PUT api/databases/book
+// @route   PUT api/database/book
 // @desc    Add database(s) book(s)
 // @access  Private
 router.put(
@@ -210,13 +210,13 @@ router.put(
     };
 
     try {
-      const databases = await Databases.findOne({ user: req.user.id });
+      const database = await Database.findOne({ user: req.user.id });
 
-      databases.article.unshift(newBook);
+      database.book.unshift(newBook);
 
-      await databases.save();
+      await database.save();
 
-      res.json(databases);
+      res.json(database);
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');
@@ -224,7 +224,7 @@ router.put(
   }
 );
 
-// @route   PUT api/databases/booklet
+// @route   PUT api/database/booklet
 // @desc    Add database(s) booklet(s)
 // @access  Private
 router.put('/booklet', auth, async (req, res) => {
@@ -246,20 +246,20 @@ router.put('/booklet', auth, async (req, res) => {
   };
 
   try {
-    const databases = await Databases.findOne({ user: req.user.id });
+    const database = await Database.findOne({ user: req.user.id });
 
-    databases.article.unshift(newBooklet);
+    database.booklet.unshift(newBooklet);
 
-    await databases.save();
+    await database.save();
 
-    res.json(databases);
+    res.json(database);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
   }
 });
 
-// @route   PUT api/databases/conference
+// @route   PUT api/database/conference
 // @desc    Add database(s) conference(s)
 // @access  Private
 router.put(
@@ -310,13 +310,13 @@ router.put(
     };
 
     try {
-      const databases = await Databases.findOne({ user: req.user.id });
+      const database = await Database.findOne({ user: req.user.id });
 
-      databases.article.unshift(newConference);
+      database.conference.unshift(newConference);
 
-      await databases.save();
+      await database.save();
 
-      res.json(databases);
+      res.json(database);
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');
@@ -324,7 +324,7 @@ router.put(
   }
 );
 
-// @route   PUT api/databases/inBook
+// @route   PUT api/database/inBook
 // @desc    Add database(s) inBook(s)
 // @access  Private
 router.put(
@@ -374,13 +374,13 @@ router.put(
     };
 
     try {
-      const databases = await Databases.findOne({ user: req.user.id });
+      const database = await Database.findOne({ user: req.user.id });
 
-      databases.article.unshift(newInBook);
+      database.inBook.unshift(newInBook);
 
-      await databases.save();
+      await database.save();
 
-      res.json(databases);
+      res.json(database);
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');
@@ -388,7 +388,7 @@ router.put(
   }
 );
 
-// @route   PUT api/databases/inCollection
+// @route   PUT api/database/inCollection
 // @desc    Add database(s) inCollection(s)
 // @access  Private
 router.put(
@@ -447,13 +447,13 @@ router.put(
     };
 
     try {
-      const databases = await Databases.findOne({ user: req.user.id });
+      const database = await Database.findOne({ user: req.user.id });
 
-      databases.article.unshift(newInCollection);
+      database.inCollection.unshift(newInCollection);
 
-      await databases.save();
+      await database.save();
 
-      res.json(databases);
+      res.json(database);
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');
@@ -461,7 +461,7 @@ router.put(
   }
 );
 
-// @route   PUT api/databases/inProceedings
+// @route   PUT api/database/inProceedings
 // @desc    Add database(s) inProceedings
 // @access  Private
 router.put(
@@ -512,13 +512,13 @@ router.put(
     };
 
     try {
-      const databases = await Databases.findOne({ user: req.user.id });
+      const database = await Database.findOne({ user: req.user.id });
 
-      databases.article.unshift(newInProceedings);
+      database.inProceedings.unshift(newInProceedings);
 
-      await databases.save();
+      await database.save();
 
-      res.json(databases);
+      res.json(database);
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');
@@ -526,7 +526,7 @@ router.put(
   }
 );
 
-// @route   PUT api/databases/manual
+// @route   PUT api/database/manual
 // @desc    Add database(s) manual(s)
 // @access  Private
 router.put(
@@ -565,13 +565,13 @@ router.put(
     };
 
     try {
-      const databases = await Databases.findOne({ user: req.user.id });
+      const database = await Database.findOne({ user: req.user.id });
 
-      databases.article.unshift(newManual);
+      database.manual.unshift(newManual);
 
-      await databases.save();
+      await database.save();
 
-      res.json(databases);
+      res.json(database);
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');
@@ -579,7 +579,7 @@ router.put(
   }
 );
 
-// @route   PUT api/databases/mastersThesis
+// @route   PUT api/database/mastersThesis
 // @desc    Add database(s) masterThesis
 // @access  Private
 router.put('/mastersThesis', auth, async (req, res) => {
@@ -602,20 +602,20 @@ router.put('/mastersThesis', auth, async (req, res) => {
   };
 
   try {
-    const databases = await Databases.findOne({ user: req.user.id });
+    const database = await Databases.findOne({ user: req.user.id });
 
-    databases.article.unshift(newMastersThesis);
+    database.mastersThesis.unshift(newMastersThesis);
 
-    await databases.save();
+    await database.save();
 
-    res.json(databases);
+    res.json(database);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
   }
 });
 
-// @route   PUT api/databases/misc
+// @route   PUT api/database/misc
 // @desc    Add database(s) misc(s)
 // @access  Private
 router.put('/misc', auth, async (req, res) => {
@@ -636,20 +636,20 @@ router.put('/misc', auth, async (req, res) => {
   };
 
   try {
-    const databases = await Databases.findOne({ user: req.user.id });
+    const database = await Database.findOne({ user: req.user.id });
 
-    databases.article.unshift(newMisc);
+    database.misc.unshift(newMisc);
 
-    await databases.save();
+    await database.save();
 
-    res.json(databases);
+    res.json(database);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
   }
 });
 
-// @route   PUT api/databases/online
+// @route   PUT api/database/online
 // @desc    Add database(s) online(s)
 // @access  Private
 router.put('/online', auth, async (req, res) => {
@@ -670,20 +670,20 @@ router.put('/online', auth, async (req, res) => {
   };
 
   try {
-    const databases = await Databases.findOne({ user: req.user.id });
+    const database = await Database.findOne({ user: req.user.id });
 
-    databases.article.unshift(newOnline);
+    database.online.unshift(newOnline);
 
-    await databases.save();
+    await database.save();
 
-    res.json(databases);
+    res.json(database);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
   }
 });
 
-// @route   PUT api/databases/phdThesis
+// @route   PUT api/database/phdThesis
 // @desc    Add database(s) phdThesis
 // @access  Private
 router.put(
@@ -715,13 +715,13 @@ router.put(
     };
 
     try {
-      const databases = await Databases.findOne({ user: req.user.id });
+      const database = await Database.findOne({ user: req.user.id });
 
-      databases.article.unshift(newPhdThesis);
+      database.phdThesis.unshift(newPhdThesis);
 
-      await databases.save();
+      await database.save();
 
-      res.json(databases);
+      res.json(database);
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');
@@ -729,7 +729,7 @@ router.put(
   }
 );
 
-// @route   PUT api/databases/proceedings
+// @route   PUT api/database/proceedings
 // @desc    Add database(s) proceedings
 // @access  Private
 router.put(
@@ -772,13 +772,13 @@ router.put(
     };
 
     try {
-      const databases = await Databases.findOne({ user: req.user.id });
+      const database = await Database.findOne({ user: req.user.id });
 
-      databases.article.unshift(newProceedings);
+      database.proceedings.unshift(newProceedings);
 
-      await databases.save();
+      await database.save();
 
-      res.json(databases);
+      res.json(database);
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');
