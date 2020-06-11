@@ -62,7 +62,7 @@ const DatabasesSchema = new Schema({
         required: true,
       },
       year: {
-        type: Date,
+        type: Number,
         required: true,
       },
       volume: {
@@ -100,7 +100,7 @@ const DatabasesSchema = new Schema({
         type: String,
       },
       month: {
-        type: Date,
+        type: String,
       },
       year: {
         type: Number,
@@ -249,9 +249,6 @@ const DatabasesSchema = new Schema({
         type: String,
       },
       organization: {
-        type: String,
-      },
-      publisher: {
         type: String,
       },
       month: {
