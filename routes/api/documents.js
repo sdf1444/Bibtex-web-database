@@ -36,10 +36,11 @@ router.post('/', [auth], async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  const {} = req.body;
+  const { bibtexdatabasename } = req.body;
 
   const documentsFields = {
     user: req.user.id,
+    bibtexdatabasename,
   };
 
   try {
@@ -52,6 +53,41 @@ router.post('/', [auth], async (req, res) => {
     res.json(documents);
   } catch (err) {
     console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+// @route   GET api/documents
+// @desc    Get all document(s)
+// @access  Public
+router.get('/', async (req, res) => {
+  try {
+    const documents = await Documents.find().populate('user');
+    res.json(documents);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+// @route   GET api/documents/user/:user_id
+// @desc    Get document(s) by user ID
+// @access  Public
+router.get('/user/:user_id', async (req, res) => {
+  try {
+    const documents = await Documents.findOne({
+      user: req.params.user_id,
+    }).populate('user');
+
+    if (!documents)
+      return res.status(400).json({ msg: 'Document(s) not found' });
+
+    res.json(documents);
+  } catch (err) {
+    console.error(err.message);
+    if (err.kind == 'ObjectId') {
+      return res.status(400).json({ msg: 'Document(s) not found' });
+    }
     res.status(500).send('Server Error');
   }
 });
