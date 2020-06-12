@@ -165,6 +165,25 @@ router.put(
   }
 );
 
+// @route   DELETE api/database/article/:article_id
+// @desc    Delete article from database
+// @access  Private
+router.delete('/article/:article_id', auth, async (req, res) => {
+  try {
+    const foundDatabase = await Database.findOne({ user: req.user.id });
+
+    foundDatabase.article = foundDatabase.article.filter(
+      (article) => article._id.toString() !== req.params.article_id
+    );
+
+    await foundDatabase.save();
+    return res.status(200).json(foundDatabase);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json('Server Error');
+  }
+});
+
 // @route   PUT api/database/book
 // @desc    Add database(s) book(s)
 // @access  Private
@@ -224,6 +243,25 @@ router.put(
   }
 );
 
+// @route   DELETE api/database/book/:book_id
+// @desc    Delete book from database
+// @access  Private
+router.delete('/book/:book_id', auth, async (req, res) => {
+  try {
+    const foundDatabase = await Database.findOne({ user: req.user.id });
+
+    foundDatabase.book = foundDatabase.book.filter(
+      (book) => book._id.toString() !== req.params.book_id
+    );
+
+    await foundDatabase.save();
+    return res.status(200).json(foundDatabase);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json('Server Error');
+  }
+});
+
 // @route   PUT api/database/booklet
 // @desc    Add database(s) booklet(s)
 // @access  Private
@@ -256,6 +294,25 @@ router.put('/booklet', auth, async (req, res) => {
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
+  }
+});
+
+// @route   DELETE api/database/booklet/:book_id
+// @desc    Delete booklet from database
+// @access  Private
+router.delete('/booklet/:booklet_id', auth, async (req, res) => {
+  try {
+    const foundDatabase = await Database.findOne({ user: req.user.id });
+
+    foundDatabase.booklet = foundDatabase.booklet.filter(
+      (booklet) => booklet._id.toString() !== req.params.booklet_id
+    );
+
+    await foundDatabase.save();
+    return res.status(200).json(foundDatabase);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json('Server Error');
   }
 });
 
@@ -324,6 +381,25 @@ router.put(
   }
 );
 
+// @route   DELETE api/database/conference/:conference_id
+// @desc    Delete conference from database
+// @access  Private
+router.delete('/conference/:conference_id', auth, async (req, res) => {
+  try {
+    const foundDatabase = await Database.findOne({ user: req.user.id });
+
+    foundDatabase.conference = foundDatabase.conference.filter(
+      (conference) => conference._id.toString() !== req.params.conference_id
+    );
+
+    await foundDatabase.save();
+    return res.status(200).json(foundDatabase);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json('Server Error');
+  }
+});
+
 // @route   PUT api/database/inBook
 // @desc    Add database(s) inBook(s)
 // @access  Private
@@ -387,6 +463,25 @@ router.put(
     }
   }
 );
+
+// @route   DELETE api/database/inBook/:inBook_id
+// @desc    Delete inBook from database
+// @access  Private
+router.delete('/inBook/:inBook_id', auth, async (req, res) => {
+  try {
+    const foundDatabase = await Database.findOne({ user: req.user.id });
+
+    foundDatabase.inBook = foundDatabase.inBook.filter(
+      (inBook) => inBook._id.toString() !== req.params.inBook_id
+    );
+
+    await foundDatabase.save();
+    return res.status(200).json(foundDatabase);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json('Server Error');
+  }
+});
 
 // @route   PUT api/database/inCollection
 // @desc    Add database(s) inCollection(s)
@@ -461,6 +556,26 @@ router.put(
   }
 );
 
+// @route   DELETE api/database/inCollection/:inCollection_id
+// @desc    Delete inCollection from database
+// @access  Private
+router.delete('/inCollection/:inCollection_id', auth, async (req, res) => {
+  try {
+    const foundDatabase = await Database.findOne({ user: req.user.id });
+
+    foundDatabase.inCollection = foundDatabase.inCollection.filter(
+      (inCollection) =>
+        inCollection._id.toString() !== req.params.inCollection_id
+    );
+
+    await foundDatabase.save();
+    return res.status(200).json(foundDatabase);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json('Server Error');
+  }
+});
+
 // @route   PUT api/database/inProceedings
 // @desc    Add database(s) inProceedings
 // @access  Private
@@ -526,6 +641,26 @@ router.put(
   }
 );
 
+// @route   DELETE api/database/inProceedings/:inProceedings_id
+// @desc    Delete inProceedings from database
+// @access  Private
+router.delete('/inProceedings/:inProceedings_id', auth, async (req, res) => {
+  try {
+    const foundDatabase = await Database.findOne({ user: req.user.id });
+
+    foundDatabase.inProceedings = foundDatabase.inProceedings.filter(
+      (inProceedings) =>
+        inProceedings._id.toString() !== req.params.inProceedings_id
+    );
+
+    await foundDatabase.save();
+    return res.status(200).json(foundDatabase);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json('Server Error');
+  }
+});
+
 // @route   PUT api/database/manual
 // @desc    Add database(s) manual(s)
 // @access  Private
@@ -579,6 +714,25 @@ router.put(
   }
 );
 
+// @route   DELETE api/database/manual/:manual_id
+// @desc    Delete manual from database
+// @access  Private
+router.delete('/manual/:manual_id', auth, async (req, res) => {
+  try {
+    const foundDatabase = await Database.findOne({ user: req.user.id });
+
+    foundDatabase.manual = foundDatabase.manual.filter(
+      (manual) => manual._id.toString() !== req.params.manual_id
+    );
+
+    await foundDatabase.save();
+    return res.status(200).json(foundDatabase);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json('Server Error');
+  }
+});
+
 // @route   PUT api/database/mastersThesis
 // @desc    Add database(s) masterThesis
 // @access  Private
@@ -602,7 +756,7 @@ router.put('/mastersThesis', auth, async (req, res) => {
   };
 
   try {
-    const database = await Databases.findOne({ user: req.user.id });
+    const database = await Database.findOne({ user: req.user.id });
 
     database.mastersThesis.unshift(newMastersThesis);
 
@@ -612,6 +766,26 @@ router.put('/mastersThesis', auth, async (req, res) => {
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
+  }
+});
+
+// @route   DELETE api/database/mastersThesis/:mastersThesis_id
+// @desc    Delete mastersThesis from database
+// @access  Private
+router.delete('/mastersThesis/:mastersThesis_id', auth, async (req, res) => {
+  try {
+    const foundDatabase = await Database.findOne({ user: req.user.id });
+
+    foundDatabase.mastersThesis = foundDatabase.mastersThesis.filter(
+      (mastersThesis) =>
+        mastersThesis._id.toString() !== req.params.mastersThesis_id
+    );
+
+    await foundDatabase.save();
+    return res.status(200).json(foundDatabase);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json('Server Error');
   }
 });
 
@@ -649,6 +823,25 @@ router.put('/misc', auth, async (req, res) => {
   }
 });
 
+// @route   DELETE api/database/misc/:misc_id
+// @desc    Delete misc from database
+// @access  Private
+router.delete('/misc/:misc_id', auth, async (req, res) => {
+  try {
+    const foundDatabase = await Database.findOne({ user: req.user.id });
+
+    foundDatabase.misc = foundDatabase.misc.filter(
+      (misc) => misc._id.toString() !== req.params.misc_id
+    );
+
+    await foundDatabase.save();
+    return res.status(200).json(foundDatabase);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json('Server Error');
+  }
+});
+
 // @route   PUT api/database/online
 // @desc    Add database(s) online(s)
 // @access  Private
@@ -680,6 +873,25 @@ router.put('/online', auth, async (req, res) => {
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
+  }
+});
+
+// @route   DELETE api/database/online/:online_id
+// @desc    Delete online from database
+// @access  Private
+router.delete('/online/:online_id', auth, async (req, res) => {
+  try {
+    const foundDatabase = await Database.findOne({ user: req.user.id });
+
+    foundDatabase.online = foundDatabase.online.filter(
+      (online) => online._id.toString() !== req.params.online_id
+    );
+
+    await foundDatabase.save();
+    return res.status(200).json(foundDatabase);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json('Server Error');
   }
 });
 
@@ -728,6 +940,25 @@ router.put(
     }
   }
 );
+
+// @route   DELETE api/database/phdThesis/:phdThesis_id
+// @desc    Delete phdThesis from database
+// @access  Private
+router.delete('/phdThesis/:phdThesis_id', auth, async (req, res) => {
+  try {
+    const foundDatabase = await Database.findOne({ user: req.user.id });
+
+    foundDatabase.phdThesis = foundDatabase.phdThesis.filter(
+      (phdThesis) => phdThesis._id.toString() !== req.params.phdThesis_id
+    );
+
+    await foundDatabase.save();
+    return res.status(200).json(foundDatabase);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json('Server Error');
+  }
+});
 
 // @route   PUT api/database/proceedings
 // @desc    Add database(s) proceedings
@@ -785,5 +1016,24 @@ router.put(
     }
   }
 );
+
+// @route   DELETE api/database/proceedings/:proceedings_id
+// @desc    Delete proceedings from database
+// @access  Private
+router.delete('/proceedings/:proceedings_id', auth, async (req, res) => {
+  try {
+    const foundDatabase = await Database.findOne({ user: req.user.id });
+
+    foundDatabase.proceedings = foundDatabase.proceedings.filter(
+      (proceedings) => proceedings._id.toString() !== req.params.proceedings_id
+    );
+
+    await foundDatabase.save();
+    return res.status(200).json(foundDatabase);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json('Server Error');
+  }
+});
 
 module.exports = router;
