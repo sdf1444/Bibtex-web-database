@@ -1,8 +1,9 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
-const User = require('../models/User');
 const { JWT_SECRET } = require('../../config');
+
+const User = require('../models/User');
 
 /**
  * @DESC To register the user (ADMIN, SUPER_ADMIN, USER)
