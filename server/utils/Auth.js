@@ -114,7 +114,7 @@ const validateUsername = async (username) => {
 /**
  * @DESC Passport middleware
  */
-const userAuth = passport.authenticate('jwt', { session: false });
+const auth = passport.authenticate('jwt', { session: false });
 
 /**
  * @DESC Check Role Middleware
@@ -141,7 +141,7 @@ const serializeUser = (user) => {
 };
 
 module.exports = {
-  userAuth,
+  auth,
   checkRole,
   userLogin,
   userRegister,
