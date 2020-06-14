@@ -39,7 +39,7 @@ const userRegister = async (userDets, role, res) => {
 
     await newUser.save();
     return res.status(201).json({
-      message: 'Hurry! now you are successfully registred. Please nor login.',
+      message: 'Hurry! now you are successfully registred. Please now login.',
       success: true,
     });
   } catch (err) {
@@ -130,21 +130,9 @@ const validateEmail = async (email) => {
   return user ? false : true;
 };
 
-const serializeUser = (user) => {
-  return {
-    username: user.username,
-    email: user.email,
-    name: user.name,
-    _id: user._id,
-    updatedAt: user.date,
-    createdAt: user.date,
-  };
-};
-
 module.exports = {
   auth,
   checkRole,
   userLogin,
   userRegister,
-  serializeUser,
 };

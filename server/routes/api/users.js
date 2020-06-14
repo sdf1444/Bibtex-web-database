@@ -7,32 +7,37 @@ const {
   checkRole,
   userLogin,
   auth,
-  serializeUser,
 } = require('../../utils/Auth');
 
 // Users registration
-router.post('/register-user', auth, async (req, res) => {
+router.post('/register-user', async (req, res) => {
   await userRegister(req.body, 'user', res);
 });
 
 // Admin registration
-router.post('/register-admin', auth, async (req, res) => {
+router.post('/register-admin', async (req, res) => {
   await userRegister(req.body, 'admin', res);
 });
 
 // Users login
-router.post('/login-user', auth, async (req, res) => {
+router.post('/login-user', async (req, res) => {
   await userLogin(req.body, 'user', res);
 });
 
 // Admin login
-router.post('/login-admin', auth, async (req, res) => {
+router.post('/login-admin', async (req, res) => {
   await userLogin(req.body, 'admin', res);
 });
 
-// Profile
-router.get('/profile', auth, async (req, res) => {
-  return res.json(serializeUser(req.user));
+// Get all users
+router.get('/', async (req, res) => {
+  try {
+    const user = await User.find().populate('user');
+    res.json(user);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
 });
 
 // Users protected
