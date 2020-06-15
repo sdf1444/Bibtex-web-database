@@ -7,7 +7,8 @@ const {
   checkRole,
   userLogin,
   auth,
-} = require('../../utils/Auth');
+  forgotPassword,
+} = require('../../controllers/Auth');
 
 // Users registration
 router.post('/register-user', async (req, res) => {
@@ -49,5 +50,8 @@ router.get('/user-protected', auth, checkRole(['user']), async (req, res) => {
 router.get('/admin-protected', auth, checkRole(['admin']), async (req, res) => {
   return res.json('Hello Admin');
 });
+
+// Forgot password rest
+router.put('/forgot-password', forgotPassword);
 
 module.exports = router;

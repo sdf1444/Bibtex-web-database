@@ -25,6 +25,10 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  resetLink: {
+    data: String,
+    default: '',
+  },
   datecreated: {
     type: Date,
     default: Date.now,
