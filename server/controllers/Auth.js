@@ -1,15 +1,8 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
-const {
-  JWT_SECRET,
-  RESET_PASSWORD,
-  MAILGUN_API,
-  CLIENT_URL,
-} = require('../../config');
-const mailgun = require('mailgun-js');
-const DOMAIN = 'sandbox103a429e6c324383b7d16cde2bfd129e.mailgun.org';
-const mg = mailgun({ apiKey: `${MAILGUN_API}`, domain: DOMAIN });
+const crypto = require('crypto');
+const { JWT_SECRET, RESET_PASSWORD, CLIENT_URL } = require('../../config');
 
 const User = require('../models/User');
 
@@ -138,53 +131,9 @@ const validateEmail = async (email) => {
   return user ? false : true;
 };
 
-/**
- * @DESC Forgot password
- */
-const forgotPassword = (req, res) => {
-  const { email } = req.body;
-
-  User.findOne({ email }, (err, user) => {
-    if (err || !user) {
-      return res
-        .status(400)
-        .json({ error: 'User with this email does not exist' });
-    }
-
-    const token = jwt.sign({ _id: user._id }, `${RESET_PASSWORD}`);
-    const data = {
-      from: 'spencerdu@hotmail.co.uk',
-      to: email,
-      subject: 'Account Activation Link',
-      html: `
-          <h2>Please click on given link to rest your password</h2>
-          <p>${`${CLIENT_URL}`}/resetpassword/${token}</p>
-      `,
-    };
-
-    return user.updateOne({ resetLink: token }, function (err, success) {
-      if (err) {
-        return res.status(400).json({ error: 'reset password link error' });
-      } else {
-        mg.messages().send(data, function (error, body) {
-          if (error) {
-            return res.json({
-              error: err.message,
-            });
-          }
-          return res.json({
-            message: 'Email has been sent, kindly follow the instructions',
-          });
-        });
-      }
-    });
-  });
-};
-
 module.exports = {
   auth,
   checkRole,
   userLogin,
   userRegister,
-  forgotPassword,
 };

@@ -7,4 +7,6 @@ module.exports = {
   RESET_PASSWORD: process.env.APP_RESET_PASSWORD,
   MAILGUN_API: process.env.APP_MAILGUN_API,
   CLIENT_URL: process.env.APP_CLIENT_URL,
+  EMAIL_ADDRESS: process.env.EMAIL_ADDRESS,
+  EMAIL_PASSWORD: process.env.EMAIL_PASSWORD,
 };
