@@ -5,11 +5,7 @@ const _ = require('lodash');
 const nodemailer = require('nodemailer');
 const smtpTransport = require('nodemailer-smtp-transport'); // this is important
 const bcrypt = require('bcrypt');
-const {
-  EMAIL_ADDRESS,
-  EMAIL_PASSWORD,
-  RESET_PASSWORD,
-} = require('../../../config');
+const { EMAIL_ADDRESS, EMAIL_PASSWORD } = require('../../../config');
 
 // Bring in the user registration function
 const {
@@ -71,7 +67,11 @@ router.put('/forgot-password', async (req, res) => {
     res.status(403).send('email is not in database');
   }
 
-  const token = jwt.sign({ _id: user._id }, `${RESET_PASSWORD}`);
+  const token = crypto.randomBytes(20).toString('hex');
+  user.update({
+    resetPasswordToken: token,
+  });
+
   const transporter = nodemailer.createTransport(
     smtpTransport({
       host: 'smtp.office365.com',
@@ -98,55 +98,47 @@ router.put('/forgot-password', async (req, res) => {
       'If you did not request this, please ignore this email and your password will remain unchanged.\n',
   };
 
-  return user.updateOne({ resetLink: token }, (err, success) => {
+  transporter.sendMail(mailOptions, (err, response) => {
     if (err) {
-      return res.status(400).json({ error: 'reset password link error' });
+      console.error('there was an error: ', err);
     } else {
-      transporter.sendMail(mailOptions, (err, response) => {
-        if (err) {
-          console.error('there was an error: ', err);
-        } else {
-          console.log('here is the res: ', response);
-          res.status(200).json('recovery email sent');
-        }
-      });
+      console.log('here is the res: ', response);
+      res.status(200).json('recovery email sent');
     }
   });
 });
 
-router.put('/reset-password', (req, res) => {
-  const { resetLink, newPass } = req.body;
-  if (resetLink) {
-    jwt.verify(resetLink, `${RESET_PASSWORD}`, (error, decodedData) => {
-      if (error) {
-        return res.status(401).json({
-          error: 'Incorrect token or it is expired.',
+const BCRYPT_SALT_ROUNDS = 12;
+router.put('/updatePasswordViaEmail', async (req, res) => {
+  User.findOne({
+    where: {
+      username: req.body.username,
+      resetPasswordToken: req.body.resetPasswordToken,
+    },
+  }).then((user) => {
+    if (user == null) {
+      console.error('password reset link is invalid or has expired');
+      res.status(403).send('password reset link is invalid or has expired');
+    } else if (user != null) {
+      console.log('user exists in db');
+      bcrypt
+        .hash(req.body.password, BCRYPT_SALT_ROUNDS)
+        .then((hashedPassword) => {
+          User.update({
+            password: hashedPassword,
+            resetPasswordToken: null,
+            resetPasswordExpires: null,
+          });
+        })
+        .then(() => {
+          console.log('password updated');
+          res.status(200).send({ message: 'password updated' });
         });
-      }
-      User.findOne({ resetLink }, (err, user) => {
-        if (err || !user) {
-          return res
-            .status(400)
-            .json({ error: 'User with this token does not exist.' });
-        }
-
-        const obj = {
-          password: newPass,
-        };
-
-        user = _.extend(user, obj);
-        user.save((err, result) => {
-          if (err) {
-            return res.status(400).json({ error: 'reset password link error' });
-          } else {
-            res.status(200).json({ message: 'Your password has bee changed' });
-          }
-        });
-      });
-    });
-  } else {
-    return res.status(401).json({ error: 'Authentication error' });
-  }
+    } else {
+      console.error('no user exists in db to update');
+      res.status(401).json('no user exists in db to update');
+    }
+  });
 });
 
 module.exports = router;

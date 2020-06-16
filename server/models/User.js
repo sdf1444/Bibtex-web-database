@@ -25,9 +25,8 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  resetLink: {
-    data: String,
-    default: '',
+  resetPasswordToken: {
+    type: String,
   },
   datecreated: {
     type: Date,
