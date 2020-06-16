@@ -1,7 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const jwt = require('jsonwebtoken');
-const _ = require('lodash');
 const nodemailer = require('nodemailer');
 const smtpTransport = require('nodemailer-smtp-transport'); // this is important
 const bcrypt = require('bcrypt');
@@ -68,7 +66,7 @@ router.put('/forgot-password', async (req, res) => {
   }
 
   const token = crypto.randomBytes(20).toString('hex');
-  user.update({
+  User.update({
     resetPasswordToken: token,
   });
 
