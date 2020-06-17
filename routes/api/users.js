@@ -1,59 +1,74 @@
 const express = require('express');
 const router = express.Router();
-const nodemailer = require('nodemailer');
-const smtpTransport = require('nodemailer-smtp-transport'); // this is important
-const bcrypt = require('bcrypt');
-const { EMAIL_ADDRESS, EMAIL_PASSWORD } = require('../../../config');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+const config = require('config');
+const { check, validationResult } = require('express-validator');
 
-// Bring in the user registration function
-const {
-  userRegister,
-  checkRole,
-  userLogin,
-  auth,
-} = require('../../controllers/Auth');
 const User = require('../../models/User');
 
-// Users registration
-router.post('/register-user', async (req, res) => {
-  await userRegister(req.body, 'user', res);
-});
+// @route   POST api/users/register-user
+// @desc    Register user
+// @access  Public
+router.post(
+  '/',
+  [
+    check('name', 'Name is required').not().isEmpty(),
+    check('username', 'Username is required').not().isEmpty(),
+    check('email', 'Please include a valid email').isEmail(),
+    check(
+      'password',
+      'Please enter a password with 6 or more characters'
+    ).isLength({ min: 6 }),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
 
-// Admin registration
-router.post('/register-admin', async (req, res) => {
-  await userRegister(req.body, 'admin', res);
-});
+    const { name, username, email, password } = req.body;
 
-// Users login
-router.post('/login-user', async (req, res) => {
-  await userLogin(req.body, 'user', res);
-});
+    try {
+      let user = await User.findOne({ username });
 
-// Admin login
-router.post('/login-admin', async (req, res) => {
-  await userLogin(req.body, 'admin', res);
-});
+      if (user) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: 'User already exists' }] });
+      }
 
-// Get all users
-router.get('/', async (req, res) => {
-  try {
-    const user = await User.find().populate('user');
-    res.json(user);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+      user = new User({
+        name,
+        email,
+        role,
+        username,
+        password,
+      });
+
+      const salt = await bcrypt.genSalt(10);
+
+      user.password = await bcrypt.hash(password, salt);
+
+      await user.save();
+
+      const payload = {
+        user: {
+          id: user.id,
+        },
+      };
+
+      jwt.sign(payload, config.get('jwtSecret'), (err, token) => {
+        if (err) throw err;
+        res.json({ token });
+      });
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server error');
+    }
   }
-});
-
-// Users protected
-router.get('/user-protected', auth, checkRole(['user']), async (req, res) => {
-  return res.json('Hello User');
-});
-
-// Admin protected
-router.get('/admin-protected', auth, checkRole(['admin']), async (req, res) => {
-  return res.json('Hello Admin');
-});
+);
 
 // Forgot password rest
 router.put('/forgot-password', async (req, res) => {
@@ -106,8 +121,9 @@ router.put('/forgot-password', async (req, res) => {
   });
 });
 
+// Update password via email
 const BCRYPT_SALT_ROUNDS = 12;
-router.put('/updatePasswordViaEmail', async (req, res) => {
+router.put('/updatePasswordViaEmail', (req, res) => {
   User.findOne({
     where: {
       username: req.body.username,

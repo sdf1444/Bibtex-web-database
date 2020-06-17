@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const passport = require('passport');
-const auth = passport.authenticate('jwt', { session: false });
+const auth = require('../../middleware/auth');
 const { check, validationResult } = require('express-validator');
 
 const Database = require('../../models/Database');
+const User = require('../../models/User');
 
 // @route   GET api/database/me
 // @desc    Get current users database(s)
