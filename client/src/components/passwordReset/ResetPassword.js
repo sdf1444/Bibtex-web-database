@@ -13,7 +13,7 @@ import {
   forgotButton,
   inputStyle,
   SubmitButtons,
-} from '../components';
+} from '../Layout';
 
 const loading = {
   margin: '1em',
@@ -68,7 +68,7 @@ export default class ResetPassword extends Component {
     }
   }
 
-  handleChange = name => (event) => {
+  handleChange = (name) => (event) => {
     this.setState({
       [name]: event.target.value,
     });
@@ -89,7 +89,7 @@ export default class ResetPassword extends Component {
           username,
           password,
           resetPasswordToken: token,
-        },
+        }
       );
       console.log(response.data);
       if (response.data.message === 'password updated') {
@@ -109,9 +109,7 @@ export default class ResetPassword extends Component {
   };
 
   render() {
-    const {
- password, error, isLoading, updated 
-} = this.state;
+    const { password, error, isLoading, updated } = this.state;
 
     if (error) {
       return (
@@ -120,14 +118,14 @@ export default class ResetPassword extends Component {
           <div style={loading}>
             <h4>Problem resetting password. Please send another reset link.</h4>
             <LinkButtons
-              buttonText="Go Home"
+              buttonText='Go Home'
               buttonStyle={homeButton}
-              link="/"
+              link='/'
             />
             <LinkButtons
               buttonStyle={forgotButton}
-              buttonText="Forgot Password?"
-              link="/forgotPassword"
+              buttonText='Forgot Password?'
+              link='/forgotPassword'
             />
           </div>
         </div>
@@ -144,18 +142,18 @@ export default class ResetPassword extends Component {
     return (
       <div>
         <HeaderBar title={title} />
-        <form className="password-form" onSubmit={this.updatePassword}>
+        <form className='password-form' onSubmit={this.updatePassword}>
           <TextField
             style={inputStyle}
-            id="password"
-            label="password"
+            id='password'
+            label='password'
             onChange={this.handleChange('password')}
             value={password}
-            type="password"
+            type='password'
           />
           <SubmitButtons
             buttonStyle={updateButton}
-            buttonText="Update Password"
+            buttonText='Update Password'
           />
         </form>
 
@@ -167,12 +165,12 @@ export default class ResetPassword extends Component {
             </p>
             <LinkButtons
               buttonStyle={loginButton}
-              buttonText="Login"
-              link="/login"
+              buttonText='Login'
+              link='/login'
             />
           </div>
         )}
-        <LinkButtons buttonText="Go Home" buttonStyle={homeButton} link="/" />
+        <LinkButtons buttonText='Go Home' buttonStyle={homeButton} link='/' />
       </div>
     );
   }
