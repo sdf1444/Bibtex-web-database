@@ -4,6 +4,9 @@ import Navbar from './components/layout/Navbar';
 import Home from './components/layout/Homepage';
 import Login from './components/auth/Login';
 import Alert from './components/layout/Alert';
+import Editor from './components/editor/Editor';
+import Papers from './components/papers/Papers';
+import PrivateRoute from './components/routing/PrivateRoute';
 // Redux
 import { Provider } from 'react-redux';
 import store from './store';
@@ -31,6 +34,8 @@ const App = () => {
             <Alert />
             <Switch>
               <Route exact path='/login' component={Login} />
+              <PrivateRoute exact path='/editor' component={Editor} />
+              <PrivateRoute exact path='/papers' component={Papers} />
             </Switch>
           </section>
         </Fragment>
