@@ -8,6 +8,19 @@ const { check, validationResult } = require('express-validator');
 
 const User = require('../../models/User');
 
+// @route   GET api/users
+// @desc    Get all users
+// @access  Public
+router.get('/', async (req, res) => {
+  try {
+    const user = await User.find().populate('user');
+    res.json(user);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
 // @route   POST api/users/register-user
 // @desc    Register user
 // @access  Public
@@ -28,7 +41,7 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { name, username, email, password } = req.body;
+    const { name, email, role, username, password } = req.body;
 
     try {
       let user = await User.findOne({ username });
