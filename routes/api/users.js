@@ -7,6 +7,7 @@ const config = require('config');
 const { check, validationResult } = require('express-validator');
 
 const User = require('../../models/User');
+const { error } = require('console');
 
 // @route   GET api/users
 // @desc    Get all users
@@ -82,6 +83,96 @@ router.post(
     }
   }
 );
+
+// @route   PUT api/users/:id
+// @desc    Update user
+// @access  Admin access only
+router.put('/:id', async (req, res) => {
+  let updatedUser = {
+    name: req.body.name,
+    email: req.body.email,
+    role: req.body.role,
+    username: req.body.username,
+    password: bcrypt.hashSync(req.body.password, 10),
+  };
+
+  User.findOneAndUpdate({ _id: req.params.id }, updatedUser, {
+    runValidators: true,
+    context: 'query',
+  })
+    .then((oldResult) => {
+      User.findOne({ _id: req.params.id })
+        .then((newResult) => {
+          res.json({
+            success: true,
+            msg: `Successfully updated!`,
+            result: {
+              _id: newResult._id,
+              name: newResult.name,
+              email: newResult.email,
+              role: newResult.role,
+              username: newResult.username,
+              password: newResult.password,
+            },
+          });
+        })
+        .catch((err) => {
+          res
+            .status(500)
+            .json({ success: false, msg: `Something went wrong. ${err}` });
+          return;
+        });
+    })
+    .catch((err) => {
+      if (err.errors) {
+        if (err.errors.name) {
+          res
+            .status(400)
+            .json({ success: false, msg: error.errors.name.message });
+          return;
+        }
+        if (err.errors.email) {
+          res
+            .status(400)
+            .json({ success: false, msg: err.errors.email.message });
+          return;
+        }
+        if (err.erros.role) {
+          res.status(400).json({ success: false, msg: err.erros.role });
+        }
+        if (err.errors.username) {
+          res.status(400).json({ success: false, msg: err.errors.username });
+        }
+        if (err.errors.password) {
+          res.status(400).json({ success: false, msg: err.errors.password });
+        }
+      }
+    });
+});
+
+// @route   DELETE api/users/:id
+// @desc    Delete user
+// @access  Admin access only
+router.delete('/:id', async (req, res) => {
+  User.findByIdAndDelete(req.params.id)
+    .then((result) => {
+      res.json({
+        success: true,
+        msg: `It has been deleted.`,
+        result: {
+          _id: result._id,
+          name: result.name,
+          email: result.email,
+          role: result.role,
+          username: result.username,
+          password: result.password,
+        },
+      });
+    })
+    .catch((err) => {
+      res.status(404).json({ success: false, msg: 'Nothing to delete.' });
+    });
+});
 
 // Forgot password rest
 router.put('/forgot-password', async (req, res) => {
