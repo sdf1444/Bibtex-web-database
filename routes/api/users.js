@@ -22,7 +22,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// @route   POST api/users/register-user
+// @route   POST api/users
 // @desc    Register user
 // @access  Public
 router.post(

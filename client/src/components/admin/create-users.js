@@ -9,12 +9,13 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    role: '',
     username: '',
     password: '',
     password2: '',
   });
 
-  const { name, email, username, password, password2 } = formData;
+  const { name, email, role, username, password, password2 } = formData;
 
   const onChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -24,12 +25,12 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
     if (password !== password2) {
       setAlert('Passwords do not match', 'danger');
     } else {
-      register({ name, email, username, password });
+      register({ name, email, role, username, password });
     }
   };
 
   if (isAuthenticated) {
-    return <Redirect to='/editor' />;
+    return <Redirect to='/admin' />;
   }
 
   return (
@@ -59,10 +60,19 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
         </div>
         <div className='form-group'>
           <input
-            type='username'
-            placeholder='Username'
+            type='text'
+            placeholder='Role'
             name='role'
             value={role}
+            onChange={onChange}
+          />
+        </div>
+        <div className='form-group'>
+          <input
+            type='text'
+            placeholder='Username'
+            name='username'
+            value={username}
             onChange={onChange}
           />
         </div>
@@ -86,9 +96,6 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
         </div>
         <input type='submit' className='btn btn-primary' value='Register' />
       </form>
-      <p className='my-1'>
-        Already have an account? <Link to='/login'>Sign In</Link>
-      </p>
     </Fragment>
   );
 };
