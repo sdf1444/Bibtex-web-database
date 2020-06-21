@@ -9,28 +9,16 @@ const { check, validationResult } = require('express-validator');
 const User = require('../../models/User');
 const { error } = require('console');
 
-// @route   GET api/users
-// @desc    Get all users
-// @access  Public
-router.get('/', async (req, res) => {
-  try {
-    const user = await User.find().populate('user');
-    res.json(user);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
-  }
-});
-
 // @route   POST api/users/register-user
 // @desc    Register user
-// @access  Public
+// @access  Admin
 router.post(
   '/register-user',
   [
     check('name', 'Name is required').not().isEmpty(),
-    check('username', 'Username is required').not().isEmpty(),
     check('email', 'Please include a valid email').isEmail(),
+    check('role', 'Role is required').not().isEmpty(),
+    check('username', 'Username is required').not().isEmpty(),
     check(
       'password',
       'Please enter a password with 6 or more characters'
@@ -83,6 +71,32 @@ router.post(
     }
   }
 );
+
+// @route   GET api/users
+// @desc    Get all users
+// @access  Public
+router.get('/', async (req, res) => {
+  try {
+    const user = await User.find().populate('user');
+    res.json(user);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+// @route   GET api/users/:id
+// @desc    Get a single user
+// @access  Admin
+router.get('/:id', async (req, res, next) => {
+  User.findById(req.params.id, (error, data) => {
+    if (error) {
+      return next(error);
+    } else {
+      res.json(data);
+    }
+  });
+});
 
 // @route   PUT api/users/:id
 // @desc    Update user

@@ -91,7 +91,7 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
         <input type='submit' className='btn btn-primary' value='Register' />
         <div className='buttons'>
           <Link to='/admin' className='btn btn-light'>
-            back
+            Back
           </Link>
         </div>
       </form>
