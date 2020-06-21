@@ -22,7 +22,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// @route   POST api/users
+// @route   POST api/users/register-user
 // @desc    Register user
 // @access  Public
 router.post(
@@ -45,12 +45,12 @@ router.post(
     const { name, email, role, username, password } = req.body;
 
     try {
-      let user = await User.findOne({ username });
+      let user = await User.findOne({ email });
 
       if (user) {
         return res
           .status(400)
-          .json({ errors: [{ msg: 'User already exists' }] });
+          .json({ errors: [{ msg: 'Email already registered' }] });
       }
 
       user = new User({

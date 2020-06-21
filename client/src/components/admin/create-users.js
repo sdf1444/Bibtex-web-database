@@ -29,16 +29,9 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
     }
   };
 
-  if (isAuthenticated) {
-    return <Redirect to='/admin' />;
-  }
-
   return (
     <Fragment>
-      <h1 className='large text-primary'>Sign Up</h1>
-      <p className='lead'>
-        <i className='fas fa-user' /> Create Your Account
-      </p>
+      <h1 className='large text-primary'>Create User</h1>
       <form className='form' onSubmit={onSubmit}>
         <div className='form-group'>
           <input
@@ -54,6 +47,7 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
             type='email'
             placeholder='Email Address'
             name='email'
+            unique
             value={email}
             onChange={onChange}
           />
@@ -95,6 +89,11 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
           />
         </div>
         <input type='submit' className='btn btn-primary' value='Register' />
+        <div className='buttons'>
+          <Link to='/admin' className='btn btn-light'>
+            back
+          </Link>
+        </div>
       </form>
     </Fragment>
   );
