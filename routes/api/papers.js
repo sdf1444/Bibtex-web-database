@@ -1,27 +1,14 @@
 const express = require('express');
-const router = require('./database');
+const router = express.Router();
 
 const Paper = require('../../models/Paper');
-
-//@route   GET api/papers
-//@desc    Get paper
-//@access  Public
-router.get('/', async (req, res) => {
-  try {
-    const paper = await Paper.find().populate('paper');
-    res.json(paper);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
-  }
-});
 
 //@route  POST api/papers
 //@desc   Add pdf file
 //@access Public
 router.post('/', async (req, res) => {
   let newPaper = new Paper({
-    paper: req.body.name,
+    paper: req.body.paper,
     doi: req.body.doi,
     pdf: req.body.pdf,
   });
@@ -33,59 +20,49 @@ router.post('/', async (req, res) => {
   });
 });
 
-//@route   PUT api/papers/:id
-//@desc    Update pdf file
+//@route   GET api/papers
+//@desc    Get paper
 //@access  Public
-router.put('/:id', async (req, res) => {
-  let updatedPaper = {
-    paper: req.body.paper,
-    doi: req.body.doi,
-    pdf: req.body.pdf,
-  };
-  Paper.findOneAndUpdate({ _id: req.params.id }, updatedpaper)
-    .then((oldResult) => {
-      Paper.findOne({ _id: req.params.id })
-        .then((newResult) => {
-          res.json({
-            success: true,
-            msg: `Successfully updated!`,
-            result: {
-              _id: newResult._id,
-              paper: newResult.paper,
-              doi: newResult.doi,
-              pdf: newResult.pdf,
-            },
-          });
-        })
-        .catch((err) => {
-          res
-            .status(500)
-            .json({ success: false, msg: `Something went wrong. ${err}` });
-          return;
-        });
-    })
-    .catch((err) => {
-      if (err.errors) {
-        if (err.errors.paper) {
-          res
-            .status(400)
-            .json({ success: false, msg: err.errors.paper.message });
-          return;
-        }
-        if (err.errors.doi) {
-          res.status(400).json({ success: false, msg: err.errors.doi.message });
-          return;
-        }
-        if (err.errors.pdf) {
-          res.status(400).json({ success: false, msg: err.errors.pdf.message });
-          return;
-        }
-        // Show failed if all else fails for some reasons
-        res
-          .status(500)
-          .json({ success: false, msg: `Something went wrong. ${err}` });
+router.get('/', async (req, res) => {
+  Paper.find((error, data) => {
+    if (error) {
+      return next(error);
+    } else {
+      res.json(data);
+    }
+  });
+});
+
+//@route   GET api/papers/:id
+//@desc    Get single paper
+//@access  Public
+router.get('/:id', async (req, res) => {
+  Paper.findById(req.params.id, (error, data) => {
+    if (error) {
+      return next(error);
+    } else {
+      res.json(data);
+    }
+  });
+});
+
+// Update Student
+router.put('/:id', (req, res) => {
+  Paper.findByIdAndUpdate(
+    req.params.id,
+    {
+      $set: req.body,
+    },
+    (error, data) => {
+      if (error) {
+        return next(error);
+        console.log(error);
+      } else {
+        res.json(data);
+        console.log('Paper updated successfully!');
       }
-    });
+    }
+  );
 });
 
 //@route   DELETE api/papers/:id
@@ -109,7 +86,5 @@ router.delete('/:id', (req, res) => {
       res.status(404).json({ success: false, msg: 'Nothing to delete.' });
     });
 });
-
-module.exports = router;
 
 module.exports = router;

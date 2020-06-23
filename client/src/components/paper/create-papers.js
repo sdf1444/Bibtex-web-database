@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link, Redirect } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
@@ -79,9 +80,12 @@ class CreatePaper extends Component {
             />
           </Form.Group>
 
-          <Button variant='danger' size='lg' block='block' type='submit'>
-            Create Paper
-          </Button>
+          <div className='btn btn-dark'>Create Paper</div>
+          <div className='buttons'>
+            <Link to='/papers' className='btn btn-light'>
+              Back
+            </Link>
+          </div>
         </Form>
       </div>
     );

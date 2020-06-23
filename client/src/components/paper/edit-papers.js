@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link, Redirect } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
@@ -26,11 +27,9 @@ class EditPaper extends Component {
       .get('http://localhost:5000/api/papers/' + this.props.match.params.id)
       .then((res) => {
         this.setState({
-          name: res.data.name,
-          email: res.data.email,
-          role: res.data.role,
-          username: res.data.username,
-          password: res.data.password,
+          paper: res.data.paper,
+          doi: res.data.doi,
+          pdf: res.data.pdf,
         });
       })
       .catch((error) => {
@@ -38,110 +37,82 @@ class EditPaper extends Component {
       });
   }
 
-  onChangeUserName(e) {
-    this.setState({ name: e.target.value });
+  onChangePaperPaper(e) {
+    this.setState({ paper: e.target.value });
   }
 
-  onChangeUserEmail(e) {
-    this.setState({ email: e.target.value });
+  onChangePaperDoi(e) {
+    this.setState({ doi: e.target.value });
   }
 
-  onChangeUserRole(e) {
-    this.setState({ role: e.target.value });
-  }
-
-  onChangeUserUsername(e) {
-    this.setState({ username: e.target.value });
-  }
-
-  onChangeUserPassword(e) {
-    this.setState({ password: e.target.value });
+  onChangePaperPdf(e) {
+    this.setState({ pdf: e.target.value });
   }
 
   onSubmit(e) {
     e.preventDefault();
 
-    const userObject = {
-      name: this.state.name,
-      email: this.state.email,
-      role: this.state.role,
-      username: this.state.username,
-      password: this.state.password,
+    const paperObject = {
+      paper: this.state.paper,
+      doi: this.state.doi,
+      pdf: this.state.pdf,
     };
 
     axios
       .put(
-        'http://localhost:5000/api/users/' + this.props.match.params.id,
-        userObject
+        'http://localhost:5000/api/papers/' + this.props.match.params.id,
+        paperObject
       )
       .then((res) => {
         console.log(res.data);
-        console.log('User successfully updated');
+        console.log('Paper successfully updated');
       })
       .catch((error) => {
         console.log(error);
       });
-
-    // Redirect to Student List
-    this.props.history.push('/admin');
   }
 
   render() {
     return (
       <div className='form-wrapper'>
         <Form onSubmit={this.onSubmit}>
-          <Form.Group controlId='Name'>
-            <Form.Label>Name</Form.Label>
+          <Form.Group controlId='Paper'>
+            <Form.Label>Paper</Form.Label>
             <Form.Control
               type='text'
-              value={this.state.name}
-              onChange={this.onChangeUserName}
+              value={this.state.paper}
+              onChange={this.onChangePaperPaper}
             />
           </Form.Group>
 
-          <Form.Group controlId='Email'>
-            <Form.Label>Email</Form.Label>
-            <Form.Control
-              type='email'
-              value={this.state.email}
-              onChange={this.onChangeUserEmail}
-            />
-          </Form.Group>
-
-          <Form.Group controlId='Role'>
-            <Form.Label>Role</Form.Label>
+          <Form.Group controlId='Doi'>
+            <Form.Label>Doi</Form.Label>
             <Form.Control
               type='text'
-              value={this.state.role}
-              onChange={this.onChangeUserRole}
+              value={this.state.doi}
+              onChange={this.onChangePaperDoi}
             />
           </Form.Group>
 
-          <Form.Group controlId='Username'>
-            <Form.Label>Username</Form.Label>
+          <Form.Group controlId='Pdf'>
+            <Form.Label>Pdf</Form.Label>
             <Form.Control
               type='text'
-              value={this.state.username}
-              onChange={this.onChangeUserUsername}
+              value={this.state.pdf}
+              onChange={this.onChangePaperPdf}
             />
           </Form.Group>
 
-          <Form.Group controlId='Password'>
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              type='password'
-              value={this.state.password}
-              onChange={this.onChangeUserPassword}
-            />
-          </Form.Group>
-
-          <Button variant='danger' size='lg' block='block' type='submit'>
-            Update User
-          </Button>
+          <div className='btn btn-dark'>Update Paper</div>
+          <div className='buttons'>
+            <Link to='/papers' className='btn btn-light'>
+              Back
+            </Link>
+          </div>
         </Form>
       </div>
     );
   }
 }
 
-export default EditUser;
+export default EditPaper;

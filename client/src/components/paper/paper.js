@@ -36,7 +36,7 @@ class Paper extends Component {
       <div>
         <div className='buttons'>
           <Link to='/create-papers' className='btn btn-light'>
-            Create User
+            Create Paper
           </Link>
         </div>
         <div className='table-wrapper'>

@@ -7,9 +7,10 @@ import Admin from './components/admin/admin';
 import Paper from './components/paper/paper';
 import CreateUser from './components/admin/create-users';
 import EditUser from './components/admin/edit-users';
+import CreatePaper from './components/paper/create-papers';
+import EditPaper from './components/paper/edit-papers';
 import Alert from './components/layout/Alert';
 import Editor from './components/editor/Editor';
-import CreatePaper from './components/paper/create-papers';
 import PrivateRoute from './components/routing/PrivateRoute';
 // Redux
 import { Provider } from 'react-redux';
@@ -41,6 +42,7 @@ const App = () => {
               <Route exact path='/create-users' component={CreateUser} />
               <Route exact path='/edit-users/:id' component={EditUser} />
               <Route exact path='/create-papers' component={CreatePaper} />
+              <Route exact path='/edit-papers/:id' component={EditPaper} />
               <Route exact path='/admin' component={Admin} />
               <Route exact path='/papers' component={Paper} />
               <PrivateRoute exact path='/editor' component={Editor} />

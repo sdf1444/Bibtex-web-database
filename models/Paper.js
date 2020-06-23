@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const PaperSchema = new mongoose.Schema({
-  name: {
+  paper: {
     type: String,
   },
   doi: {
