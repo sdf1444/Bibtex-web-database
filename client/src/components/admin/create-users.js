@@ -25,11 +25,10 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
     if (password !== password2) {
       setAlert('Passwords do not match', 'danger');
     } else {
-      if (register({ name, email, role, username, password })) {
-        this.props.history.push('/admin');
-      }
+      register({ name, email, role, username, password });
     }
   };
+
   return (
     <Fragment>
       <h1 className='large text-primary'>Create User</h1>

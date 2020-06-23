@@ -3,31 +3,27 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
 
-class EditUser extends Component {
+class EditPaper extends Component {
   constructor(props) {
     super(props);
 
-    this.onChangeUserName = this.onChangeUserName.bind(this);
-    this.onChangeUserEmail = this.onChangeUserEmail.bind(this);
-    this.onChangeUserRole = this.onChangeUserRole.bind(this);
-    this.onChangeUserUsername = this.onChangeUserUsername.bind(this);
-    this.onChangeUserPassword = this.onChangeUserPassword.bind(this);
+    this.onChangePaperPaper = this.onChangePaperPaper.bind(this);
+    this.onChangePaperDoi = this.onChangePaperDoi.bind(this);
+    this.onChangePaperPdf = this.onChangePaperPdf.bind(this);
 
     this.onSubmit = this.onSubmit.bind(this);
 
     // State
     this.state = {
-      name: '',
-      email: '',
-      role: '',
-      username: '',
-      password: '',
+      paper: '',
+      doi: '',
+      pdf: '',
     };
   }
 
   componentDidMount() {
     axios
-      .get('http://localhost:5000/api/users/' + this.props.match.params.id)
+      .get('http://localhost:5000/api/papers/' + this.props.match.params.id)
       .then((res) => {
         this.setState({
           name: res.data.name,
@@ -87,6 +83,7 @@ class EditUser extends Component {
       });
 
     // Redirect to Student List
+    this.props.history.push('/admin');
   }
 
   render() {
