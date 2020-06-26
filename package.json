@@ -27,6 +27,7 @@
     "multer": "^1.4.2",
     "path": "^0.12.7",
     "pug": "^3.0.0",
+    "react-bootstrap-dropdown-menu": "^1.1.15",
     "request": "^2.88.2",
     "semantic-ui-react": "^0.88.2"
   },

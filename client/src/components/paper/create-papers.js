@@ -80,7 +80,9 @@ class CreatePaper extends Component {
             />
           </Form.Group>
 
-          <div className='btn btn-dark'>Create Paper</div>
+          <Button variant='danger' size='lg' block='block' type='submit'>
+            Create Paper
+          </Button>
           <div className='buttons'>
             <Link to='/papers' className='btn btn-light'>
               Back

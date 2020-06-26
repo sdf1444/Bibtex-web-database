@@ -46,7 +46,7 @@ router.get('/:id', async (req, res) => {
   });
 });
 
-// Update Student
+// Update paper
 router.put('/:id', (req, res) => {
   Paper.findByIdAndUpdate(
     req.params.id,

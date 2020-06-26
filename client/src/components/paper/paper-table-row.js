@@ -8,7 +8,6 @@ class PaperTableRow extends Component {
     super(props);
     this.deletePaper = this.deletePaper.bind(this);
   }
-
   deletePaper() {
     axios
       .delete('http://localhost:5000/api/papers/' + this.props.obj._id)
@@ -26,8 +25,15 @@ class PaperTableRow extends Component {
       <tr>
         <td>{this.props.obj.paper}</td>
         <td>{this.props.obj.doi}</td>
-        <td>{this.props.obj.pdf}</td>
         <td>
+          <a href={this.props.obj.pdf} download>
+            {this.props.obj.pdf}
+          </a>
+        </td>
+        <td>
+          <Button size='sm' variant='danger'>
+            Export reference
+          </Button>
           <Link to={'/edit-papers/' + this.props.obj._id}>Edit</Link>
           <Button onClick={this.deletePaper} size='sm' variant='danger'>
             Delete

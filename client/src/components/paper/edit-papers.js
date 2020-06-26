@@ -103,7 +103,9 @@ class EditPaper extends Component {
             />
           </Form.Group>
 
-          <div className='btn btn-dark'>Update Paper</div>
+          <Button variant='danger' size='lg' block='block' type='submit'>
+            Edit Paper
+          </Button>
           <div className='buttons'>
             <Link to='/papers' className='btn btn-light'>
               Back
