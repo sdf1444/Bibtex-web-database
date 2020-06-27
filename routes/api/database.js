@@ -90,6 +90,25 @@ router.delete('/:id', [auth, checkObjectId('id')], async (req, res) => {
   }
 });
 
+// Update reference
+router.put('/reference/:reference_id', (req, res) => {
+  Database.findByIdAndUpdate(
+    req.params.id,
+    {
+      $set: req.body,
+    },
+    (error, data) => {
+      if (error) {
+        return next(error);
+        console.log(error);
+      } else {
+        res.json(data);
+        console.log('Reference updated successfully!');
+      }
+    }
+  );
+});
+
 // @route   POST api/database/article/:id
 // @desc    Add article(s) to database(s)
 // @access  Private
