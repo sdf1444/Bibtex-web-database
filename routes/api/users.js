@@ -3,7 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const config = require('config');
+const config = require('../../config');
 const { check, validationResult } = require('express-validator');
 
 const User = require('../../models/User');
@@ -61,7 +61,7 @@ router.post(
         },
       };
 
-      jwt.sign(payload, config.get('jwtSecret'), (err, token) => {
+      jwt.sign(payload, config.jwtSecret, (err, token) => {
         if (err) throw err;
         res.json({ token });
       });
@@ -209,8 +209,8 @@ router.put('/forgot-password', async (req, res) => {
       port: 587,
       secure: false,
       auth: {
-        user: `${EMAIL_ADDRESS}`,
-        pass: `${EMAIL_PASSWORD}`,
+        user: config.email_address,
+        pass: config.email_password,
       },
       tls: {
         rejectUnauthorized: false,

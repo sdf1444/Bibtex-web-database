@@ -1,13 +1,25 @@
 const express = require('express');
 const path = require('path');
 const logger = require('morgan');
-const connectDB = require('./config/db');
+const config = require('./config');
+const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const app = express();
 
-// Connect Database
-connectDB();
+mongoose
+  .connect(config.db, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    useFindAndModify: false,
+  })
+  .then(function onSuccess() {
+    console.log('The server connected with MongoDB.');
+  })
+  .catch(function onError() {
+    console.log('Error while connecting with MongoDB.');
+  });
 
 /** Seting up server to accept cross-origin browser requests */
 app.use(function (req, res, next) {
