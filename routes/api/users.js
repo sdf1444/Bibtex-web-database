@@ -3,7 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const config = require('config');
+const config = require('../../config');
 const { check, validationResult } = require('express-validator');
 
 const User = require('../../models/User');
@@ -72,7 +72,7 @@ router.post(
         },
       };
 
-      jwt.sign(payload, config.get('jwtSecret'), (err, token) => {
+      jwt.sign(payload, config.jwtSecret, (err, token) => {
         if (err) throw err;
         res.json({ token });
       });

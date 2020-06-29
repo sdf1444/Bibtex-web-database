@@ -3,7 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const auth = require('../../middleware/auth');
 const jwt = require('jsonwebtoken');
-const config = require('config');
+const config = require('../../config');
 const { check, validationResult } = require('express-validator');
 
 const User = require('../../models/User');
@@ -54,16 +54,17 @@ router.post(
           .status(400)
           .json({ errors: [{ msg: 'Invalid Credentials' }] });
       }
-
       const payload = {
         user: {
           id: user.id,
         },
       };
 
-      jwt.sign(payload, config.get('jwtSecret'), (err, token) => {
+      const role = user.role;
+
+      jwt.sign(payload, config.jwtSecret, (err, token) => {
         if (err) throw err;
-        res.json({ token });
+        res.json({ token, role });
       });
     } catch (err) {
       console.error(err.message);
