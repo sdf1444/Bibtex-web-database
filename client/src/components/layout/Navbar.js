@@ -4,9 +4,19 @@ import { connect } from 'react-redux';
 import { PropTypes } from 'prop-types';
 import { logout } from '../../actions/auth';
 
-const Navbar = ({ auth: { isAuthenticated, loading }, logout }) => {
+const Navbar = ({ auth: { isAuthenticated, loading, role }, logout }) => {
+  console.log(role);
   const authLinks = (
     <ul>
+      {(() => {
+        if (role == 'admin') {
+          return (
+            <li>
+              <Link to='/admin'>Admin</Link>
+            </li>
+          );
+        }
+      })()}
       <li>
         <Link to='/editor'>Editor</Link>
       </li>
