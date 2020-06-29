@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import axios from 'axios';
 import Table from 'react-bootstrap/Table';
-import UserTableRow from './user-table-row';
+import UserTableRow from './UserTableRow';
 
 class Admin extends Component {
   constructor(props) {

@@ -3,14 +3,12 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
 import Home from './components/layout/Homepage';
 import Login from './components/auth/Login';
-import Admin from './components/admin/admin';
-import Paper from './components/paper/paper';
-import CreateUser from './components/admin/create-users';
-import EditUser from './components/admin/edit-users';
-import CreatePaper from './components/paper/create-papers';
-import EditPaper from './components/paper/edit-papers';
-import Alert from './components/layout/Alert';
+import Admin from './components/admin/Admin';
+import CreateUser from './components/admin/CreateUsers';
+import EditUser from './components/admin/EditUsers';
 import Editor from './components/editor/Editor';
+import Paper from './components/paper/Paper';
+import Alert from './components/layout/Alert';
 import PrivateRoute from './components/routing/PrivateRoute';
 // Redux
 import { Provider } from 'react-redux';
@@ -39,13 +37,11 @@ const App = () => {
             <Alert />
             <Switch>
               <Route exact path='/login' component={Login} />
-              <Route exact path='/create-users' component={CreateUser} />
-              <Route exact path='/edit-users/:id' component={EditUser} />
-              <Route exact path='/create-papers' component={CreatePaper} />
-              <Route exact path='/edit-papers/:id' component={EditPaper} />
               <Route exact path='/admin' component={Admin} />
-              <Route exact path='/papers' component={Paper} />
+              <Route exact path='/create-users' component={CreateUser} />
               <PrivateRoute exact path='/editor' component={Editor} />
+              <Route exact path='/edit-users/:id' component={EditUser} />
+              <Route exact path='/papers' component={Paper} />
             </Switch>
           </section>
         </Fragment>

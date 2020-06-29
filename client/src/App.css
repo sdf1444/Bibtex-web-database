@@ -368,6 +368,19 @@ button {
   left: 37.5vw;
 }
 
+/* Paper table */
+.Paper-table {
+  width: 70%;
+  margin: 10px auto;
+  border-collapse: collapse;
+}
+.Paper-table th {
+  border: 1px solid black;
+}
+.Paper-table td {
+  border: 1px solid black;
+}
+
 /* Mobile Styles */
 @media (max-width: 700px) {
   .container {
