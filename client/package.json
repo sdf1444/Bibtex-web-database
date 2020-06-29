@@ -9,12 +9,9 @@
     "@testing-library/user-event": "^7.2.1",
     "axios": "^0.19.2",
     "bootstrap": "^4.5.0",
-<<<<<<< HEAD
-=======
     "formik": "^2.1.4",
     "mobx": "^5.15.4",
     "mobx-react": "^6.2.2",
->>>>>>> fd6a7f0bc79d716d607390723967b6cd654abb4e
     "moment": "^2.26.0",
     "pdf": "^0.1.0",
     "prop-types": "^15.7.2",
@@ -54,6 +51,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:5000",
-  "type": "module"
+  "proxy": "http://localhost:5000"
 }

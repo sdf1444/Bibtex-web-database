@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 const jwt = require('jsonwebtoken');
-=======
->>>>>>> fd6a7f0bc79d716d607390723967b6cd654abb4e
 const config = require('../config');
 
 module.exports = function (req, res, next) {
