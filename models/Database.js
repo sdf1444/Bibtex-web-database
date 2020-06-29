@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const DatabaseSchema = new Schema({
-  bibtexdatabasename: {
+  bibtexdatabase: {
     type: String,
   },
   user: {
@@ -11,6 +11,10 @@ const DatabaseSchema = new Schema({
   },
   article: [
     {
+      user: {
+        type: Schema.Types.ObjectId,
+        ref: 'user',
+      },
       key: {
         type: String,
       },
@@ -46,6 +50,10 @@ const DatabaseSchema = new Schema({
   ],
   book: [
     {
+      user: {
+        type: Schema.Types.ObjectId,
+        ref: 'user',
+      },
       key: {
         type: String,
       },
@@ -84,6 +92,10 @@ const DatabaseSchema = new Schema({
   ],
   booklet: [
     {
+      user: {
+        type: Schema.Types.ObjectId,
+        ref: 'user',
+      },
       key: {
         type: String,
       },
@@ -109,6 +121,10 @@ const DatabaseSchema = new Schema({
   ],
   conference: [
     {
+      user: {
+        type: Schema.Types.ObjectId,
+        ref: 'user',
+      },
       key: {
         type: String,
       },
@@ -156,6 +172,10 @@ const DatabaseSchema = new Schema({
   ],
   inBook: [
     {
+      user: {
+        type: Schema.Types.ObjectId,
+        ref: 'user',
+      },
       key: {
         type: String,
       },
@@ -201,6 +221,10 @@ const DatabaseSchema = new Schema({
   ],
   inCollection: [
     {
+      user: {
+        type: Schema.Types.ObjectId,
+        ref: 'user',
+      },
       key: {
         type: String,
       },
@@ -258,6 +282,10 @@ const DatabaseSchema = new Schema({
   ],
   inProceedings: [
     {
+      user: {
+        type: Schema.Types.ObjectId,
+        ref: 'user',
+      },
       key: {
         type: String,
       },
@@ -305,6 +333,10 @@ const DatabaseSchema = new Schema({
   ],
   manual: [
     {
+      user: {
+        type: Schema.Types.ObjectId,
+        ref: 'user',
+      },
       key: {
         type: String,
       },
@@ -334,6 +366,10 @@ const DatabaseSchema = new Schema({
   ],
   mastersThesis: [
     {
+      user: {
+        type: Schema.Types.ObjectId,
+        ref: 'user',
+      },
       key: {
         type: String,
       },
@@ -362,6 +398,10 @@ const DatabaseSchema = new Schema({
   ],
   misc: [
     {
+      user: {
+        type: Schema.Types.ObjectId,
+        ref: 'user',
+      },
       key: {
         type: String,
       },
@@ -384,6 +424,10 @@ const DatabaseSchema = new Schema({
   ],
   online: [
     {
+      user: {
+        type: Schema.Types.ObjectId,
+        ref: 'user',
+      },
       key: {
         type: String,
       },
@@ -406,6 +450,10 @@ const DatabaseSchema = new Schema({
   ],
   phdThesis: [
     {
+      user: {
+        type: Schema.Types.ObjectId,
+        ref: 'user',
+      },
       key: {
         type: String,
       },
@@ -438,6 +486,10 @@ const DatabaseSchema = new Schema({
   ],
   proceedings: [
     {
+      user: {
+        type: Schema.Types.ObjectId,
+        ref: 'user',
+      },
       key: {
         type: String,
       },

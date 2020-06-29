@@ -32,7 +32,7 @@ export const loadUser = () => async (dispatch) => {
 };
 
 // Register User
-export const register = ({ name, email, username, password }) => async (
+export const register = ({ name, email, role, username, password }) => async (
   dispatch
 ) => {
   const config = {
@@ -41,7 +41,7 @@ export const register = ({ name, email, username, password }) => async (
     },
   };
 
-  const body = JSON.stringify({ name, email, username, password });
+  const body = JSON.stringify({ name, email, role, username, password });
 
   try {
     const res = await axios.post('/api/users/register-user', body, config);
@@ -50,8 +50,6 @@ export const register = ({ name, email, username, password }) => async (
       type: REGISTER_SUCCESS,
       payload: res.data,
     });
-
-    dispatch(loadUser());
   } catch (err) {
     const errors = err.response.data.errors;
 

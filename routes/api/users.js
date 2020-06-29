@@ -7,29 +7,18 @@ const config = require('../../config');
 const { check, validationResult } = require('express-validator');
 
 const User = require('../../models/User');
-
-// @route   GET api/users
-// @desc    Get all users
-// @access  Public
-router.get('/', async (req, res) => {
-  try {
-    const user = await User.find().populate('user');
-    res.json(user);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
-  }
-});
+const { error } = require('console');
 
 // @route   POST api/users/register-user
 // @desc    Register user
-// @access  Public
+// @access  Admin
 router.post(
   '/register-user',
   [
     check('name', 'Name is required').not().isEmpty(),
-    check('username', 'Username is required').not().isEmpty(),
     check('email', 'Please include a valid email').isEmail(),
+    check('role', 'Role is required').not().isEmpty(),
+    check('username', 'Username is required').not().isEmpty(),
     check(
       'password',
       'Please enter a password with 6 or more characters'
@@ -44,12 +33,12 @@ router.post(
     const { name, email, role, username, password } = req.body;
 
     try {
-      let user = await User.findOne({ username });
+      let user = await User.findOne({ email });
 
       if (user) {
         return res
           .status(400)
-          .json({ errors: [{ msg: 'User already exists' }] });
+          .json({ errors: [{ msg: 'Email already registered' }] });
       }
 
       user = new User({
@@ -83,6 +72,122 @@ router.post(
   }
 );
 
+// @route   GET api/users
+// @desc    Get all users
+// @access  Public
+router.get('/', async (req, res) => {
+  try {
+    const user = await User.find().populate('user');
+    res.json(user);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+// @route   GET api/users/:id
+// @desc    Get a single user
+// @access  Admin
+router.get('/:id', async (req, res, next) => {
+  User.findById(req.params.id, (error, data) => {
+    if (error) {
+      return next(error);
+    } else {
+      res.json(data);
+    }
+  });
+});
+
+// @route   PUT api/users/:id
+// @desc    Update user
+// @access  Admin access only
+router.put('/:id', async (req, res) => {
+  let updatedUser = {
+    name: req.body.name,
+    email: req.body.email,
+    role: req.body.role,
+    username: req.body.username,
+    password: bcrypt.hashSync(req.body.password, 10),
+  };
+
+  User.findOneAndUpdate({ _id: req.params.id }, updatedUser, {
+    runValidators: true,
+    context: 'query',
+  })
+    .then((oldResult) => {
+      User.findOne({ _id: req.params.id })
+        .then((newResult) => {
+          res.json({
+            success: true,
+            msg: `Successfully updated!`,
+            result: {
+              _id: newResult._id,
+              name: newResult.name,
+              email: newResult.email,
+              role: newResult.role,
+              username: newResult.username,
+              password: newResult.password,
+            },
+          });
+        })
+        .catch((err) => {
+          res
+            .status(500)
+            .json({ success: false, msg: `Something went wrong. ${err}` });
+          return;
+        });
+    })
+    .catch((err) => {
+      if (err.errors) {
+        if (err.errors.name) {
+          res
+            .status(400)
+            .json({ success: false, msg: error.errors.name.message });
+          return;
+        }
+        if (err.errors.email) {
+          res
+            .status(400)
+            .json({ success: false, msg: err.errors.email.message });
+          return;
+        }
+        if (err.erros.role) {
+          res.status(400).json({ success: false, msg: err.erros.role });
+        }
+        if (err.errors.username) {
+          res.status(400).json({ success: false, msg: err.errors.username });
+        }
+        if (err.errors.password) {
+          res.status(400).json({ success: false, msg: err.errors.password });
+        }
+      }
+    });
+});
+
+// @route   DELETE api/users/:id
+// @desc    Delete user
+// @access  Admin access only
+router.delete('/:id', async (req, res) => {
+  User.findByIdAndDelete(req.params.id)
+    .then((result) => {
+      res.json({
+        success: true,
+        msg: `It has been deleted.`,
+        result: {
+          _id: result._id,
+          name: result.name,
+          email: result.email,
+          role: result.role,
+          username: result.username,
+          password: result.password,
+        },
+      });
+    })
+    .catch((err) => {
+      res.status(404).json({ success: false, msg: 'Nothing to delete.' });
+    });
+});
+
 // Forgot password rest
 router.put('/forgot-password', async (req, res) => {
   if (req.body.email == '') {
@@ -104,8 +209,8 @@ router.put('/forgot-password', async (req, res) => {
       port: 587,
       secure: false,
       auth: {
-        user: `${EMAIL_ADDRESS}`,
-        pass: `${EMAIL_PASSWORD}`,
+        user: config.email_address,
+        pass: config.email_password,
       },
       tls: {
         rejectUnauthorized: false,

@@ -4,7 +4,7 @@
   "description": "bibtex web database",
   "main": "server.js",
   "scripts": {
-    "start": "node server",
+    "start": "node server.js",
     "server": "nodemon server",
     "client": "npm start --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\""
@@ -15,16 +15,33 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "config": "^3.3.1",
+<<<<<<< HEAD
+=======
+    "cookie-parser": "^1.4.5",
+>>>>>>> fd6a7f0bc79d716d607390723967b6cd654abb4e
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-validator": "^6.5.0",
     "gridfs-stream": "^1.1.1",
+<<<<<<< HEAD
+=======
+    "http-errors": "^1.7.3",
+    "jade": "^1.11.0",
+>>>>>>> fd6a7f0bc79d716d607390723967b6cd654abb4e
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.20",
     "morgan": "^1.10.0",
     "multer": "^1.4.2",
     "multer-gridfs-storage": "^4.2.0",
+<<<<<<< HEAD
     "request": "^2.88.2"
+=======
+    "path": "^0.12.7",
+    "pug": "^3.0.0",
+    "react-bootstrap-dropdown-menu": "^1.1.15",
+    "request": "^2.88.2",
+    "semantic-ui-react": "^0.88.2"
+>>>>>>> fd6a7f0bc79d716d607390723967b6cd654abb4e
   },
   "devDependencies": {
     "concurrently": "^5.2.0",
