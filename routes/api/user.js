@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
+const auth = require('../../middleware/auth');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const config = require('../../config');
@@ -72,7 +73,20 @@ router.post(
   }
 );
 
-// @route   GET api/users
+// @route   GET api/user/me
+// @desc    Get current user
+// @access  Private
+router.get('/me', auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('-password');
+    res.json(user);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+// @route   GET api/user
 // @desc    Get all users
 // @access  Public
 router.get('/', async (req, res) => {
@@ -85,7 +99,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// @route   GET api/users/:id
+// @route   GET api/user/:id
 // @desc    Get a single user
 // @access  Admin
 router.get('/:id', async (req, res, next) => {
@@ -98,7 +112,7 @@ router.get('/:id', async (req, res, next) => {
   });
 });
 
-// @route   PUT api/users/:id
+// @route   PUT api/user/:id
 // @desc    Update user
 // @access  Admin access only
 router.put('/:id', async (req, res) => {
@@ -164,7 +178,7 @@ router.put('/:id', async (req, res) => {
     });
 });
 
-// @route   DELETE api/users/:id
+// @route   DELETE api/user/:id
 // @desc    Delete user
 // @access  Admin access only
 router.delete('/:id', async (req, res) => {

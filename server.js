@@ -54,7 +54,7 @@ app.use(
   })
 );
 app.use(cors());
-app.use('/api/users', require('./routes/api/users'));
+app.use('/api/user', require('./routes/api/user'));
 app.use('/api/auth', require('./routes/api/auth'));
 app.use('/api/database', require('./routes/api/database'));
 app.use('/api/papers', require('./routes/api/papers'));

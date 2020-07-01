@@ -27,7 +27,7 @@ class EditUser extends Component {
 
   componentDidMount() {
     axios
-      .get('http://localhost:5000/api/users/' + this.props.match.params.id)
+      .get('http://localhost:5000/api/user/' + this.props.match.params.id)
       .then((res) => {
         this.setState({
           name: res.data.name,

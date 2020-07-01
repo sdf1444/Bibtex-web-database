@@ -21,7 +21,7 @@ const Login = ({ login, isAuthenticated }) => {
   };
 
   if (isAuthenticated) {
-    return <Redirect to='/editor' />;
+    return <Redirect to='/welcome' />;
   }
 
   return (

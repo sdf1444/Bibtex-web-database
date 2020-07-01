@@ -11,7 +11,7 @@ class UserTableRow extends Component {
 
   deleteUser() {
     axios
-      .delete('http://localhost:5000/api/users/' + this.props.obj._id)
+      .delete('http://localhost:5000/api/user/' + this.props.obj._id)
       .then((res) => {
         console.log('User successfully deleted!');
         window.location.reload(false);
