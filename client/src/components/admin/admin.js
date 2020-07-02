@@ -40,7 +40,7 @@ class Admin extends Component {
           </Link>
         </div>
         <div className='table-wrapper'>
-          <Table striped bordered hover>
+          <table className='users'>
             <thead>
               <tr>
                 <th>Name</th>
@@ -51,7 +51,7 @@ class Admin extends Component {
               </tr>
             </thead>
             <tbody>{this.DataTable()}</tbody>
-          </Table>
+          </table>
         </div>
       </div>
     );

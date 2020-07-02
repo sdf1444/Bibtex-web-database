@@ -11,6 +11,7 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  overflow-y: hidden;
 }
 
 body {
@@ -28,10 +29,6 @@ a {
 
 ul {
   list-style: none;
-}
-
-img {
-  width: 100%;
 }
 
 /* Utilities */
@@ -349,6 +346,35 @@ button {
   text-align: center;
 }
 
+/* Admin Page */
+.users {
+  font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.users td,
+.users th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.users tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.users tr:hover {
+  background-color: #ddd;
+}
+
+.users th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #4caf50;
+  color: white;
+}
+
 /* Editor Page */
 .sidepanelbuttons {
   padding: 0.45rem;
@@ -369,6 +395,10 @@ button {
 }
 
 /* Paper table */
+.upload {
+  text-align: center;
+}
+
 .Paper-table {
   width: 70%;
   margin: 10px auto;

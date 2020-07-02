@@ -14,6 +14,7 @@ class UserTableRow extends Component {
       .delete('http://localhost:5000/api/user/' + this.props.obj._id)
       .then((res) => {
         console.log('User successfully deleted!');
+        alert('User deleted');
         window.location.reload(false);
       })
       .catch((error) => {
