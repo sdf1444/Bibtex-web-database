@@ -5,10 +5,11 @@ import Home from './components/layout/Homepage';
 import Login from './components/auth/Login';
 import Welcome from './components/welcome/Welcome';
 import Admin from './components/admin/Admin';
-import CreateUser from './components/admin/CreateUsers';
-import Alert from './components/layout/Alert';
+import CreateUser from './components/admin/CreateUser';
+import EditUser from './components/admin/EditUser';
 import Editor from './components/editor/Editor';
 import Paper from './components/paper/Paper';
+import Alert from './components/layout/Alert';
 import PrivateRoute from './components/routing/PrivateRoute';
 // Redux
 import { Provider } from 'react-redux';
@@ -40,6 +41,7 @@ const App = () => {
               <PrivateRoute exact path='/welcome' component={Welcome} />
               <PrivateRoute exact path='/admin' component={Admin} />
               <PrivateRoute exact path='/create-users' component={CreateUser} />
+              <PrivateRoute exact path='/edit-user/:id' component={EditUser} />
               <PrivateRoute exact path='/editor' component={Editor} />
               <PrivateRoute exact path='/papers' component={Paper} />
             </Switch>

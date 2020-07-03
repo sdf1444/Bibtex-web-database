@@ -31,7 +31,7 @@ class UserTableRow extends Component {
         <td>{this.props.obj.username}</td>
         <td>{this.props.obj.password}</td>
         <td>
-          <Link to={'/edit-users/' + this.props.obj._id}>Edit</Link>
+          <Link to={'/edit-user/' + this.props.obj._id}>Edit</Link>
           <Button onClick={this.deleteUser} size='sm' variant='danger'>
             Delete
           </Button>

@@ -75,7 +75,7 @@ class EditUser extends Component {
 
     axios
       .put(
-        'http://localhost:5000/api/users/' + this.props.match.params.id,
+        'http://localhost:5000/api/user/' + this.props.match.params.id,
         userObject
       )
       .then((res) => {
@@ -86,7 +86,7 @@ class EditUser extends Component {
         console.log(error);
       });
 
-    // Redirect to Student List
+    // Redirect to User List
   }
 
   render() {
