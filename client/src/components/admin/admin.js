@@ -34,13 +34,16 @@ class Admin extends Component {
   render() {
     return (
       <div>
-        <div className='buttons'>
-          <Link to='/create-users' className='btn btn-light'>
-            Create User
-          </Link>
+        <div className='users'>
+          <div className='button'>
+            <Link to='/create-users' className='btn btn-light'>
+              Create User
+            </Link>
+          </div>
         </div>
+        <h1 className='heading'>Users List</h1>
         <div className='table-wrapper'>
-          <table className='users'>
+          <table className='usersTable'>
             <thead>
               <tr>
                 <th>Name</th>
