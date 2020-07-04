@@ -110,8 +110,9 @@ class Paper extends Component {
                         onClick={this.deleteFile.bind(this)}
                         id={file._id}
                       >
-                        Remove
+                        Delete
                       </button>
+                      <button>Export references</button>
                     </td>
                   </tr>
                 );

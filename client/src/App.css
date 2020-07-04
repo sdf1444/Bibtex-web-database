@@ -358,7 +358,9 @@ button {
 }
 
 .users {
-  display: flex;
+  position: fixed;
+  top: 50px;
+  left: 40%;
 }
 
 .usersTable {
@@ -475,23 +477,30 @@ button {
   }
 
   body {
-    overflow-y: hidden;
     overflow-x: auto;
   }
 
   .heading {
     position: fixed;
-    top: 70px;
+    top: 75px;
+    left: 55%;
   }
 
   .button {
     position: fixed;
-    top: 91px;
-    left: 4.5vw;
+    top: 105px;
+    left: 2.8%;
+  }
+
+  .users {
+    position: fixed;
+    top: 100px;
+    left: 50%;
+    width: 100%;
   }
 
   .table-wrapper {
     position: absolute;
-    top: 135px;
+    top: 140px;
   }
 }
