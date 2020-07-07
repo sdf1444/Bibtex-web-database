@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
 import Home from './components/layout/Homepage';
 import Login from './components/auth/Login';
+import RecoverPassword from './components/passwordReset/RecoverPassword';
+import UpdatePassword from './components/passwordReset/UpdatePassword';
 import Welcome from './components/welcome/Welcome';
 import Admin from './components/admin/Admin';
 import CreateUser from './components/admin/CreateUser';
@@ -38,6 +40,12 @@ const App = () => {
             <Alert />
             <Switch>
               <Route exact path='/login' component={Login} />
+              <Route
+                exact
+                path='/recoverPassword'
+                component={RecoverPassword}
+              />
+              <Route exact path='/reset/:id' component={UpdatePassword} />
               <PrivateRoute exact path='/welcome' component={Welcome} />
               <PrivateRoute exact path='/admin' component={Admin} />
               <PrivateRoute exact path='/create-users' component={CreateUser} />

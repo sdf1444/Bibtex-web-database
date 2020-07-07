@@ -33,7 +33,7 @@ class Admin extends Component {
 
   render() {
     return (
-      <div className='admin'>
+      <div>
         <div className='button'>
           <Link to='/create-users' className='btn btn-light'>
             Create User

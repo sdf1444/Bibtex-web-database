@@ -11,6 +11,7 @@
     "axios": "^0.19.2",
     "bootstrap": "^4.5.0",
     "formik": "^2.1.4",
+    "joi-browser": "^13.4.0",
     "mobx": "^5.15.4",
     "mobx-react": "^6.2.2",
     "moment": "^2.26.0",
@@ -18,6 +19,7 @@
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.1",
+    "react-bootstrap-table-next": "^4.0.3",
     "react-dom": "^16.13.1",
     "react-moment": "^0.9.7",
     "react-redux": "^7.2.0",
@@ -28,6 +30,7 @@
     "redux-devtools-extension": "^2.13.8",
     "redux-thunk": "^2.3.0",
     "semantic-ui-react": "^0.88.2",
+    "styled-components": "^5.1.1",
     "uuid": "^8.1.0",
     "yup": "^0.29.1"
   },

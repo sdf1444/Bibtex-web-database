@@ -6,6 +6,8 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const config = require('../../config');
 const { check, validationResult } = require('express-validator');
+const nodemailer = require('nodemailer');
+const smtpTransport = require('nodemailer-smtp-transport');
 
 const User = require('../../models/User');
 const { error } = require('console');
@@ -90,13 +92,20 @@ router.get('/me', auth, async (req, res) => {
 // @desc    Get all users
 // @access  Public
 router.get('/', async (req, res) => {
-  try {
-    const user = await User.find().populate('user');
-    res.json(user);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
-  }
+  const username = req.query.username;
+  var condition = username
+    ? { username: { $regex: new RegExp(username), $options: 'i' } }
+    : {};
+
+  User.find(condition)
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || 'Some error occurred while retrieving users',
+      });
+    });
 });
 
 // @route   GET api/user/:id
@@ -111,6 +120,8 @@ router.get('/:id', async (req, res, next) => {
     }
   });
 });
+
+router.get('/');
 
 // @route   PUT api/user/:id
 // @desc    Update user
@@ -202,89 +213,89 @@ router.delete('/:id', async (req, res) => {
     });
 });
 
-// Forgot password rest
-router.put('/forgot-password', async (req, res) => {
-  if (req.body.email == '') {
-    res.status(400).send('email required');
+router.post('/:email', async (req, res) => {
+  const { email } = req.params;
+  let user;
+  try {
+    user = await User.findOne({ email });
+
+    user.save(function (err) {
+      if (err) {
+        return res.status(500).send({ message: err.message });
+      }
+    });
+
+    const transporter = nodemailer.createTransport(
+      smtpTransport({
+        host: 'smtp.office365.com',
+        port: 587,
+        secure: false,
+        auth: {
+          user: config.email_address,
+          pass: config.email_password,
+        },
+        tls: {
+          rejectUnauthorized: false,
+        },
+      })
+    );
+
+    const mailOptions = {
+      from: 'spencerdu@hotmail.co.uk',
+      to: `${user.email}`,
+      subject: 'Link to Reset Password',
+      text:
+        'You are recieving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
+        'Please click on the following link or paste this into your browser to complete the process:\n\n' +
+        `http://localhost:3000/reset/${user._id}\n\n` +
+        'If you did not request this, please ignore this email and your password will remain unchanged.\n',
+    };
+
+    transporter.sendMail(mailOptions, (err, response) => {
+      if (err) {
+        console.error('there was an error: ', err);
+      } else {
+        console.log('here is the res: ', response);
+        res.status(200).json('recovery email sent');
+      }
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
   }
-  const user = await User.findOne({ email: req.body.email });
-  if (!user) {
-    res.status(403).send('email is not in database');
-  }
-
-  const token = crypto.randomBytes(20).toString('hex');
-  User.update({
-    resetPasswordToken: token,
-  });
-
-  const transporter = nodemailer.createTransport(
-    smtpTransport({
-      host: 'smtp.office365.com',
-      port: 587,
-      secure: false,
-      auth: {
-        user: config.email_address,
-        pass: config.email_password,
-      },
-      tls: {
-        rejectUnauthorized: false,
-      },
-    })
-  );
-
-  const mailOptions = {
-    from: 'spencerdu@hotmail.co.uk',
-    to: `${user.email}`,
-    subject: 'Link to Reset Password',
-    text:
-      'You are recieving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
-      'Please click on the following link or paste this into your browser to complete the process:\n\n' +
-      `http://localhost:3000/reset/${token}\n\n` +
-      'If you did not request this, please ignore this email and your password will remain unchanged.\n',
-  };
-
-  transporter.sendMail(mailOptions, (err, response) => {
-    if (err) {
-      console.error('there was an error: ', err);
-    } else {
-      console.log('here is the res: ', response);
-      res.status(200).json('recovery email sent');
-    }
-  });
 });
 
-// Update password via email
-const BCRYPT_SALT_ROUNDS = 12;
-router.put('/updatePasswordViaEmail', (req, res) => {
-  User.findOne({
-    where: {
-      username: req.body.username,
-      resetPasswordToken: req.body.resetPasswordToken,
-    },
-  }).then((user) => {
-    if (user == null) {
-      console.error('password reset link is invalid or has expired');
-      res.status(403).send('password reset link is invalid or has expired');
-    } else if (user != null) {
-      console.log('user exists in db');
-      bcrypt
-        .hash(req.body.password, BCRYPT_SALT_ROUNDS)
-        .then((hashedPassword) => {
-          User.update({
-            password: hashedPassword,
-            resetPasswordToken: null,
-            resetPasswordExpires: null,
+router.put('/updatePassword/:id', async (req, res) => {
+  let updatePassword = {
+    password: bcrypt.hashSync(req.body.password, 10),
+  };
+
+  User.findOneAndUpdate({ _id: req.params.id }, updatePassword, {
+    runValidators: true,
+    context: 'query',
+  })
+    .then((oldResult) => {
+      User.findOne({ _id: req.params.id })
+        .then((newResult) => {
+          res.json({
+            success: true,
+            msg: `Successfully updated!`,
           });
         })
-        .then(() => {
-          console.log('password updated');
-          res.status(200).send({ message: 'password updated' });
+        .catch((err) => {
+          res
+            .status(500)
+            .json({ success: false, msg: `Something went wrong. ${err}` });
+          return;
         });
-    } else {
-      console.error('no user exists in db to update');
-      res.status(401).json('no user exists in db to update');
-    }
-  });
+    })
+    .catch((err) => {
+      if (err.errors) {
+        if (err.errors.password) {
+          res.status(400).json({ success: false, msg: err.errors.password });
+        }
+      }
+    });
 });
 
 module.exports = router;

@@ -53,6 +53,7 @@ const Login = ({ login, isAuthenticated }) => {
         </div>
         <input type='submit' className='btn btn-primary' value='Login' />
       </form>
+      <Link to='/recoverPassword'>Forgot your password?</Link>
       <p className='my-1'>Don't have an account? Please contact admin.</p>
     </Fragment>
   );

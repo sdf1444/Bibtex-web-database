@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const DatabaseSchema = new Schema({
-  bibtexdatabase: {
+  bibtexdatabasename: {
     type: String,
   },
   user: {

@@ -1,3 +1,4 @@
+import { push } from 'connected-react-router';
 import axios from 'axios';
 import { setAlert } from './alert';
 import {
@@ -97,4 +98,28 @@ export const login = (username, password) => async (dispatch) => {
 // Logout / Clear editor
 export const logout = () => (dispatch) => {
   dispatch({ type: LOGOUT });
+};
+
+// Send reset password link
+export const sendResetPasswordLink = (email) =>
+  axios.post('http://localhost:5000/api/user/login/forgot', { email });
+
+export const attemptSendResetPasswordLink = (email) => async (dispatch) => {
+  return await sendResetPasswordLink(email).catch(
+    dispatch(push('/login/forgot'))
+  );
+};
+
+// Reset password
+export const resetPassword = (password, token) =>
+  axios.post(`http://localhost:5000/api/user/login/reset/${token}`, {
+    password,
+  });
+
+export const attemptResetPassword = (password, token) => async (dispatch) => {
+  return await resetPassword(password, token)
+    .then(() => {
+      dispatch(push('/login'));
+    })
+    .catch(dispatch(push(`/login/reset/${token}`)));
 };
