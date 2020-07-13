@@ -78,8 +78,10 @@ class Paper extends Component {
       <div className='Paper'>
         <header className='Paper-header'></header>
         <div className='Paper-content'>
-          <input type='file' onChange={this.fileChanged.bind(this)} />
-          <button onClick={this.uploadFile.bind(this)}>Upload</button>
+          <div className='upload'>
+            <input type='file' onChange={this.fileChanged.bind(this)} />
+            <button onClick={this.uploadFile.bind(this)}>Upload</button>
+          </div>
           <table className='Paper-table'>
             <thead>
               <tr>
@@ -108,8 +110,9 @@ class Paper extends Component {
                         onClick={this.deleteFile.bind(this)}
                         id={file._id}
                       >
-                        Remove
+                        Delete
                       </button>
+                      <button>Export references</button>
                     </td>
                   </tr>
                 );

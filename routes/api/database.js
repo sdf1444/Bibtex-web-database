@@ -91,7 +91,7 @@ router.delete('/:id', [auth, checkObjectId('id')], async (req, res) => {
 });
 
 // Update reference
-router.put('/reference/:reference_id', (req, res) => {
+router.put('/reference/:id', (req, res, next) => {
   Database.findByIdAndUpdate(
     req.params.id,
     {
@@ -99,7 +99,7 @@ router.put('/reference/:reference_id', (req, res) => {
     },
     (error, data) => {
       if (error) {
-        return next(error);
+        res.status(500).send('Server Error');
         console.log(error);
       } else {
         res.json(data);
@@ -108,6 +108,38 @@ router.put('/reference/:reference_id', (req, res) => {
     }
   );
 });
+
+router.post('/upload', [auth], async (req, res) => {
+  let database = await Database.findOne({ bibtexdatabasename: req.body.bibtexdatabasename })
+  .exec();
+  if (!database) {
+    let newDatabase = new Database(req.body);
+    newDatabase.user = req.user.id;
+    newDatabase.save();
+    res.json(newDatabase);
+  }
+  else {
+    for (let key of Object.keys(database.toObject())) {
+      console.log(key);
+      if (key === 'bibtexdatabasename' || key === 'user' || key === '_id') continue;
+      if (!req.body[key]) continue;
+      for (let ref of req.body[key]) {
+        let contains = false;
+        for (let i in database[key]) {
+          if (database[key][i].key.toLowerCase() === ref.key.toLowerCase()) {
+            contains = true;
+            database[key][i] = ref;
+          }
+        }
+        if (!contains) {
+          database[key].push(ref);
+        }
+      }
+    }
+    await database.save();
+    return res.json(database);
+  }
+})
 
 // @route   POST api/database/article/:id
 // @desc    Add article(s) to database(s)
@@ -195,7 +227,7 @@ router.delete('/article/:id/:article_id', auth, async (req, res) => {
 // @route   POST api/database/book/:id
 // @desc    Add book(s) into database(s)
 // @access  Private
-router.put(
+router.post(
   '/book/:id',
   auth,
   checkObjectId('id'),
@@ -260,7 +292,7 @@ router.delete('/book/:id/:book_id', auth, async (req, res) => {
     }
 
     database.book = database.book.filter(
-      ({ id }) => id !== req.params.article_id
+      ({ id }) => id !== req.params.book_id
     );
 
     await database.save();
@@ -340,10 +372,10 @@ router.delete('/booklet/:id/:booklet_id', auth, async (req, res) => {
   }
 });
 
-// @route   PUT api/database/conference/:id
+// @route   POST api/database/conference/:id
 // @desc    Add database(s) conference(s)
 // @access  Private
-router.put(
+router.post(
   '/conference/:id',
   auth,
   checkObjectId('id'),
@@ -847,7 +879,7 @@ router.delete(
 // @route   POST api/database/misc/:id
 // @desc    Add database(s) misc(s)
 // @access  Private
-router.post('/misc', auth, checkObjectId('id'), async (req, res) => {
+router.post('/misc/:id', auth, checkObjectId('id'), async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -977,7 +1009,7 @@ router.delete('/online/:id/:online_id', auth, async (req, res) => {
 // @route   POST api/database/phdThesis/:id
 // @desc    Add database(s) phdThesis
 // @access  Private
-router.put(
+router.post(
   '/phdThesis/:id',
   auth,
   checkObjectId('id'),
