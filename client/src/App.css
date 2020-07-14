@@ -396,23 +396,6 @@ button {
 }
 
 /* Editor Page */
-.sidepanelbuttons {
-  padding: 0.45rem;
-  margin: 0 0.25rem;
-  display: flex;
-}
-
-.editorbuttons {
-  position: fixed;
-  top: 12.5vh;
-  left: 45vw;
-}
-
-.entry {
-  position: fixed;
-  top: 90px;
-  left: 37.5vw;
-}
 
 /* Paper table */
 .upload {

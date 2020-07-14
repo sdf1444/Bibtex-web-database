@@ -14,7 +14,7 @@ class Admin extends Component {
 
   componentDidMount() {
     axios
-      .get('http://localhost:5000/api/users')
+      .get('http://localhost:5000/api/user')
       .then((res) => {
         this.setState({
           users: res.data,
@@ -34,13 +34,14 @@ class Admin extends Component {
   render() {
     return (
       <div>
-        <div className='buttons'>
+        <div className='button'>
           <Link to='/create-users' className='btn btn-light'>
             Create User
           </Link>
         </div>
         <div className='table-wrapper'>
-          <Table striped bordered hover>
+          <h1 className='users'>Users List</h1>
+          <table className='usersTable'>
             <thead>
               <tr>
                 <th>Name</th>
@@ -51,7 +52,7 @@ class Admin extends Component {
               </tr>
             </thead>
             <tbody>{this.DataTable()}</tbody>
-          </Table>
+          </table>
         </div>
       </div>
     );

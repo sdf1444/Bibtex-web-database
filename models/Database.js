@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 const DatabaseSchema = new Schema({
   bibtexdatabasename: {
     type: String,
+    unique: true
   },
   user: {
     type: Schema.Types.ObjectId,
@@ -31,11 +32,11 @@ const DatabaseSchema = new Schema({
         required: true,
       },
       year: {
-        type: Number,
+        type: String,
         required: true,
       },
       volume: {
-        type: Number,
+        type: String,
       },
       number: {
         type: Number,
@@ -70,14 +71,14 @@ const DatabaseSchema = new Schema({
         required: true,
       },
       year: {
-        type: Number,
+        type: String,
         required: true,
       },
       volume: {
-        type: Number,
+        type: String,
       },
       series: {
-        type: Number,
+        type: String,
       },
       address: {
         type: String,
@@ -115,7 +116,7 @@ const DatabaseSchema = new Schema({
         type: String,
       },
       year: {
-        type: Number,
+        type: String,
       },
     },
   ],
@@ -141,17 +142,17 @@ const DatabaseSchema = new Schema({
         required: true,
       },
       year: {
-        type: Number,
+        type: String,
         required: true,
       },
       editor: {
         type: String,
       },
       volume: {
-        type: Number,
+        type: String,
       },
       series: {
-        type: Number,
+        type: String,
       },
       pages: {
         type: String,
@@ -188,7 +189,7 @@ const DatabaseSchema = new Schema({
         required: true,
       },
       chapter: {
-        type: Number,
+        type: String,
         required: true,
       },
       publisher: {
@@ -196,14 +197,14 @@ const DatabaseSchema = new Schema({
         required: true,
       },
       year: {
-        type: Number,
+        type: String,
         required: true,
       },
       volume: {
-        type: Number,
+        type: String,
       },
       series: {
-        type: Number,
+        type: String,
       },
       type: {
         type: String,
@@ -245,23 +246,23 @@ const DatabaseSchema = new Schema({
         required: true,
       },
       year: {
-        type: Number,
+        type: String,
         required: true,
       },
       editor: {
         type: String,
       },
       volume: {
-        type: Number,
+        type: String,
       },
       series: {
-        type: Number,
+        type: String,
       },
       type: {
         type: String,
       },
       chapter: {
-        type: Number,
+        type: String
       },
       pages: {
         type: String,
@@ -302,17 +303,17 @@ const DatabaseSchema = new Schema({
         required: true,
       },
       year: {
-        type: Number,
+        type: String,
         required: true,
       },
       editor: {
         type: String,
       },
       volume: {
-        type: Number,
+        type: String,
       },
       series: {
-        type: Number,
+        type: String,
       },
       pages: {
         type: String,
@@ -360,7 +361,7 @@ const DatabaseSchema = new Schema({
         type: String,
       },
       year: {
-        type: Number,
+        type: String,
       },
     },
   ],
@@ -383,7 +384,7 @@ const DatabaseSchema = new Schema({
         type: String,
       },
       year: {
-        type: Number,
+        type: String,
       },
       type: {
         type: String,
@@ -418,7 +419,7 @@ const DatabaseSchema = new Schema({
         type: String,
       },
       year: {
-        type: Number,
+        type: String,
       },
     },
   ],
@@ -441,7 +442,7 @@ const DatabaseSchema = new Schema({
         type: String,
       },
       year: {
-        type: Number,
+        type: String,
       },
       url: {
         type: String,
@@ -470,7 +471,7 @@ const DatabaseSchema = new Schema({
         required: true,
       },
       year: {
-        type: Number,
+        type: String,
         required: true,
       },
       type: {
@@ -498,17 +499,17 @@ const DatabaseSchema = new Schema({
         required: true,
       },
       year: {
-        type: Number,
+        type: String,
         required: true,
       },
       editor: {
         type: String,
       },
       volume: {
-        type: Number,
+        type: String,
       },
       series: {
-        type: Number,
+        type: String,
       },
       address: {
         type: String,

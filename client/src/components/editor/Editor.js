@@ -1,44 +1,71 @@
-import React from 'react';
-import { Button } from 'semantic-ui-react';
-import { Dropdown, Menu } from 'semantic-ui-react';
+import React, { useState, useEffect } from 'react';
+import { getDatabases } from '../../actions/editor';
+import './Editor.css';
+import FileList from './FileList';
 import PropTypes from 'prop-types';
+import EntryList from './EntryList';
+import InfoList from './InfoList';
 
 const options = [
-  { key: 1, text: 'Article', value: 1 },
-  { key: 2, text: 'Book', value: 2 },
-  { key: 3, text: 'Booklet', value: 3 },
-  { key: 4, text: 'Conference', value: 4 },
-  { key: 5, text: 'InBook', value: 5 },
-  { key: 6, text: 'InCollection', value: 6 },
-  { key: 7, text: 'InProceedings', value: 7 },
-  { key: 8, text: 'Manual', value: 8 },
-  { key: 9, text: 'Masters Thesis', value: 9 },
-  { key: 10, text: 'Misc', value: 10 },
-  { key: 11, text: 'Online', value: 11 },
-  { key: 12, text: 'Phd Thesis', value: 12 },
-  { key: 13, text: 'Proceedings', value: 13 },
+  { key: 1, text: 'Article', value: 'article' },
+  { key: 2, text: 'Book', value: 'book' },
+  { key: 3, text: 'Booklet', value: 'booklet' },
+  { key: 4, text: 'Conference', value: 'conference' },
+  { key: 5, text: 'InBook', value: 'inBook' },
+  { key: 6, text: 'InCollection', value: 'inCollection' },
+  { key: 7, text: 'InProceedings', value: 'inProceedings' },
+  { key: 8, text: 'Manual', value: 'manual' },
+  { key: 9, text: 'Masters Thesis', value: 'mastersThesis' },
+  { key: 10, text: 'Misc', value: 'misc' },
+  { key: 11, text: 'Online', value: 'online' },
+  { key: 12, text: 'Phd Thesis', value: 'phdThesis' },
+  { key: 13, text: 'Proceedings', value: 'proceedings' },
 ];
 
 const Editor = () => {
+  const selectDatabase = (database) => {
+    setEntryState(database);
+    setInfoState(null);
+  }
+  const selectEntry = (entry) => {
+    setInfoState(entry);
+  }
+  const refreshDatabases = (database) => {
+    setFileState(null);
+    chooseFile(null);
+    setEntryState(null);
+    chooseEntry(null);
+    setInfoState(null);   
+  }
+  const callback = (type, setStateFunc) => {
+    switch (type) {
+      case 'file':
+        setFileState = setStateFunc;
+        break;
+      case 'entry':
+        setEntryState = setStateFunc;
+        break;
+      case 'info':
+        setInfoState = setStateFunc;
+        break;
+    }
+  }
+  const callbackState = (setStateFunc) => {
+    chooseFile = setStateFunc;
+  }
+  const callbackEntry = (setStateFunc) => chooseEntry = setStateFunc;
+
+  let setFileState;
+  let setEntryState;
+  let setInfoState;
+  let chooseFile;
+  let chooseEntry;
   return (
-    <div>
-      <div className='sidepanelbuttons'>
-        <Button.Group>
-          <Button>Add new document</Button>
-          <Button>Upload</Button>
-        </Button.Group>
-      </div>
-      <div className='entry'>
-        <Menu compact>
-          <Dropdown text='Add entry' options={options} simple item />
-        </Menu>
-      </div>
-      <div className='editorbuttons'>
-        <Button.Group>
-          <Button>Edit</Button>
-          <Button>Download</Button>
-        </Button.Group>
-      </div>
+    <div className="Editor">
+      <FileList selectDatabase={selectDatabase} 
+      callback={callback} callbackState={callbackState}/>
+      <EntryList selectEntry={selectEntry} callback={callback} callbackEntry={callbackEntry}/>
+      <InfoList callback={callback} refreshDatabases={refreshDatabases}/>
     </div>
   );
 };
