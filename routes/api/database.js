@@ -110,29 +110,25 @@ router.put('/reference/:id', (req, res, next) => {
 });
 
 router.post('/upload', [auth], async (req, res) => {
-  let database = await Database.findOne({ bibtexdatabasename: req.body.bibtexdatabasename })
-  .exec();
+  let database = await Database.findOne({
+    bibtexdatabasename: req.body.bibtexdatabasename,
+  }).exec();
   if (!database) {
     let newDatabase = new Database(req.body);
     newDatabase.user = req.user.id;
     newDatabase.save();
     res.json(newDatabase);
-  }
-  else {
+  } else {
     for (let key of Object.keys(database.toObject())) {
-<<<<<<< HEAD
-=======
-      console.log(key);
->>>>>>> 1daa008c91b5e6282d25163fb46e35d76d7709c9
-      if (key === 'bibtexdatabasename' || key === 'user' || key === '_id') continue;
+      if (key === 'bibtexdatabasename' || key === 'user' || key === '_id')
+        continue;
       if (!req.body[key]) continue;
       for (let ref of req.body[key]) {
         let contains = false;
-<<<<<<< HEAD
-        console.log('DATABASE')
-        console.log(database[key])
-        console.log('REF')
-        console.log(ref)
+        console.log('DATABASE');
+        console.log(database[key]);
+        console.log('REF');
+        console.log(ref);
         for (let i in database[key]) {
           if (database[key][i].key.toLowerCase() === ref.key.toLowerCase()) {
             contains = true;
@@ -140,12 +136,6 @@ router.post('/upload', [auth], async (req, res) => {
               database[key][i][key2] = ref[key2];
             }
             console.log('changed');
-=======
-        for (let i in database[key]) {
-          if (database[key][i].key.toLowerCase() === ref.key.toLowerCase()) {
-            contains = true;
-            database[key][i] = ref;
->>>>>>> 1daa008c91b5e6282d25163fb46e35d76d7709c9
           }
         }
         if (!contains) {
@@ -156,7 +146,7 @@ router.post('/upload', [auth], async (req, res) => {
     await database.save();
     return res.json(database);
   }
-})
+});
 
 // @route   POST api/database/article/:id
 // @desc    Add article(s) to database(s)
@@ -308,9 +298,7 @@ router.delete('/book/:id/:book_id', auth, async (req, res) => {
       return res.status(401).json({ msg: 'User not authorized' });
     }
 
-    database.book = database.book.filter(
-      ({ id }) => id !== req.params.book_id
-    );
+    database.book = database.book.filter(({ id }) => id !== req.params.book_id);
 
     await database.save();
 
