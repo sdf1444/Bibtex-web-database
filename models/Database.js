@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const DatabaseSchema = new Schema({
   bibtexdatabasename: {
     type: String,
-    unique: true
+    unique: true,
   },
   user: {
     type: Schema.Types.ObjectId,
@@ -39,7 +39,7 @@ const DatabaseSchema = new Schema({
         type: String,
       },
       number: {
-        type: Number,
+        type: String,
       },
       pages: {
         type: String,
@@ -262,7 +262,7 @@ const DatabaseSchema = new Schema({
         type: String,
       },
       chapter: {
-        type: String
+        type: String,
       },
       pages: {
         type: String,
@@ -277,7 +277,7 @@ const DatabaseSchema = new Schema({
         type: String,
       },
       month: {
-        type: Number,
+        type: String,
       },
     },
   ],
