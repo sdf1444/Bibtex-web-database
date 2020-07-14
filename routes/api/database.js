@@ -120,10 +120,15 @@ router.post('/upload', [auth], async (req, res) => {
   }
   else {
     for (let key of Object.keys(database.toObject())) {
+<<<<<<< HEAD
+=======
+      console.log(key);
+>>>>>>> 1daa008c91b5e6282d25163fb46e35d76d7709c9
       if (key === 'bibtexdatabasename' || key === 'user' || key === '_id') continue;
       if (!req.body[key]) continue;
       for (let ref of req.body[key]) {
         let contains = false;
+<<<<<<< HEAD
         console.log('DATABASE')
         console.log(database[key])
         console.log('REF')
@@ -135,6 +140,12 @@ router.post('/upload', [auth], async (req, res) => {
               database[key][i][key2] = ref[key2];
             }
             console.log('changed');
+=======
+        for (let i in database[key]) {
+          if (database[key][i].key.toLowerCase() === ref.key.toLowerCase()) {
+            contains = true;
+            database[key][i] = ref;
+>>>>>>> 1daa008c91b5e6282d25163fb46e35d76d7709c9
           }
         }
         if (!contains) {

@@ -56,9 +56,16 @@ const EntryList = (props) => {
 
     const entries = getEntries(database);
     const bibtexString = convertRefs(entries);
+<<<<<<< HEAD
     const listEntries = entries.map(entry => {
         let className = state === entry._id ? 'entry chosen-entry' : 'entry';
         let entryName=`@${entry.typeKey} title=${entry.title} author=${entry.author} year=${entry.year}`
+=======
+    console.log(bibtexString);
+    const listEntries = entries.map(entry => {
+        let className = state === entry._id ? 'entry chosen-entry' : 'entry';
+        let entryName=`@${entry.type} title=${entry.title} author=${entry.author} year=${entry.year}`
+>>>>>>> 1daa008c91b5e6282d25163fb46e35d76d7709c9
         return (
             <button className={className} key={entry._id} 
             id={entry._id} onClick={handleEntryClick}>

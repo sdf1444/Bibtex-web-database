@@ -11,8 +11,11 @@
 .info-body {
     margin-top: 20px;
     height: 528px;
+<<<<<<< HEAD
     overflow: hidden;
     overflow-y: scroll;
+=======
+>>>>>>> 1daa008c91b5e6282d25163fb46e35d76d7709c9
 }
 
 .info-value {
@@ -38,6 +41,10 @@
     margin-top: 0;
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1daa008c91b5e6282d25163fb46e35d76d7709c9
 .info-head {
     width: 100%;
     height: 46px;
