@@ -213,6 +213,8 @@ router.delete('/:id', async (req, res) => {
     });
 });
 
+// @route   POST api/user/:email
+// @desc    Send email password reset link
 router.post('/:email', async (req, res) => {
   const { email } = req.params;
   let user;
@@ -265,6 +267,8 @@ router.post('/:email', async (req, res) => {
   }
 });
 
+// @route api/user/updatePassword/:id
+// @desc  Update password via password reset link in email
 router.put('/updatePassword/:id', async (req, res) => {
   let updatePassword = {
     password: bcrypt.hashSync(req.body.password, 10),
