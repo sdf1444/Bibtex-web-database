@@ -32,7 +32,7 @@ let extraEntryFields = {
     'organisation',
     'publisher',
   ],
-  inBook: ['volime', 'series', 'type', 'address', 'edition'],
+  inBook: ['volume', 'series', 'type', 'address', 'edition'],
   inCollection: [
     'editor',
     'volume',
