@@ -1,0 +1,75 @@
+.entry {
+    width: 100%;
+    height: 150px;
+    padding-top: 0px;
+    padding-bottom: 5px;
+    font-size: 18px;
+    margin-top: 2px;
+}
+
+.chosen-entry {
+    border: 4px solid rgb(255, 127, 53) !important;
+}
+
+.entry-new {
+    width: 100%;
+    height: 70px;
+    font-size: 18px;
+    margin-top: 2px;
+    overflow-wrap: break-word;
+    overflow: hidden;
+}
+
+.entry-text p {
+    margin-bottom: 0px;
+    height: 25px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-align: start;
+}
+
+.entry-header,
+.entry-footer {
+    font-weight: bolder;
+}
+
+.entry-type {
+    font-weight: bold;
+    color: rgb(226, 28, 28);
+    margin-right: 5px;
+    text-transform: lowercase;
+}
+
+.entry-key {
+    color: rgb(71, 71, 255);
+    font-weight: bold;
+}
+
+.entry-tag {
+    margin-left: 10px;
+    height: 25px;
+    width: 255px;
+    text-align: start;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-style: italic;
+}
+
+.entry-cont {
+    display: flex;
+}
+
+.entry-title,
+.entry-author,
+.entry-year {
+    text-align: start;
+    font-weight: bold;
+    width: 65px;
+    height: 25px;
+}
+
+.entry-end {
+    letter-spacing: 20px;
+    font-weight: bold;
+}

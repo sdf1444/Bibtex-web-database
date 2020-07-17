@@ -27,10 +27,10 @@ mongoose
     });
 
 // routes
-const auth = require('./routes/auth');
-const user = require('./routes/user');
-const database = require('./routes/database');
-const papers = require('./routes/papers');
+const auth = require('./routes/api/auth');
+const user = require('./routes/api/user');
+const database = require('./routes/api/database');
+const papers = require('./routes/api/papers');
 
 /** Seting up server to accept cross-origin browser requests */
 app.use(function (req, res, next) {

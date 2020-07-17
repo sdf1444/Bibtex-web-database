@@ -54,6 +54,8 @@
     height: 46px;
     font-size: 18px;
     margin-top: 2px;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .chosen-file {
