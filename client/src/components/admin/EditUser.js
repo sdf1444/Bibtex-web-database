@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
+import { Link, Redirect } from 'react-router-dom';
 
 class EditUser extends Component {
   constructor(props) {
@@ -81,6 +82,7 @@ class EditUser extends Component {
       .then((res) => {
         console.log(res.data);
         console.log('User successfully updated');
+        alert('User updated');
       })
       .catch((error) => {
         console.log(error);
@@ -97,6 +99,7 @@ class EditUser extends Component {
             <Form.Label>Name</Form.Label>
             <Form.Control
               type='text'
+              required
               value={this.state.name}
               onChange={this.onChangeUserName}
             />
@@ -106,6 +109,7 @@ class EditUser extends Component {
             <Form.Label>Email</Form.Label>
             <Form.Control
               type='email'
+              required
               value={this.state.email}
               onChange={this.onChangeUserEmail}
             />
@@ -115,6 +119,7 @@ class EditUser extends Component {
             <Form.Label>Role</Form.Label>
             <Form.Control
               type='text'
+              required
               value={this.state.role}
               onChange={this.onChangeUserRole}
             />
@@ -124,6 +129,7 @@ class EditUser extends Component {
             <Form.Label>Username</Form.Label>
             <Form.Control
               type='text'
+              required
               value={this.state.username}
               onChange={this.onChangeUserUsername}
             />
@@ -133,14 +139,19 @@ class EditUser extends Component {
             <Form.Label>Password</Form.Label>
             <Form.Control
               type='password'
+              minlength='6'
+              required
               value={this.state.password}
               onChange={this.onChangeUserPassword}
             />
           </Form.Group>
 
-          <Button variant='danger' size='lg' block='block' type='submit'>
+          <Button variant='danger' size='sm' type='submit'>
             Update User
           </Button>
+          <Link to='/admin' className='btn btn-dark'>
+            Back
+          </Link>
         </Form>
       </div>
     );

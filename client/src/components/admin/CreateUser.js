@@ -26,7 +26,7 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
       setAlert('Passwords do not match', 'danger');
     } else {
       if (register({ name, email, role, username, password })) {
-        alert('User created');
+        setAlert('User created', 'success');
       }
     }
   };
@@ -40,6 +40,7 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
             type='text'
             placeholder='Name'
             name='name'
+            required
             value={name}
             onChange={onChange}
           />
@@ -50,6 +51,7 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
             placeholder='Email Address'
             name='email'
             unique
+            required
             value={email}
             onChange={onChange}
           />
@@ -59,6 +61,7 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
             type='text'
             placeholder='Role'
             name='role'
+            required
             value={role}
             onChange={onChange}
           />
@@ -68,6 +71,7 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
             type='text'
             placeholder='Username'
             name='username'
+            required
             value={username}
             onChange={onChange}
           />
@@ -78,6 +82,7 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
             placeholder='Password'
             name='password'
             value={password}
+            minlength='6'
             onChange={onChange}
           />
         </div>
@@ -92,7 +97,7 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
         </div>
         <input type='submit' className='btn btn-primary' value='Register' />
         <div className='buttons'>
-          <Link to='/admin' className='btn btn-light'>
+          <Link to='/admin' className='btn btn-dark'>
             Back
           </Link>
         </div>

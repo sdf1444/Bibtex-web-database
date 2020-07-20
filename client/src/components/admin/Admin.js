@@ -35,7 +35,7 @@ class Admin extends Component {
     return (
       <div>
         <div className='button'>
-          <Link to='/create-users' className='btn btn-light'>
+          <Link to='/create-users' className='btn btn-primary'>
             Create User
           </Link>
         </div>

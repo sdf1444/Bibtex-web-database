@@ -20,7 +20,9 @@ router.get('/me', auth, async (req, res, next) => {
 // @route GET api/database
 // @desc Get all databases
 router.get('/', async (req, res, next) => {
-  const databases = await Database.find({}).populate('entries');
+  const databases = await Database.find({})
+    .sort({ updatedAt: -1 })
+    .populate('entries');
   res.data = databases;
   return next();
 });
@@ -51,14 +53,38 @@ router.post('/', auth, async (req, res, next) => {
   }
 });
 
+// @route PUT api/database/
+// @desc Change database name
+router.put('/', auth, async (req, res, next) => {
+  try {
+    if (!req.body.bibtexdatabasename || req.body.bibtexdatabasename === '') {
+      res.data = { err: 'Database name missing or invalid' };
+      return next();
+    }
+    const database = await Database.findById(req.body.id);
+    if (!database) {
+      res.data = { err: 'Database with this id does not exist' };
+      return next();
+    }
+    database.bibtexdatabasename = req.body.bibtexdatabasename;
+    const newDatabase = await database.save();
+    res.data = newDatabase;
+    return next();
+  } catch (err) {
+    console.log(err.message);
+    res.data = { err: err.message };
+    return next();
+  }
+});
+
 // @route DELETE api/database
 // @desc Delete database
-router.delete('/', auth, async (req, res, next) => {
-  if (!req.body.id) {
+router.delete('/:id', auth, async (req, res, next) => {
+  if (!req.params.id) {
     res.data = { err: 'Database id missing' };
     return next();
   }
-  const database = await Database.findById(req.body.id);
+  const database = await Database.findById(req.params.id);
   if (!database) {
     res.data = { err: 'Database with this id does not exist' };
     return next();
@@ -67,6 +93,9 @@ router.delete('/', auth, async (req, res, next) => {
     res.data = { err: 'Database does not belong to this user', status: 401 };
     return next();
   }
+  await Promise.all(
+    database.entries.map((entry) => Entry.findByIdAndRemove(entry).exec())
+  );
   await database.remove();
   res.data = database;
   return next();
@@ -75,17 +104,25 @@ router.delete('/', auth, async (req, res, next) => {
 // @route PUT api/database/entry
 // @desc Update database entry
 router.put('/entry', auth, async (req, res, next) => {
-  if (!req.body.id) {
-    res.data = { err: 'Entry id missing' };
+  if (!req.body.databaseId) {
+    res.data = { err: 'Database id missing' };
     return next();
+  }
+  if (!req.body.entryId) {
+    res.data = { err: 'Entry id missing' };
   }
   if (!req.body.citationKey && !req.body.entryTags) {
     res.data = { err: 'Citation Key or Entry Tags missing' };
     return next();
   }
-  const entry = await Entry.findById(req.body.id);
+  const entry = await Entry.findById(req.body.entryId);
   if (!entry) {
     res.data = { err: 'Entry with this id does not exist' };
+    return next();
+  }
+  const database = await Database.findById(req.body.databaseId);
+  if (!database) {
+    res.data = { err: 'Database with this id does not exist' };
     return next();
   }
   entry.citationKey = req.body.citationKey || entry.citationKey;
@@ -95,9 +132,12 @@ router.put('/entry', auth, async (req, res, next) => {
   }
   try {
     const newEntry = await entry.save();
+    database.updatedAt = new Date();
+    await database.save();
     res.data = newEntry;
     return next();
   } catch (err) {
+    console.log(err);
     res.data = { err: err.message };
     return next();
   }
@@ -136,38 +176,72 @@ router.post('/entry', auth, async (req, res, next) => {
   }
 });
 
-// @route DELETE api/database/entry
-// @desc Delete database entry
-router.delete('/entry', auth, async (req, res, next) => {
-  if (!req.body.databaseId) {
+// @route POST api/database/entry-anonymous
+// @desc Create entry anonymously (with no owner)
+router.post('/entry-anonymous', async (req, res, next) => {
+  if (!req.body.id) {
     res.data = { err: 'Database id missing' };
     return next();
   }
-  if (!req.body.entryId) {
-    res.data = { err: 'Entry id missing' };
+  if (!req.body.entry) {
+    res.data = { err: 'Entry missing' };
     return next();
   }
-  const database = await Database.findById(req.body.databaseId);
+  const database = await Database.findById(req.body.id);
   if (!database) {
     res.data = { err: 'Database with this id does not exist' };
     return next();
   }
-  const entry = await Entry.findById(req.body.entryId);
+  try {
+    const newEntry = new Entry({
+      ...req.body.entry,
+    });
+    const entry = await newEntry.save();
+    database.entries.push(entry._id);
+    await database.save();
+    res.data = entry;
+    return next();
+  } catch (err) {
+    console.log(err);
+    res.data = { err: err.message };
+    return next();
+  }
+});
+
+// @route DELETE api/database/entry
+// @desc Delete database entry
+router.delete('/entry/:databaseId/:entryId', auth, async (req, res, next) => {
+  if (!req.params.databaseId) {
+    res.data = { err: 'Database id missing' };
+    return next();
+  }
+  if (!req.params.entryId) {
+    res.data = { err: 'Entry id missing' };
+    return next();
+  }
+  const database = await Database.findById(req.params.databaseId);
+  if (!database) {
+    res.data = { err: 'Database with this id does not exist' };
+    return next();
+  }
+  const entry = await Entry.findById(req.params.entryId);
   if (!entry) {
     res.data = { err: 'Entry with this id does not exist' };
     return next();
   }
-  if (entry.user.toString() !== req.user.id) {
+  if (entry.user && entry.user.toString() !== req.user.id) {
     res.data = { err: 'Entry does not belong to this user', status: 401 };
     return next();
   }
-  if (!database.entries.map((id) => id.toString()).includes(req.body.entryId)) {
+  if (
+    !database.entries.map((id) => id.toString()).includes(req.params.entryId)
+  ) {
     res.data = { err: 'Entry with this id is not presented in a database' };
     return next();
   }
   try {
     database.entries = database.entries.filter(
-      (id) => id.toString() !== req.body.entryId
+      (id) => id.toString() !== req.params.entryId
     );
     await database.save();
     const removedEntry = await entry.remove();
@@ -195,11 +269,18 @@ router.post('/upload', auth, async (req, res, next) => {
   }).populate('entries');
   try {
     if (!database) {
-      const newDatabase = new Database({
-        ...req.body,
-        user: req.user.id,
+      const promises = req.body.entries.map((entry) => {
+        console.log(entry);
+        const newEntry = new Entry({ ...entry, user: req.user.id });
+        return newEntry.save();
       });
-      newDatabase.save();
+      const entries = (await Promise.all(promises)).map((entry) => entry._id);
+      const newDatabase = new Database({
+        bibtexdatabasename: req.body.bibtexdatabasename,
+        user: req.user.id,
+        entries,
+      });
+      await newDatabase.save();
       res.data = newDatabase;
       return next();
     } else {
@@ -224,7 +305,11 @@ router.post('/upload', auth, async (req, res, next) => {
           database.entries.push(newEntry);
         }
       }
-      if (promises.length !== 0) await Promise.all(promises);
+      try {
+        if (promises.length !== 0) await Promise.all(promises);
+      } catch (err) {
+        console.log(err.message);
+      }
       await database.save();
       res.data = database;
       return next();
