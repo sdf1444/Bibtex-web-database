@@ -3,7 +3,7 @@ const entryFields = require('./entryFields');
 
 const Schema = mongoose.Schema;
 
-const entrySchema = Schema({
+const entrySchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
   },
@@ -14,7 +14,6 @@ const entrySchema = Schema({
   citationKey: {
     type: String,
     required: true,
-    unique: true,
   },
   entryTags: {
     type: Object,

@@ -18,6 +18,7 @@ const initialState = {
 
 export default function (state = initialState, action) {
   const { type, payload } = action;
+  console.log(action);
 
   switch (type) {
     case USER_LOADED:
@@ -38,6 +39,7 @@ export default function (state = initialState, action) {
         loading: false,
         role: payload.role,
       };
+    case REGISTER_FAIL:
     case AUTH_ERROR:
     case LOGIN_FAIL:
     case LOGOUT:

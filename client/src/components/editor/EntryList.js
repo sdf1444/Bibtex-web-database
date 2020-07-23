@@ -122,12 +122,13 @@ const EntryList = (props) => {
           options={options}
           simple
           item
-          onChange={(e, data) =>
-            props.dispatch({
-              type: 'selectNew',
-              value: data.value,
-            })
-          }
+          onChange={(e, data) => {
+            if (props.isSelectedAllowed)
+              props.dispatch({
+                type: 'selectNew',
+                value: data.value,
+              });
+          }}
         ></Dropdown>
       </Menu>
       <div className='entry-search'>
@@ -162,6 +163,7 @@ const EntryList = (props) => {
 
 EntryList.propTypes = {
   active: PropTypes.bool.isRequired,
+  isSelectedAllowed: PropTypes.bool,
   newEntry: PropTypes.any,
   selectedEntry: PropTypes.any,
   file: PropTypes.any,

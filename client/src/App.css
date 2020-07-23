@@ -160,7 +160,10 @@ ul {
   color: #fff;
 }
 
-.btn-light,
+.btn-light {
+  margin-left: 47%;
+}
+
 .bg-light,
 .badge-light,
 .alert-light {

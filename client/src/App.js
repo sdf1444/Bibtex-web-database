@@ -20,6 +20,7 @@ import { loadUser } from './actions/auth';
 import setAuthToken from './utils/setAuthToken';
 
 import './App.css';
+import Group from './components/group/Group';
 
 if (localStorage.token) {
   setAuthToken(localStorage.token);
@@ -52,6 +53,7 @@ const App = () => {
               <PrivateRoute exact path='/edit-user/:id' component={EditUser} />
               <PrivateRoute exact path='/editor' component={Editor} />
               <PrivateRoute exact path='/papers' component={Paper} />
+              <PrivateRoute exact path='/groups' component={Group} />
             </Switch>
           </section>
         </Fragment>

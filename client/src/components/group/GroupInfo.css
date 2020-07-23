@@ -1,0 +1,25 @@
+.group-info {
+  width: 400px;
+  height: 100%;
+  padding: 20px;
+  background-color: lightgrey;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.group-info-users,
+.group-info-requests {
+  width: 100%;
+  height: calc(50% - 10px);
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+.group-info-requests {
+  margin-top: 20px;
+}
+
+.full-height {
+  height: 100% !important;
+}

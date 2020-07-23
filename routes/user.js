@@ -1,25 +1,27 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
-const auth = require('../../middleware/auth');
+const auth = require('../middleware/auth');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const config = require('../../config');
+const config = require('../config');
 const { check, validationResult } = require('express-validator');
 const nodemailer = require('nodemailer');
 const smtpTransport = require('nodemailer-smtp-transport');
 
-const User = require('../../models/User');
+const User = require('../models/User');
 const { error } = require('console');
 
-// @route   POST api/users/register-user
-// @desc    Register user
-// @access  Admin
+// @route     POST api/users/register-user
+// @desc        Register user
+// @access    Admin
 router.post(
   '/register-user',
+  auth,
   [
     check('name', 'Name is required').not().isEmpty(),
     check('email', 'Please include a valid email').isEmail(),
+    check('role', 'Role is required').not().isEmpty(),
     check('username', 'Username is required').not().isEmpty(),
     check(
       'password',
@@ -30,6 +32,11 @@ router.post(
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
+    }
+
+    const admin = await User.findById(req.user.id);
+    if (admin.role !== 'admin') {
+      return res.status(403).json({ error: 'You are not admin' });
     }
 
     const { name, email, role, username, password } = req.body;
@@ -62,7 +69,6 @@ router.post(
           id: user.id,
         },
       };
-
       jwt.sign(payload, config.jwtSecret, (err, token) => {
         if (err) throw err;
         res.json({ token });
@@ -74,9 +80,9 @@ router.post(
   }
 );
 
-// @route   GET api/user/me
-// @desc    Get current user
-// @access  Private
+// @route     GET api/user/me
+// @desc        Get current user
+// @access    Private
 router.get('/me', auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
@@ -87,9 +93,9 @@ router.get('/me', auth, async (req, res) => {
   }
 });
 
-// @route   GET api/user
-// @desc    Get all users
-// @access  Public
+// @route     GET api/user
+// @desc        Get all users
+// @access    Public
 router.get('/', async (req, res) => {
   const username = req.query.username;
   var condition = username
@@ -97,6 +103,7 @@ router.get('/', async (req, res) => {
     : {};
 
   User.find(condition)
+    .select('-password')
     .then((data) => {
       res.send(data);
     })
@@ -107,31 +114,31 @@ router.get('/', async (req, res) => {
     });
 });
 
-// @route   GET api/user/:id
-// @desc    Get a single user
-// @access  Admin
-router.get('/:id', async (req, res, next) => {
-  User.findById(req.params.id, (error, data) => {
-    if (error) {
-      return next(error);
-    } else {
-      res.json(data);
-    }
-  });
+// @route     GET api/user/:id
+// @desc        Get a single user
+// @access    Admin
+router.get('/:id', auth, async (req, res, next) => {
+  const admin = await User.findById(req.user.id);
+  if (admin.role !== 'admin') {
+    return res.status(403).json({ error: 'You are not admin' });
+  }
+  const user = await User.findById(req.params.id).select('-password');
+  res.json(user);
 });
 
-router.get('/');
-
-// @route   PUT api/user/:id
-// @desc    Update user
-// @access  Admin access only
-router.put('/:id', async (req, res) => {
+// @route     PUT api/user/:id
+// @desc      Update user
+// @access    Admin access only
+router.put('/:id', auth, async (req, res) => {
+  const admin = await User.findById(req.user.id);
+  if (admin.role !== 'admin') {
+    return res.status(403).json({ error: 'You are not admin' });
+  }
   let updatedUser = {
     name: req.body.name,
     email: req.body.email,
     role: req.body.role,
     username: req.body.username,
-    password: bcrypt.hashSync(req.body.password, 10),
   };
 
   User.findOneAndUpdate({ _id: req.params.id }, updatedUser, {
@@ -150,7 +157,6 @@ router.put('/:id', async (req, res) => {
               email: newResult.email,
               role: newResult.role,
               username: newResult.username,
-              password: newResult.password,
             },
           });
         })
@@ -188,10 +194,14 @@ router.put('/:id', async (req, res) => {
     });
 });
 
-// @route   DELETE api/user/:id
-// @desc    Delete user
-// @access  Admin access only
-router.delete('/:id', async (req, res) => {
+// @route     DELETE api/user/:id
+// @desc        Delete user
+// @access    Admin access only
+router.delete('/:id', auth, async (req, res) => {
+  const admin = await User.findById(req.user.id);
+  if (admin.role !== 'admin') {
+    return res.status(403).json({ error: 'You are not admin' });
+  }
   User.findByIdAndDelete(req.params.id)
     .then((result) => {
       res.json({
@@ -212,8 +222,6 @@ router.delete('/:id', async (req, res) => {
     });
 });
 
-// @route   POST api/user/:email
-// @desc    Send email password reset link
 router.post('/:email', async (req, res) => {
   const { email } = req.params;
   let user;
@@ -266,8 +274,6 @@ router.post('/:email', async (req, res) => {
   }
 });
 
-// @route api/user/updatePassword/:id
-// @desc  Update password via password reset link in email
 router.put('/updatePassword/:id', async (req, res) => {
   let updatePassword = {
     password: bcrypt.hashSync(req.body.password, 10),

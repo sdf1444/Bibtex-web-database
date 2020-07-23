@@ -1,5 +1,5 @@
-import { createGlobalStyle } from "styled-components"
-import { fontDeclarations, fontMixin } from "./mixins"
+import { createGlobalStyle } from 'styled-components';
+import { fontDeclarations, fontMixin } from './mixins';
 
 export const GlobalStyles = createGlobalStyle`
   ${fontDeclarations};
@@ -9,7 +9,7 @@ export const GlobalStyles = createGlobalStyle`
   }
 
   html {
-    background: ${props => props.theme.contentBackground};
+    background: ${(props) => props.theme.contentBackground};
     box-sizing: border-box;
   }
 
@@ -35,9 +35,9 @@ export const GlobalStyles = createGlobalStyle`
     -webkit-transition: color 0.15s ease;
     transition: color 0.15s ease;
 
-    color: ${props => props.theme.linkColor};
+    color: ${(props) => props.theme.linkColor};
     &:hover {
-      color: ${props => props.theme.linkColorHover};
+      color: ${(props) => props.theme.linkColorHover};
       text-decoration: none;
     }
   }
@@ -54,10 +54,10 @@ export const GlobalStyles = createGlobalStyle`
     display: flex;
     flex-direction: column;
     height: 100vh;
-    /* margin-top: ${props => "-" + props.theme.navHeight}; */
+    /* margin-top: ${(props) => '-' + props.theme.navHeight}; */
   }
   .main-wrapper-auth {
-    background: ${props => props.theme.contentBackground};
+    background: ${(props) => props.theme.contentBackground};
   }
 
   .main-content {
@@ -67,13 +67,13 @@ export const GlobalStyles = createGlobalStyle`
 
   span.form-error {
     font-size: 12px;
-    color: ${props => props.theme.secondaryDark};
+    color: ${(props) => props.theme.secondaryDark};
   }
 
   button.btn-ghost, a.btn-ghost, button.ghost-btn, a.ghost-btn {
-    background-color: ${props => props.theme.white};
-    border-color: ${props => props.theme.white};
-    color: ${props => props.theme.black};
+    background-color: ${(props) => props.theme.white};
+    border-color: ${(props) => props.theme.white};
+    color: ${(props) => props.theme.black};
     border: 0;
     display: inline-block;
     /* padding: 0.75rem 1.5rem 0.8125rem; */
@@ -89,8 +89,8 @@ export const GlobalStyles = createGlobalStyle`
     -webkit-transition: background-color .15s ease-out,color .15s ease-out,-webkit-box-shadow .15s ease-out;
     transition: background-color .15s ease-out,color .15s ease-out,-webkit-box-shadow .15s ease-out;
     &:hover, &:focus {
-      background-color: ${props => props.theme.white};
-      border-color: ${props => props.theme.white};
+      background-color: ${(props) => props.theme.white};
+      border-color: ${(props) => props.theme.white};
       color: #526699;
       -webkit-box-shadow: 0 0.3125rem 0.9375rem 0 rgba(0,0,0,.05), 0 0 0 0.0625rem rgba(0,0,0,.03), 0 0.125rem 0.0625rem 0 rgba(0,0,0,.1), 0 0.0625rem 0.1875rem 0 rgba(0,0,0,.01);
       box-shadow: 0 0.3125rem 0.9375rem 0 rgba(0,0,0,.05), 0 0 0 0.0625rem rgba(0,0,0,.03), 0 0.125rem 0.0625rem 0 rgba(0,0,0,.1), 0 0.0625rem 0.1875rem 0 rgba(0,0,0,.01);
@@ -99,4 +99,4 @@ export const GlobalStyles = createGlobalStyle`
       outline: 0;
     }
   }
-`
+`;

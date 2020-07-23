@@ -1,18 +1,36 @@
 const express = require('express');
-const auth = require('../../middleware/auth');
-const Database = require('../../models/Database');
-const Entry = require('../../models/Entry');
-const User = require('../../models/User');
-const { updateEntry } = require('../../services/entry');
+const auth = require('../middleware/auth');
+const Database = require('../models/Database');
+const Entry = require('../models/Entry');
+const User = require('../models/User');
+const { updateEntry } = require('../services/entry');
+const { param } = require('express-validator');
+const Group = require('../models/Group');
 
 const router = express.Router();
 
 // @route GET api/database/me
-// @desc Get user's databases
+// @desc Get databases that user has access to
 router.get('/me', auth, async (req, res, next) => {
-  const databases = await Database.find({ user: req.user.id }).populate(
-    'entries'
-  );
+  const databases = (
+    await Database.find({})
+      .sort({ updatedAt: -1 })
+      .populate('entries')
+      .populate('entries')
+      .populate('group')
+      .exec()
+  ).filter((database) => {
+    return (
+      (database.user &&
+        database.user._id.toString() === req.user.id.toString()) ||
+      (database.group &&
+        database.group.owner.toString() === req.user.id.toString()) ||
+      (database.group &&
+        database.group.users
+          .map((user) => user.toString())
+          .includes(req.user.id.toString()))
+    );
+  });
   res.data = databases;
   return next();
 });
@@ -22,8 +40,43 @@ router.get('/me', auth, async (req, res, next) => {
 router.get('/', async (req, res, next) => {
   const databases = await Database.find({})
     .sort({ updatedAt: -1 })
-    .populate('entries');
+    .populate('entries')
+    .populate('entries')
+    .populate('group')
+    .exec();
   res.data = databases;
+  return next();
+});
+
+// @route GET api/database/all
+// @desc Get all databases, but first those who belong to this user
+router.get('/all', auth, async (req, res, next) => {
+  const databases = await Database.find({})
+    .sort({ updatedAt: -1 })
+    .populate('entries')
+    .populate('user')
+    .populate('group')
+    .exec();
+  const sortedDatabases = databases.sort((A, B) => {
+    const a =
+      (A.user && A.user._id.toString() === req.user.id) ||
+      (A.group &&
+        (A.group.owner.toString() === req.user.id ||
+          A.group.users
+            .map((user) => user._id.toString())
+            .includes(req.user.id)));
+    const b =
+      (B.user && B.user._id.toString() === req.user.id) ||
+      (B.group &&
+        (B.group.owner.toString() === req.user.id ||
+          B.group.users
+            .map((user) => user._id.toString())
+            .includes(req.user.id)));
+    if (a && b) return new Date(b.updatedAt) - new Date(a.updatedAt);
+    else if (a) return -1;
+    else return 1;
+  });
+  res.data = sortedDatabases;
   return next();
 });
 
@@ -38,13 +91,38 @@ router.get('/entries', async (req, res, next) => {
 // @route POST api/database
 // @desc Create empty database with no entries
 router.post('/', auth, async (req, res, next) => {
+  params = {};
+  console.log(req.body);
+  if (req.body.group) {
+    params.group = req.body.group;
+    const group = await Group.findById(req.body.group);
+    if (!group) {
+      res.data = { err: 'Group with this id does not exist' };
+      return next();
+    }
+    if (
+      group.owner.toString() !== req.user.id.toString() &&
+      !group.users
+        .map((user) => user.toString())
+        .includes(req.user.id.toString())
+    ) {
+      res.data = { err: 'This is not your group' };
+      return next();
+    }
+  } else {
+    params.user = req.user.id;
+  }
   try {
     const newDatabase = new Database({
       bibtexdatabasename: req.body.bibtexdatabasename,
-      user: req.user.id,
+      ...params,
     });
     const database = await newDatabase.save();
-    res.data = database;
+    res.data = await database
+      .populate('entries')
+      .populate('user')
+      .populate('group')
+      .execPopulate();
     return next();
   } catch (err) {
     console.log(err.message);
@@ -68,7 +146,11 @@ router.put('/', auth, async (req, res, next) => {
     }
     database.bibtexdatabasename = req.body.bibtexdatabasename;
     const newDatabase = await database.save();
-    res.data = newDatabase;
+    res.data = await newDatabase
+      .populate('entries')
+      .populate('user')
+      .populate('group')
+      .execPopulate();
     return next();
   } catch (err) {
     console.log(err.message);
@@ -84,12 +166,21 @@ router.delete('/:id', auth, async (req, res, next) => {
     res.data = { err: 'Database id missing' };
     return next();
   }
-  const database = await Database.findById(req.params.id);
+  const database = await Database.findById(req.params.id).populate('group');
   if (!database) {
     res.data = { err: 'Database with this id does not exist' };
     return next();
   }
-  if (database.user.toString() !== req.user.id) {
+  if (
+    !(
+      (database.user && database.user.toString() === req.user.id) ||
+      (database.group && database.group.owner.toString() === req.user.id) ||
+      (database.group &&
+        database.group.users
+          .map((user) => user.toString())
+          .includes(req.user.id.toString()))
+    )
+  ) {
     res.data = { err: 'Database does not belong to this user', status: 401 };
     return next();
   }
@@ -120,9 +211,24 @@ router.put('/entry', auth, async (req, res, next) => {
     res.data = { err: 'Entry with this id does not exist' };
     return next();
   }
-  const database = await Database.findById(req.body.databaseId);
+  const database = await Database.findById(req.body.databaseId)
+    .populate('group')
+    .exec();
   if (!database) {
     res.data = { err: 'Database with this id does not exist' };
+    return next();
+  }
+  if (
+    !(
+      (database.user && database.user.toString() === req.user.id) ||
+      (database.group && database.group.owner.toString() === req.user.id) ||
+      (database.group &&
+        database.group.users
+          .map((user) => user.toString())
+          .includes(req.user.id.toString()))
+    )
+  ) {
+    res.data = { err: 'Database does not belong to this user', status: 401 };
     return next();
   }
   entry.citationKey = req.body.citationKey || entry.citationKey;
@@ -154,47 +260,30 @@ router.post('/entry', auth, async (req, res, next) => {
     res.data = { err: 'Entry missing' };
     return next();
   }
-  const database = await Database.findById(req.body.id);
+  const database = await Database.findById(req.body.id)
+    .populate('group')
+    .exec();
   if (!database) {
     res.data = { err: 'Database with this id does not exist' };
+    return next();
+  }
+  if (
+    !(
+      (database.user && database.user.toString() === req.user.id) ||
+      (database.group && database.group.owner.toString() === req.user.id) ||
+      (database.group &&
+        database.group.users
+          .map((user) => user.toString())
+          .includes(req.user.id.toString()))
+    )
+  ) {
+    res.data = { err: 'Database does not belong to this user', status: 401 };
     return next();
   }
   try {
     const newEntry = new Entry({
       ...req.body.entry,
       user: req.user.id,
-    });
-    const entry = await newEntry.save();
-    database.entries.push(entry._id);
-    await database.save();
-    res.data = entry;
-    return next();
-  } catch (err) {
-    console.log(err);
-    res.data = { err: err.message };
-    return next();
-  }
-});
-
-// @route POST api/database/entry-anonymous
-// @desc Create entry anonymously (with no owner)
-router.post('/entry-anonymous', async (req, res, next) => {
-  if (!req.body.id) {
-    res.data = { err: 'Database id missing' };
-    return next();
-  }
-  if (!req.body.entry) {
-    res.data = { err: 'Entry missing' };
-    return next();
-  }
-  const database = await Database.findById(req.body.id);
-  if (!database) {
-    res.data = { err: 'Database with this id does not exist' };
-    return next();
-  }
-  try {
-    const newEntry = new Entry({
-      ...req.body.entry,
     });
     const entry = await newEntry.save();
     database.entries.push(entry._id);
@@ -219,9 +308,24 @@ router.delete('/entry/:databaseId/:entryId', auth, async (req, res, next) => {
     res.data = { err: 'Entry id missing' };
     return next();
   }
-  const database = await Database.findById(req.params.databaseId);
+  const database = await Database.findById(req.params.databaseId)
+    .populate('group')
+    .exec();
   if (!database) {
     res.data = { err: 'Database with this id does not exist' };
+    return next();
+  }
+  if (
+    !(
+      (database.user && database.user.toString() === req.user.id) ||
+      (database.group && database.group.owner.toString() === req.user.id) ||
+      (database.group &&
+        database.group.users
+          .map((user) => user.toString())
+          .includes(req.user.id.toString()))
+    )
+  ) {
+    res.data = { err: 'Database does not belong to this user', status: 401 };
     return next();
   }
   const entry = await Entry.findById(req.params.entryId);
@@ -266,9 +370,31 @@ router.post('/upload', auth, async (req, res, next) => {
   }
   const database = await Database.findOne({
     bibtexdatabasename: req.body.bibtexdatabasename,
-  }).populate('entries');
+  })
+    .populate('entries')
+    .populate('group');
   try {
     if (!database) {
+      const params = {};
+      if (req.body.group) {
+        params.group = req.body.group;
+        const group = await Group.findById(req.body.group);
+        if (!group) {
+          res.data = { err: 'Group with this id does not exist' };
+          return next();
+        }
+        if (
+          group.owner.toString() !== req.user.id.toString() &&
+          !group.users
+            .map((user) => user.toString())
+            .includes(req.user.id.toString())
+        ) {
+          res.data = { err: 'This is not your group' };
+          return next();
+        }
+      } else {
+        params.user = req.user.id;
+      }
       const promises = req.body.entries.map((entry) => {
         console.log(entry);
         const newEntry = new Entry({ ...entry, user: req.user.id });
@@ -277,13 +403,33 @@ router.post('/upload', auth, async (req, res, next) => {
       const entries = (await Promise.all(promises)).map((entry) => entry._id);
       const newDatabase = new Database({
         bibtexdatabasename: req.body.bibtexdatabasename,
-        user: req.user.id,
+        ...params,
         entries,
       });
       await newDatabase.save();
-      res.data = newDatabase;
+      res.data = await newDatabase
+        .populate('entries')
+        .populate('user')
+        .populate('group')
+        .execPopulate();
       return next();
     } else {
+      if (
+        !(
+          (database.user && database.user.toString() === req.user.id) ||
+          (database.group && database.group.owner.toString() === req.user.id) ||
+          (database.group &&
+            database.group.users
+              .map((user) => user.toString())
+              .includes(req.user.id.toString()))
+        )
+      ) {
+        res.data = {
+          err: 'Database does not belong to this user',
+          status: 401,
+        };
+        return next();
+      }
       let contains;
       let promises = [];
       for (let entry of req.body.entries) {
@@ -311,7 +457,11 @@ router.post('/upload', auth, async (req, res, next) => {
         console.log(err.message);
       }
       await database.save();
-      res.data = database;
+      res.data = await database
+        .populate('entries')
+        .populate('user')
+        .populate('group')
+        .execPopulate();
       return next();
     }
   } catch (err) {

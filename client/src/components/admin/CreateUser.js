@@ -26,7 +26,7 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
       setAlert('Passwords do not match', 'danger');
     } else {
       if (register({ name, email, role, username, password })) {
-        setAlert('User created', 'success');
+        alert('User created');
       }
     }
   };
@@ -81,8 +81,8 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
             type='password'
             placeholder='Password'
             name='password'
+            required
             value={password}
-            minlength='6'
             onChange={onChange}
           />
         </div>
@@ -91,6 +91,7 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
             type='password'
             placeholder='Confirm Password'
             name='password2'
+            required
             value={password2}
             onChange={onChange}
           />

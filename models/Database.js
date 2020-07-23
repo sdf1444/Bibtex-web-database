@@ -13,7 +13,6 @@ const databaseSchema = new Schema(
     user: {
       type: Schema.Types.ObjectId,
       ref: 'user',
-      required: true,
     },
     entries: [
       {
@@ -21,6 +20,10 @@ const databaseSchema = new Schema(
         ref: 'entry',
       },
     ],
+    group: {
+      type: Schema.Types.ObjectId,
+      ref: 'group',
+    },
   },
   { timestamps: true }
 );
@@ -31,6 +34,12 @@ databaseSchema.pre('validate', async function (next) {
   ).map((entry) => entry.citationKey);
   if (entryKeys.length !== new Set(entryKeys).size) {
     return next(new Error(`Database contains key dublicates`));
+  }
+  if (!this.user && !this.group) {
+    return next(new Error('Database must have either a user owner or group'));
+  }
+  if (this.user && this.group) {
+    return next(new Error("Database can't have both user owner and group"));
   }
   return next();
 });

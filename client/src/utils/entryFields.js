@@ -27,7 +27,7 @@ const extraEntryFields = {
     'organisation',
     'publisher',
   ],
-  inBook: ['volume', 'series', 'type', 'address', 'edition'],
+  inBook: ['volime', 'series', 'type', 'address', 'edition'],
   inCollection: [
     'editor',
     'volume',

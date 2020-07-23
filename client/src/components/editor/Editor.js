@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, createRef } from 'react';
+import React, { useEffect, useReducer } from 'react';
 import * as utils from '../../actions/editor';
 import './Editor.css';
 import entryFields from '../../utils/entryFields';
@@ -13,6 +13,9 @@ function editorReducer(state, action) {
     //
     // File List
     //
+    case 'setUser': {
+      return { ...state, user: action.user };
+    }
     case 'load': {
       const selectedFile = state.selectedFile
         ? action.files.find((file) => file._id === state.selectedFile._id)
@@ -21,7 +24,9 @@ function editorReducer(state, action) {
         ...state,
         isLoading: false,
         fileList: action.files,
+        groups: action.groups,
         selectedFile,
+        selectedGroup: 'user',
       };
     }
     case 'inputName': {
@@ -284,6 +289,14 @@ function editorReducer(state, action) {
         isLoading: true,
       };
     }
+    case 'selectGroup': {
+      console.log('GROUP');
+      console.log(action);
+      return {
+        ...state,
+        selectedGroup: action.group,
+      };
+    }
     default:
       return state;
   }
@@ -291,6 +304,9 @@ function editorReducer(state, action) {
 
 const Editor = () => {
   const initialState = {
+    user: null,
+    groups: null,
+    selectedGroup: 'user',
     isLoading: true,
     isDeletingFile: false,
     isDeletingEntry: false,
@@ -309,11 +325,19 @@ const Editor = () => {
   };
   const [state, dispatch] = useReducer(editorReducer, initialState);
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      const user = await utils.getUser();
+      dispatch({ type: 'setUser', user });
+    };
+    fetchUser();
+  }, []);
   // FETCH
   useEffect(() => {
     const fetchFiles = async () => {
       const files = await utils.getDatabases();
-      dispatch({ type: 'load', files });
+      const groups = await utils.getGroups();
+      dispatch({ type: 'load', files, groups });
     };
     if (state.isLoading) fetchFiles();
   }, [state.isLoading]);
@@ -328,15 +352,27 @@ const Editor = () => {
   // CREATE FILE
   useEffect(() => {
     const createFile = async () => {
-      const res = await utils.createDatabase(state.inputName);
-      dispatch({
-        type: 'finishCreating',
-        ok: res.data.ok,
-        file: res.data.response,
-      });
+      if (state.selectedGroup === 'user') {
+        const res = await utils.createDatabase(state.inputName);
+        dispatch({
+          type: 'finishCreating',
+          ok: res.data.ok,
+          file: res.data.response,
+        });
+      } else {
+        const res = await utils.createDatabase(
+          state.inputName,
+          state.selectedGroup
+        );
+        dispatch({
+          type: 'finishCreating',
+          ok: res.data.ok,
+          file: res.data.response,
+        });
+      }
     };
     if (state.isCreatingFile) createFile();
-  }, [state.isCreatingFile, state.inputName]);
+  }, [state.isCreatingFile, state.inputName, state.selectedGroup]);
   // UPLOAD FILE
   useEffect(() => {
     const uploadFile = async () => {
@@ -345,7 +381,8 @@ const Editor = () => {
       fileReader.onload = async () => {
         const res = await utils.uploadDatabase(
           fileReader.result,
-          state.inputName
+          state.inputName,
+          state.selectedGroup
         );
         dispatch({
           type: 'finishUploading',
@@ -359,7 +396,12 @@ const Editor = () => {
       };
     };
     if (state.isUploadingFile) uploadFile();
-  }, [state.isUploadingFile, state.uploadedFile, state.inputName]);
+  }, [
+    state.isUploadingFile,
+    state.uploadedFile,
+    state.inputName,
+    state.selectedGroup,
+  ]);
   // CHANGE NAME
   useEffect(() => {
     const changeName = async () => {
@@ -415,7 +457,7 @@ const Editor = () => {
       });
     };
     if (state.isSavingEntry) saveEntry();
-  }, [state.isSavingEntry, state.entryChanges]);
+  }, [state.isSavingEntry, state.entryChanges, state.selectedFile]);
 
   const fileActive = !state.isLoading;
   const entryActive = !!state.selectedFile && !state.isLoading;
@@ -428,18 +470,30 @@ const Editor = () => {
       )) ||
       !!state.newEntry);
 
+  const isSelectedAllowed =
+    state.selectedFile &&
+    ((state.selectedFile.user &&
+      state.selectedFile.user._id === state.user._id) ||
+      (state.selectedFile.group &&
+        (state.selectedFile.group.owner === state.user._id ||
+          state.selectedFile.group.users.includes(state.user._id))));
+
   return (
     <div className='Editor'>
       <FileList
         active={fileActive}
+        isSelectedAllowed={isSelectedAllowed}
         selectedFile={state.selectedFile}
         uploading={!!state.uploadedFile}
         inputName={state.inputName}
         fileList={state.fileList}
+        groups={state.groups}
+        user={state.user}
         dispatch={dispatch}
       />
       <EntryList
         active={entryActive}
+        isSelectedAllowed={isSelectedAllowed}
         file={state.selectedFile}
         selectedEntry={state.selectedEntry}
         newEntry={state.newEntry}
@@ -448,6 +502,7 @@ const Editor = () => {
       />
       <InfoList
         active={infoActive}
+        isSelectedAllowed={isSelectedAllowed}
         entry={state.selectedEntry || state.newEntry}
         entryChanges={state.entryChanges}
         dispatch={dispatch}

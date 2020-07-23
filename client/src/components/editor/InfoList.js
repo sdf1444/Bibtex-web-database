@@ -15,6 +15,7 @@ const InfoList = (props) => {
       <input
         className='info-value'
         value={props.entryChanges.citationKey}
+        readOnly={!props.isSelectedAllowed}
         onChange={(e) =>
           props.dispatch({
             type: 'inputCitationKey',
@@ -33,6 +34,7 @@ const InfoList = (props) => {
         <input
           className='info-value'
           value={props.entryChanges.entryTags[tag] || ''}
+          readOnly={!props.isSelectedAllowed}
           onChange={(e) =>
             props.dispatch({
               type: 'inputTag',
@@ -53,6 +55,7 @@ const InfoList = (props) => {
         <input
           className='info-value'
           value={props.entryChanges.entryTags[tag] || ''}
+          readOnly={!props.isSelectedAllowed}
           onChange={(e) =>
             props.dispatch({
               type: 'inputTag',
@@ -69,7 +72,9 @@ const InfoList = (props) => {
     <div className='info-div'>
       <div className='info-head'>@{props.entry.entryType.toLowerCase()}</div>
       <div className='info-body'>{infoList}</div>
-      <div className='info-footer'>
+      <div
+        className={`info-footer ${props.isSelectedAllowed ? '' : 'disabled'}`}
+      >
         <button
           className='save-btn'
           onClick={(e) =>
@@ -99,6 +104,7 @@ InfoList.propTypes = {
   active: PropTypes.bool.isRequired,
   entry: PropTypes.any,
   entryChanges: PropTypes.any,
+  isSelectedAllowed: PropTypes.bool,
   dispatch: PropTypes.any.isRequired,
 };
 

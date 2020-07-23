@@ -1,128 +1,367 @@
-import React, { Component } from 'react';
-import { Link, Redirect } from 'react-router-dom';
-import axios from 'axios';
+import React, { useEffect, useReducer } from 'react';
+import * as utils from '../../actions/paper';
+import { getGroups } from '../../actions/editor';
+import { Table } from 'react-bootstrap';
+import PaperTableRow from './PaperTableRow';
+import './Paper.css';
+import ExtractWindow from './ExtractWindow';
 
-class Paper extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      files: [],
-      file: '',
-    };
-
-    this.loadFiles = this.loadFiles.bind(this);
-  }
-
-  componentDidMount() {
-    this.loadFiles();
-  }
-
-  loadFiles() {
-    fetch('/api/papers/files')
-      .then((res) => res.json())
-      .then((files) => {
-        if (files.message) {
-          console.log('No Files');
-          this.setState({ files: [] });
-        } else {
-          this.setState({ files });
-        }
-      });
-  }
-
-  fileChanged(event) {
-    const f = event.target.files[0];
-    this.setState({
-      file: f,
-    });
-  }
-
-  deleteFile(event) {
-    event.preventDefault();
-    const id = event.target.id;
-
-    fetch('/api/papers/files/' + id, {
-      method: 'DELETE',
-    })
-      .then((res) => res.json())
-      .then((response) => {
-        console.log(response);
-        if (response.success) this.loadFiles();
-        else alert('Delete Failed');
-      });
-  }
-
-  uploadFile(event) {
-    event.preventDefault();
-    let data = new FormData();
-    data.append('file', this.state.file);
-
-    fetch('/api/papers/files', {
-      method: 'POST',
-      body: data,
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          this.loadFiles();
-        } else {
-          alert('Upload failed');
-        }
-      });
-  }
-
-  render() {
-    const { files } = this.state;
-    return (
-      <div className='Paper'>
-        <header className='Paper-header'></header>
-        <div className='Paper-content'>
-          <div className='upload'>
-            <input type='file' onChange={this.fileChanged.bind(this)} />
-            <button onClick={this.uploadFile.bind(this)}>Upload</button>
-          </div>
-          <table className='Paper-table'>
-            <thead>
-              <tr>
-                <th>Paper</th>
-                <th>Uploaded</th>
-                <th>Size</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {files.map((file, index) => {
-                var d = new Date(file.uploadDate);
-                return (
-                  <tr key={index}>
-                    <td>
-                      <a
-                        href={`http://localhost:5000/papers/files/${file.filename}`}
-                      >
-                        {file.filename}
-                      </a>
-                    </td>
-                    <td>{`${d.toLocaleDateString()} ${d.toLocaleTimeString()}`}</td>
-                    <td>{Math.round(file.length / 100) / 10 + 'KB'}</td>
-                    <td>
-                      <button
-                        onClick={this.deleteFile.bind(this)}
-                        id={file._id}
-                      >
-                        Delete
-                      </button>
-                      <button>Export references</button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    );
+function paperReducer(state, action) {
+  switch (action.type) {
+    case 'extractBibtex': {
+      if (state.isExtracting) return state;
+      return {
+        ...state,
+        isExtracting: true,
+        windowMessage: {
+          type: 'loading',
+          message: 'Extracting...',
+        },
+      };
+    }
+    case 'setDatabases': {
+      return {
+        ...state,
+        databases: action.databases,
+      };
+    }
+    case 'setGroups': {
+      return {
+        ...state,
+        groups: action.groups,
+      };
+    }
+    case 'selectGroup': {
+      return {
+        ...state,
+        selectedGroup: action.value,
+        selected: 'new',
+        windowMessage: {},
+      };
+    }
+    case 'selectDatabase': {
+      return {
+        ...state,
+        selected: action.value,
+        inputName: action.value !== 'new' ? action.value : '',
+        windowMessage: {},
+      };
+    }
+    case 'inputName': {
+      return {
+        ...state,
+        inputName: action.value,
+        windowMessage: {},
+      };
+    }
+    case 'searchName': {
+      return {
+        ...state,
+        searchName: action.value,
+      };
+    }
+    case 'uploadFile': {
+      if (action.file.type !== 'application/pdf') return state;
+      return {
+        ...state,
+        uploadedFile: action.file,
+      };
+    }
+    case 'closeUploaded': {
+      return {
+        ...state,
+        uploadedFile: null,
+      };
+    }
+    case 'saveFile': {
+      return {
+        ...state,
+        isSaving: true,
+      };
+    }
+    case 'deleteFile': {
+      return {
+        ...state,
+        isDeleting: true,
+        deletedFile: action.file,
+      };
+    }
+    case 'openWindow': {
+      return {
+        ...state,
+        windowOpened: true,
+        extractedFile: action.file,
+      };
+    }
+    case 'closeWindow': {
+      if (state.isExtracting) return state;
+      return {
+        ...state,
+        windowOpened: false,
+        windowMessage: {},
+      };
+    }
+    case 'finishLoading': {
+      console.log(action.files);
+      return {
+        ...state,
+        isLoading: false,
+        files: action.files,
+        windowMessage: {},
+      };
+    }
+    case 'finishDeleting': {
+      if (!action.ok) return { ...state, isDeleting: false };
+      return {
+        ...state,
+        isDeleting: false,
+        isLoading: true,
+      };
+    }
+    case 'finishSaving': {
+      if (!action.ok) return { ...state, isSaving: false };
+      return {
+        ...state,
+        isSaving: false,
+        isLoading: true,
+      };
+    }
+    case 'finishExtracting': {
+      if (!action.ok)
+        return {
+          ...state,
+          windowMessage: {
+            type: 'err',
+            message: action.err,
+          },
+          isExtracting: false,
+        };
+      return {
+        ...state,
+        isExtracting: false,
+        windowMessage: {
+          type: 'success',
+          message: 'File uploaded',
+        },
+      };
+    }
+    default:
+      return state;
   }
 }
+
+const Paper = () => {
+  const initialState = {
+    isLoading: true,
+    isDeleting: false,
+    isSaving: false,
+    isExtracting: false,
+    windowOpened: false,
+    files: null,
+    uploadedFile: null,
+    deletedFile: null,
+    extractedFile: null,
+    groups: null,
+    databases: null,
+    selectedGroup: 'personal',
+    selected: null,
+    inputName: '',
+    searchName: '',
+    windowMessage: {},
+  };
+
+  const [state, dispatch] = useReducer(paperReducer, initialState);
+
+  useEffect(() => {
+    const setDatabases = async () => {
+      const databases = await utils.getDatabases();
+      dispatch({
+        type: 'setDatabases',
+        databases,
+      });
+    };
+    const setGroups = async () => {
+      const groups = await getGroups();
+      dispatch({
+        type: 'setGroups',
+        groups,
+      });
+    };
+    setGroups();
+    setDatabases();
+  }, []);
+  useEffect(() => {
+    const loadFiles = async () => {
+      const res = await utils.getFiles();
+      dispatch({
+        type: 'finishLoading',
+        files: res.data.response,
+      });
+    };
+    if (state.isLoading) loadFiles();
+  }, [state.isLoading]);
+  useEffect(() => {
+    const deleteFile = async () => {
+      const res = await utils.deleteFile(state.deletedFile._id);
+      dispatch({
+        type: 'finishDeleting',
+        ok: res.data.ok,
+      });
+    };
+    if (state.isDeleting) deleteFile();
+  }, [state.isDeleting, state.deletedFile]);
+  useEffect(() => {
+    const saveFile = async () => {
+      const res = await utils.saveFile(state.uploadedFile);
+      dispatch({
+        type: 'finishSaving',
+        ok: res.data.ok,
+        file: res.data.response,
+      });
+    };
+    if (state.isSaving) saveFile();
+  }, [state.isSaving, state.uploadedFile]);
+  useEffect(() => {
+    const extractBibtex = async () => {
+      if (!state.inputName) {
+        return dispatch({
+          type: 'finishExtracting',
+          ok: false,
+          err: 'Database name cannot be empty',
+        });
+      }
+      console.log(state.inputName);
+      const res = await utils.extractAndUploadBibtex(
+        state.extractedFile.filename,
+        state.inputName,
+        state.selectedGroup === 'personal' ? null : state.selectedGroup
+      );
+      console.log(res);
+      console.log(res.data);
+      dispatch({
+        type: 'finishExtracting',
+        ok: res.data.ok,
+        err: res.data.err,
+        file: res.data.response,
+      });
+    };
+    if (state.isExtracting) extractBibtex();
+  }, [
+    state.isExtracting,
+    state.extractedFile,
+    state.inputName,
+    state.selectedGroup,
+  ]);
+
+  if (state.isLoading || !state.files) {
+    return <div className='Paper'>Loading</div>;
+  }
+
+  const fileFilter = (file) => {
+    if (state.searchName === '') {
+      return true;
+    }
+    return file.filename.includes(state.searchName);
+  };
+
+  const dataTable = state.files
+    .filter(fileFilter)
+    .map((file) => {
+      return <PaperTableRow file={file} dispatch={dispatch} key={file._id} />;
+    })
+    .reverse();
+  const uploadText = state.uploadedFile
+    ? state.uploadedFile.name
+    : 'No file selected';
+
+  return (
+    <div className='Paper'>
+      <div
+        className={
+          state.windowOpened ? 'paper-layout' : 'paper-layout disabled'
+        }
+        onClick={(e) => dispatch({ type: 'closeWindow' })}
+      ></div>
+      <ExtractWindow
+        active={state.windowOpened}
+        file={state.extractedFile}
+        groups={state.groups}
+        selectedGroup={state.selectedGroup}
+        databases={state.databases}
+        inputValue={state.inputName}
+        windowMessage={state.windowMessage}
+        selected={state.selected}
+        dispatch={dispatch}
+      />
+      <div className='paper-header'>
+        <div className='search-label'>Search by file name: </div>
+        <input
+          className='search-paper'
+          value={state.searchName}
+          onChange={(e) =>
+            dispatch({
+              type: 'searchName',
+              value: e.target.value,
+            })
+          }
+        ></input>
+        <input
+          type='file'
+          id='paper-file'
+          className='upload-input'
+          onChange={(e) =>
+            dispatch({
+              type: 'uploadFile',
+              file: e.target.files[0],
+            })
+          }
+        ></input>
+        <label htmlFor='paper-file' className='upload-label'>
+          Choose a file
+        </label>
+        <button
+          className={`upload-file-btn ${state.uploadedFile ? '' : 'disabled'}`}
+          onClick={(e) =>
+            dispatch({
+              type: 'saveFile',
+            })
+          }
+        >
+          Upload
+        </button>
+        <div
+          className={`upload-file-name ${
+            state.uploadedFile ? 'activated' : ''
+          }`}
+        >
+          {uploadText}
+        </div>
+        <button
+          className={`remove-uploaded ${state.uploadedFile ? '' : 'disabled'}`}
+          onClick={(e) =>
+            dispatch({
+              type: 'closeUploaded',
+            })
+          }
+        >
+          x
+        </button>
+      </div>
+      <div className='paper-wrapper'>
+        <Table className='paper-table' striped bordered hover>
+          <thead>
+            <tr>
+              <th>Paper</th>
+              <th>Uploaded</th>
+              <th>Size</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>{dataTable}</tbody>
+        </Table>
+      </div>
+    </div>
+  );
+};
 
 export default Paper;

@@ -41,31 +41,34 @@ router.get('/files/:filename', (req, res) => {
   });
 });
 
-router.get('/files', (req, res) => {
+router.get('/files', (req, res, next) => {
   gridFS.files.find().toArray((err, files) => {
-    if (!files || files.length === 0) {
-      return res.status(404).json({
-        message: 'Could not find files',
-      });
+    if (!files) {
+      res.data = { err: 'Could not find files' };
+      return next();
     }
-    return res.json(files);
+    res.data = files;
+    return next();
   });
 });
 
-router.post('/files', singleUpload, (req, res) => {
-  if (req.file) {
-    return res.json({
-      success: true,
-      file: req.file,
-    });
+router.post('/files', singleUpload, (req, res, next) => {
+  if (!req.file) {
+    res.data = { err: 'File missing' };
+    return next();
   }
-  res.send({ success: false });
+  res.data = req.file;
+  return next();
 });
 
-router.delete('/files/:id', (req, res) => {
+router.delete('/files/:id', (req, res, next) => {
   gridFS.remove({ _id: req.params.id }, (err) => {
-    if (err) return res.status(500).json({ success: false });
-    return res.json({ success: true });
+    if (err) {
+      res.data = { err: err.message };
+      return next();
+    }
+    res.data = {};
+    return next();
   });
 });
 

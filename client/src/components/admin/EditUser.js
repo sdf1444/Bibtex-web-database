@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
-import { Link, Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 class EditUser extends Component {
   constructor(props) {
@@ -87,8 +87,6 @@ class EditUser extends Component {
       .catch((error) => {
         console.log(error);
       });
-
-    // Redirect to User List
   }
 
   render() {
@@ -132,17 +130,6 @@ class EditUser extends Component {
               required
               value={this.state.username}
               onChange={this.onChangeUserUsername}
-            />
-          </Form.Group>
-
-          <Form.Group controlId='Password'>
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              type='password'
-              minlength='6'
-              required
-              value={this.state.password}
-              onChange={this.onChangeUserPassword}
             />
           </Form.Group>
 
