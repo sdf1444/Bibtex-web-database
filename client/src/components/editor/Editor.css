@@ -4,13 +4,13 @@
   margin: 0;
   position: absolute;
   top: 0;
-  background-color: #f2f2f2;
 }
 
 .Editor {
   display: flex;
   justify-content: space-between;
   height: 700px;
+  overflow: auto;
 }
 
 .Editor button {

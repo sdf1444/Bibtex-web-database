@@ -37,7 +37,6 @@ ul {
   overflow: hidden;
   padding: 0 2rem;
   margin-top: 6rem;
-  margin-bottom: 3rem;
 }
 
 /* Text Styles*/
@@ -161,11 +160,13 @@ ul {
 }
 
 .btn-light {
-  margin-left: 47%;
+  position: fixed;
+  display: block;
+  text-align: center;
+  left: 47%;
 }
 
-.bg-light,
-.badge-light,
+.bg-light .badge-light,
 .alert-light {
   background: var(--light-color);
   color: #333;
@@ -439,6 +440,13 @@ button {
 
   .lead {
     font-size: 1rem;
+  }
+
+  .btn-light {
+    position: fixed;
+    display: block;
+    text-align: center;
+    left: 45.5%;
   }
 
   /* Navbar */

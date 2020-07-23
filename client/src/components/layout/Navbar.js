@@ -24,6 +24,9 @@ const Navbar = ({ auth: { isAuthenticated, loading, role }, logout }) => {
         <Link to='/papers'>Papers</Link>
       </li>
       <li>
+        <Link to='/publicDatabases'>Databases</Link>
+      </li>
+      <li>
         <Link to='/groups'>Groups</Link>
       </li>
       <li>

@@ -11,6 +11,7 @@ import CreateUser from './components/admin/CreateUser';
 import EditUser from './components/admin/EditUser';
 import Editor from './components/editor/Editor';
 import Paper from './components/paper/Paper';
+import PublicDatabases from './components/publicDatabases/publicDatabases';
 import Alert from './components/layout/Alert';
 import PrivateRoute from './components/routing/PrivateRoute';
 // Redux
@@ -53,6 +54,11 @@ const App = () => {
               <PrivateRoute exact path='/edit-user/:id' component={EditUser} />
               <PrivateRoute exact path='/editor' component={Editor} />
               <PrivateRoute exact path='/papers' component={Paper} />
+              <PrivateRoute
+                exact
+                path='/publicDatabases'
+                component={PublicDatabases}
+              />
               <PrivateRoute exact path='/groups' component={Group} />
             </Switch>
           </section>

@@ -89,8 +89,8 @@
 .paper-wrapper {
   margin-top: 20px;
   max-height: 700px;
-  overflow-x: hidden;
-  overflow-y: scroll;
+  overflow-x: auto;
+  overflow-y: auto;
 }
 
 .paper-layout {

@@ -39,13 +39,14 @@ const extractFile = async (filename) => {
   formData.append('input', blob);
 
   console.log('SENT');
-  const res = await fetch(`http://localhost:8070/api/processReferences`, {
+  const res = await fetch(`http://944dff882802.ngrok.io/processReferences`, {
     method: 'POST',
     body: formData,
     headers: {
       Accept: 'application/x-bibtex',
     },
   });
+
   if (res.status !== 200) return { ok: false, err: 'No references found' };
   const bibBlob = await res.blob();
   return { ok: true, blob: bibBlob };
