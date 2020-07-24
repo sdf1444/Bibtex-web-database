@@ -250,7 +250,7 @@ router.post('/:email', async (req, res) => {
     );
 
     const mailOptions = {
-      from: 'spencerdu@hotmail.co.uk',
+      from: 'bibtexwebdatabase@hotmail.com',
       to: `${user.email}`,
       subject: 'Link to Reset Password',
       text:
