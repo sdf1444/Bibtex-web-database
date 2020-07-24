@@ -15,7 +15,7 @@ const Homepage = ({ isAuthenticated }) => {
           <div className='landing-inner'>
             <h1 className='x-large'>Bibtex</h1>
             <p className='lead'>Online editor for bibtex references</p>
-            <div className='buttons'>
+            <div className='buttons centered'>
               <Link to='/login' className='btn btn-light'>
                 Login
               </Link>

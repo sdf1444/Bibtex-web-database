@@ -1,33 +1,33 @@
 .paper-buttons {
-  display: flex;
+    display: flex;
 }
 
 .paper-buttons button {
-  margin-left: 10px;
-  font-size: 15px;
-  width: 80px;
-  height: 46px;
-  line-height: 46px;
-  border: none;
-  outline: none;
-  text-align: center;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    margin-left: 10px;
+    font-size: 15px;
+    width: 80px;
+    height: 46px;
+    line-height: 46px;
+    border: none;
+    outline: none;
+    text-align: center;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, .25);
 }
 
 .remove-btn {
-  background-color: rgb(255, 84, 84);
-  color: white;
+    background-color: rgb(255, 84, 84);
+    color: white;
 }
 
 .remove-btn:active {
-  background-color: crimson;
+    background-color: crimson;
 }
 
 .extract-btn {
-  background-color: rgb(224, 165, 14);
-  color: white;
+    background-color: rgb(224, 165, 14);
+    color: white;
 }
 
 .extract-btn:active {
-  background-color: rgb(184, 135, 12);
+    background-color: rgb(184, 135, 12);
 }

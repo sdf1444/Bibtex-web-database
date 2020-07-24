@@ -275,7 +275,7 @@ const Paper = () => {
     : 'No file selected';
 
   return (
-    <div className='Paper'>
+    <div className='paper'>
       <div
         className={
           state.windowOpened ? 'paper-layout' : 'paper-layout disabled'

@@ -13,7 +13,7 @@ const Welcome = ({ auth: { user }, auth: { auth, loading } }) => {
       <h1 className='large text-primary'>Bibtex</h1>
       <p className='lead'>
         <i />
-        Hello! {user && user.username} Welcome to the Bixtex editor!
+        Hello! {user && user.name} Welcome to the Bibtex editor!
       </p>
       <p>
         <small>Logged in as: {user && user.role}</small>

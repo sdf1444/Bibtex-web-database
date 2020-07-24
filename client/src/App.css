@@ -1,4 +1,9 @@
 /* Global Styles */
+.centered {
+  display: flex;
+  justify-content: center;
+}
+
 :root {
   --primary-color: #17a2b8;
   --dark-color: #343a40;
@@ -19,6 +24,7 @@ body {
   line-height: 1.6;
   background-color: #fff;
   color: #333;
+  overflow: auto;
 }
 
 a {
@@ -159,14 +165,9 @@ ul {
   color: #fff;
 }
 
-.btn-light {
-  position: fixed;
-  display: block;
-  text-align: center;
-  left: 47%;
-}
-
-.bg-light .badge-light,
+.btn-light,
+.bg-light,
+.badge-light,
 .alert-light {
   background: var(--light-color);
   color: #333;
@@ -349,58 +350,6 @@ button {
   text-align: center;
 }
 
-/* Admin Page */
-.heading {
-  position: absolute;
-  top: 25px;
-  left: 40%;
-}
-
-.button {
-  position: absolute;
-  top: 50px;
-}
-
-.users {
-  position: fixed;
-  top: 50px;
-  left: 40%;
-}
-
-.usersTable {
-  font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-.usersTable td,
-.usersTable th {
-  border: 1px solid #ddd;
-  padding: 8px;
-}
-
-.usersTable tr:nth-child(even) {
-  background-color: #f2f2f2;
-}
-
-.usersTable tr:hover {
-  background-color: #ddd;
-}
-
-.usersTable th {
-  padding-top: 12px;
-  padding-bottom: 12px;
-  text-align: left;
-  background-color: #4caf50;
-  color: white;
-}
-
-.table-wrapper {
-  overflow-x: auto;
-}
-
-/* Editor Page */
-
 /* Paper table */
 .upload {
   display: flex;
@@ -442,16 +391,9 @@ button {
     font-size: 1rem;
   }
 
-  .btn-light {
-    position: fixed;
-    display: block;
-    text-align: center;
-    left: 45.5%;
-  }
-
   /* Navbar */
   .navbar {
-    position: fixed;
+    position: absolute;
     display: block;
     text-align: center;
     width: 100%;
