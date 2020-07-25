@@ -242,8 +242,7 @@ router.post('/:email', async (req, res) => {
     const msg = {
       to: `${user.email}`,
       from: 'bibtexwebdatabase@hotmail.co.uk',
-      subject: 'Sending with SendGrid is Fun',
-      text: 'and easy to do anywhere, even with Node.js',
+      subject: 'Link to Reset Password',
       html:
         'You are recieving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
         'Please click on the following link or paste this into your browser to complete the process:\n\n' +
