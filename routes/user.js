@@ -236,12 +236,12 @@ router.post('/:email', async (req, res) => {
 
     const transporter = nodemailer.createTransport(
       smtpTransport({
-        host: 'smtp.office365.com',
+        host: 'smtp.gmail.com',
         port: 587,
         secure: false,
         auth: {
-          user: config.email_address,
-          pass: config.email_password,
+          user: 'spencerchief@gmail.com',
+          pass: 'Boggie234!',
         },
         tls: {
           rejectUnauthorized: false,
@@ -250,7 +250,7 @@ router.post('/:email', async (req, res) => {
     );
 
     const mailOptions = {
-      from: 'bibtexwebdatabase@hotmail.com',
+      from: 'spencerchief@gmail.com',
       to: `${user.email}`,
       subject: 'Link to Reset Password',
       text:
