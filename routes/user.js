@@ -234,17 +234,18 @@ router.post('/:email', async (req, res) => {
       }
     });
 
-    const transporter = nodemailer.createTransport({
-      host: 'smtp.office365.com',
-      port: 587,
+    let transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
       auth: {
-        user: 'bibtexwebdatabase@hotmail.com',
-        pass: 'Boggie234',
+        user: 'spencercheif@gmail.com',
+        pass: 'Boggie234!',
       },
     });
 
     const mailOptions = {
-      from: 'bibtexwebdatabase@hotmail.com',
+      from: 'spencercheif@gmail.com',
       to: `${user.email}`,
       subject: 'Link to Reset Password',
       text:
