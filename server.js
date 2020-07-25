@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const app = express();
+const path = require('path');
 
 // models
 const Database = require('./models/Database');
@@ -34,6 +35,16 @@ const database = require('./routes/database');
 const papers = require('./routes/papers');
 const group = require('./routes/group');
 
+// Serve static assets in production
+if (process.env.NODE_ENV === 'production') {
+  // Set static folder
+  app.use(express.static('client/build'));
+
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+  });
+}
+
 /** Seting up server to accept cross-origin browser requests */
 app.use(function (req, res, next) {
   //allow cross origin requests
@@ -58,8 +69,6 @@ app.use(logger('dev'));
 
 // Init Middleware
 app.use(express.json({ extended: false }));
-
-app.get('/', (req, res) => res.send('API Running'));
 
 // Define Routes
 app.use(

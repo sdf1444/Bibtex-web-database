@@ -19,6 +19,12 @@ function paperReducer(state, action) {
         },
       };
     }
+    case 'changeProgress': {
+      return {
+        ...state,
+        progress: action.progress,
+      };
+    }
     case 'setDatabases': {
       return {
         ...state,
@@ -61,7 +67,12 @@ function paperReducer(state, action) {
       };
     }
     case 'uploadFile': {
-      if (action.file.type !== 'application/pdf') return state;
+      console.log(action.file);
+      if (!action.file || action.file.type !== 'application/pdf')
+        return {
+          ...state,
+          uploadedFile: null,
+        };
       return {
         ...state,
         uploadedFile: action.file,
@@ -77,6 +88,7 @@ function paperReducer(state, action) {
       return {
         ...state,
         isSaving: true,
+        progress: 0,
       };
     }
     case 'deleteFile': {
@@ -124,6 +136,7 @@ function paperReducer(state, action) {
         ...state,
         isSaving: false,
         isLoading: true,
+        progress: null,
       };
     }
     case 'finishExtracting': {
@@ -152,6 +165,7 @@ function paperReducer(state, action) {
 
 const Paper = () => {
   const initialState = {
+    progress: null,
     isLoading: true,
     isDeleting: false,
     isSaving: false,
@@ -212,7 +226,12 @@ const Paper = () => {
   }, [state.isDeleting, state.deletedFile]);
   useEffect(() => {
     const saveFile = async () => {
-      const res = await utils.saveFile(state.uploadedFile);
+      const res = await utils.saveFile(state.uploadedFile, (n) => {
+        dispatch({
+          type: 'changeProgress',
+          progress: n,
+        });
+      });
       dispatch({
         type: 'finishSaving',
         ok: res.data.ok,
@@ -275,7 +294,7 @@ const Paper = () => {
     : 'No file selected';
 
   return (
-    <div className='paper'>
+    <div className='Paper'>
       <div
         className={
           state.windowOpened ? 'paper-layout' : 'paper-layout disabled'
@@ -293,6 +312,18 @@ const Paper = () => {
         selected={state.selected}
         dispatch={dispatch}
       />
+      <div className='w3-light-grey'>
+        <div
+          className={`w3-container w3-blue w3-center ${
+            state.progress ? '' : 'disabled'
+          }`}
+          style={{
+            width: state.progress || 0 + '%',
+          }}
+        >
+          {state.progress || 0}%
+        </div>
+      </div>
       <div className='paper-header'>
         <div className='search-label'>Search by file name: </div>
         <input
