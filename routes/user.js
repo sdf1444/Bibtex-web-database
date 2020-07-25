@@ -240,8 +240,8 @@ router.post('/:email', async (req, res) => {
         port: 587,
         secure: false,
         auth: {
-          user: config.email_address,
-          pass: config.email_password,
+          user: 'bibtexwebdatabase@hotmail.com',
+          pass: 'Boggie234',
         },
         tls: {
           rejectUnauthorized: false,
