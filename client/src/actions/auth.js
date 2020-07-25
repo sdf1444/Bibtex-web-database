@@ -100,7 +100,7 @@ export const logout = () => (dispatch) => {
 
 // Send reset password link
 export const sendResetPasswordLink = (email) =>
-  axios.post('/api/user/login/forgot', { email });
+  axios.post('http://localhost:5000/api/user/login/forgot', { email });
 
 export const attemptSendResetPasswordLink = (email) => async (dispatch) => {
   return await sendResetPasswordLink(email).catch(
@@ -110,7 +110,7 @@ export const attemptSendResetPasswordLink = (email) => async (dispatch) => {
 
 // Reset password
 export const resetPassword = (password, token) =>
-  axios.post(`/api/user/login/reset/${token}`, {
+  axios.post(`http://localhost:5000/api/user/login/reset/${token}`, {
     password,
   });
 
