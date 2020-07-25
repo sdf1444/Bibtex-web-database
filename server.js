@@ -15,12 +15,16 @@ const User = require('./models/User');
 const Group = require('./models/Group');
 
 mongoose
-  .connect(config.db, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useCreateIndex: true,
-    useFindAndModify: false,
-  })
+  .connect(
+    process.env.MONGODB_URI ||
+      'mongodb+srv://sdf1444:boggie234@cluster0-wq3gs.mongodb.net/bibtex?retryWrites=true&w=majority',
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useCreateIndex: true,
+      useFindAndModify: false,
+    }
+  )
   .then(function onSuccess() {
     console.log('The server connected with MongoDB.');
   })
@@ -39,10 +43,6 @@ const group = require('./routes/group');
 if (process.env.NODE_ENV === 'production') {
   // Set static folder
   app.use(express.static('client/build'));
-
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
-  });
 }
 
 /** Seting up server to accept cross-origin browser requests */
