@@ -6,9 +6,7 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const config = require('../config');
 const { check, validationResult } = require('express-validator');
-const nodemailer = require('nodemailer');
-const smtpTransport = require('nodemailer-smtp-transport');
-
+const sgMail = require('@sendgrid/mail');
 const User = require('../models/User');
 const { error } = require('console');
 
@@ -234,35 +232,26 @@ router.post('/:email', async (req, res) => {
       }
     });
 
-    let transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 465,
-      secure: true,
-      auth: {
-        user: 'spencercheif@gmail.com',
-        pass: 'Boggie234!',
-      },
-    });
+    sgMail.setApiKey(
+      SG.V8u471Q1SDSM -
+        N7wNdGGnA.zAQn2YrtO3z3lnSgHBGYvxBu1cC -
+        VMsm4MUKx -
+        CJV64
+    );
 
-    const mailOptions = {
-      from: 'spencercheif@gmail.com',
+    const msg = {
       to: `${user.email}`,
-      subject: 'Link to Reset Password',
-      text:
+      from: 'bibtexwebdatabase@hotmail.co.uk',
+      subject: 'Sending with SendGrid is Fun',
+      text: 'and easy to do anywhere, even with Node.js',
+      html:
         'You are recieving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
         'Please click on the following link or paste this into your browser to complete the process:\n\n' +
         `http://localhost:3000/reset/${user._id}\n\n` +
         'If you did not request this, please ignore this email and your password will remain unchanged.\n',
     };
 
-    transporter.sendMail(mailOptions, (err, response) => {
-      if (err) {
-        console.error('there was an error: ', err);
-      } else {
-        console.log('here is the res: ', response);
-        res.status(200).json('recovery email sent');
-      }
-    });
+    sgMail.send(msg);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
