@@ -55,7 +55,7 @@ const extractFile = async (filename) => {
 
   console.log('SENT');
   const res = await fetch(
-    `https://grobid-960543373.us-east-2.elb.amazonaws.com/api/processReferences`,
+    `http://grobid-960543373.us-east-2.elb.amazonaws.com/api/processReferences`,
     {
       method: 'POST',
       body: formData,
