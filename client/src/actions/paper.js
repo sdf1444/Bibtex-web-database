@@ -54,13 +54,16 @@ const extractFile = async (filename) => {
   formData.append('input', blob);
 
   console.log('SENT');
-  const res = await fetch(`http://localhost:8070/api/processReferences`, {
-    method: 'POST',
-    body: formData,
-    headers: {
-      Accept: 'application/x-bibtex',
-    },
-  });
+  const res = await fetch(
+    `http://grobid-960543373.us-east-2.elb.amazonaws.com/api/processReferences`,
+    {
+      method: 'POST',
+      body: formData,
+      headers: {
+        Accept: 'application/x-bibtex',
+      },
+    }
+  );
   if (res.status !== 200) return { ok: false, err: 'No references found' };
   const bibBlob = await res.blob();
   return { ok: true, blob: bibBlob };
