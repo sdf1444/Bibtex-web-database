@@ -234,20 +234,14 @@ router.post('/:email', async (req, res) => {
       }
     });
 
-    const transporter = nodemailer.createTransport(
-      smtpTransport({
-        host: 'smtp.office365.com',
-        port: 587,
-        secure: false,
-        auth: {
-          user: 'bibtexwebdatabase@hotmail.com',
-          pass: 'Boggie234',
-        },
-        tls: {
-          rejectUnauthorized: false,
-        },
-      })
-    );
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.office365.com',
+      port: 587,
+      auth: {
+        user: 'bibtexwebdatabase@hotmail.com',
+        pass: 'Boggie234',
+      },
+    });
 
     const mailOptions = {
       from: 'bibtexwebdatabase@hotmail.com',
