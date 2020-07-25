@@ -6,8 +6,8 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const config = require('../config');
 const { check, validationResult } = require('express-validator');
-const nodemailer = require('nodemailer');
-const smtpTransport = require('nodemailer-smtp-transport');
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey('s5FHE-RpQleWHekhI6_lnw');
 
 const User = require('../models/User');
 const { error } = require('console');
@@ -236,12 +236,12 @@ router.post('/:email', async (req, res) => {
 
     const transporter = nodemailer.createTransport(
       smtpTransport({
-        host: 'smtp.gmail.com',
+        host: 'smtp.office365.com',
         port: 587,
         secure: false,
         auth: {
-          user: 'spencerchief@gmail.com',
-          pass: 'Boggie234!',
+          user: config.email_address,
+          pass: config.email_password,
         },
         tls: {
           rejectUnauthorized: false,
@@ -249,9 +249,9 @@ router.post('/:email', async (req, res) => {
       })
     );
 
-    const mailOptions = {
-      from: 'spencerchief@gmail.com',
+    const msg = {
       to: `${user.email}`,
+      from: 'bibtexdatabase.com',
       subject: 'Link to Reset Password',
       text:
         'You are recieving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
@@ -260,14 +260,7 @@ router.post('/:email', async (req, res) => {
         'If you did not request this, please ignore this email and your password will remain unchanged.\n',
     };
 
-    transporter.sendMail(mailOptions, (err, response) => {
-      if (err) {
-        console.error('there was an error: ', err);
-      } else {
-        console.log('here is the res: ', response);
-        res.status(200).json('recovery email sent');
-      }
-    });
+    sgMail.send(msg);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
