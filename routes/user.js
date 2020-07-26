@@ -235,7 +235,7 @@ router.post('/:email', async (req, res) => {
     });
     console.log(config.email_address);
     console.log(config.email_password);
-    var transport = nodemailer.createTransport('SMTP', {
+    var transporter = nodemailer.createTransport('SMTP', {
       service: 'hotmail',
       auth: {
         user: 'bibtexwebdatabase@hotmail.com',
