@@ -233,24 +233,30 @@ router.post('/:email', async (req, res) => {
         return res.status(500).send({ message: err.message });
       }
     });
-    console.log(config.email_address);
-    console.log(config.email_password);
-    var transporter = nodemailer.createTransport('SMTP', {
-      service: 'hotmail',
-      auth: {
-        user: 'bibtexwebdatabase@hotmail.com',
-        pass: 'Boggie234',
-      },
-    });
+
+    const transporter = nodemailer.createTransport(
+      smtpTransport({
+        host: 'smtp.office365.com',
+        port: 587,
+        secure: false,
+        auth: {
+          user: config.email_address,
+          pass: config.email_password,
+        },
+        tls: {
+          rejectUnauthorized: false,
+        },
+      })
+    );
 
     const mailOptions = {
       from: 'bibtexwebdatabase@hotmail.com',
-      to: 'duss@cardiff.ac.uk',
+      to: `${user.email}`,
       subject: 'Link to Reset Password',
       text:
         'You are recieving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
         'Please click on the following link or paste this into your browser to complete the process:\n\n' +
-        `http://localhost:3000/reset/\n\n` +
+        `http://localhost:3000/reset/${user._id}\n\n` +
         'If you did not request this, please ignore this email and your password will remain unchanged.\n',
     };
 
