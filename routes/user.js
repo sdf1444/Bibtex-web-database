@@ -6,6 +6,8 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const config = require('../config');
 const { check, validationResult } = require('express-validator');
+const nodemailer = require('nodemailer');
+const smtpTransport = require('nodemailer-smtp-transport');
 
 const User = require('../models/User');
 const { error } = require('console');
@@ -218,6 +220,58 @@ router.delete('/:id', auth, async (req, res) => {
     .catch((err) => {
       res.status(404).json({ success: false, msg: 'Nothing to delete.' });
     });
+});
+
+router.post('/:email', async (req, res) => {
+  const { email } = req.params;
+  let user;
+  try {
+    user = await User.findOne({ email });
+
+    user.save(function (err) {
+      if (err) {
+        return res.status(500).send({ message: err.message });
+      }
+    });
+
+    const transporter = nodemailer.createTransport(
+      smtpTransport({
+        host: 'smtp.office365.com',
+        port: 587,
+        secure: false,
+        auth: {
+          user: 'spencerchief@gmail.com',
+          pass: 'Boggie234!',
+        },
+        tls: {
+          rejectUnauthorized: false,
+        },
+      })
+    );
+
+    const mailOptions = {
+      from: 'bibtexwebdatabase@hotmail.com',
+      to: `${user.email}`,
+      subject: 'Link to Reset Password',
+      text:
+        'You are recieving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
+        'Please click on the following link or paste this into your browser to complete the process:\n\n' +
+        `http://localhost:3000/reset/${user._id}\n\n` +
+        'If you did not request this, please ignore this email and your password will remain unchanged.\n',
+    };
+
+    transporter.sendMail(mailOptions, (err, response) => {
+      if (err) {
+        console.error('there was an error: ', err);
+      } else {
+        console.log('here is the res: ', response);
+        res.status(200).json('recovery email sent');
+      }
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
 });
 
 router.put('/updatePassword/:id', async (req, res) => {
