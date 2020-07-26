@@ -55,7 +55,7 @@ const extractFile = async (filename) => {
 
   console.log('SENT');
   const res = await fetch(
-    `https://ec2-3-136-41-26.us-east-2.compute.amazonaws.com/processReferences`,
+    `https://ec2-3-136-41-26.us-east-2.compute.amazonaws.com/api/processReferences`,
     {
       method: 'POST',
       body: formData,
