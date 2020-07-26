@@ -39,15 +39,13 @@ const papers = require('./routes/papers');
 const group = require('./routes/group');
 const router = require('./routes/user');
 
-const auth;
-
 // Serve static assets in production
 if (process.env.NODE_ENV === 'production') {
   // Set static folder
   app.use(express.static('client/build'));
-  auth = process.env;
+  const auth = process.env;
 } else {
-  auth = require('./config/sendgrid.json');
+  const auth = require('./config/sendgrid.json');
 }
 
 /** Seting up server to accept cross-origin browser requests */
@@ -123,8 +121,9 @@ app.use((req, res) => {
 const transporter = nodemailer.createTransport({
   service: 'Sendgrid',
   auth: {
-    user: auth.SENDGRID_USERNAME, pass: auth.SENDGRID_PASSWORD
-  }
+    user: auth.SENDGRID_USERNAME,
+    pass: auth.SENDGRID_PASSWORD,
+  },
 });
 
 router.post('/:email', async (req, res) => {
