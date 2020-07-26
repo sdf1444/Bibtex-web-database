@@ -233,7 +233,8 @@ router.post('/:email', async (req, res) => {
         return res.status(500).send({ message: err.message });
       }
     });
-
+    console.log(config.email_address);
+    console.log(config.email_password);
     const transporter = nodemailer.createTransport(
       smtpTransport({
         host: 'smtp.office365.com',
