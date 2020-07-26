@@ -240,8 +240,8 @@ router.post('/:email', async (req, res) => {
         port: 587,
         secure: false,
         auth: {
-          user: 'spencerchief@gmail.com',
-          pass: 'Boggie234!',
+          user: config.email_address,
+          pass: config.email_password,
         },
         tls: {
           rejectUnauthorized: false,
