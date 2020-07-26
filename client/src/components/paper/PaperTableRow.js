@@ -6,7 +6,11 @@ const PaperTableRow = (props) => {
   const d = new Date(props.file.uploadDate);
   return (
     <tr>
-      <td>{props.file.filename}</td>
+      <td>
+        <a href={`http://localhost:5000/api/files/${props.file.filename}`}>
+          {props.file.filename}
+        </a>
+      </td>
       <td>{`${d.toLocaleDateString()} ${d.toLocaleTimeString()}`}</td>
       <td>{Math.round(props.file.length / 100) / 10 + 'KB'}</td>
       <td>
