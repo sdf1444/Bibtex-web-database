@@ -122,8 +122,8 @@ app.use((req, res) => {
 const transporter = nodemailer.createTransport({
   service: 'Sendgrid',
   auth: {
-    user: auth.SENDGRID_USERNAME,
-    pass: auth.SENDGRID_PASSWORD,
+    user: 'app179010897@heroku.com',
+    pass: 'shsk5y643830',
   },
 });
 
