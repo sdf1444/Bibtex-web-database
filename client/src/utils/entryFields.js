@@ -15,9 +15,17 @@ const requiredEntryFields = {
 };
 
 const extraEntryFields = {
-  article: ['number', 'pages', 'volume'],
-  book: ['series', 'address', 'edition', 'volume'],
-  booklet: ['howpublished', 'address'],
+  article: ['number', 'pages', 'volume', 'month', 'url', 'annotation'],
+  book: [
+    'series',
+    'address',
+    'edition',
+    'volume',
+    'month',
+    'url',
+    'annotation',
+  ],
+  booklet: ['howpublished', 'address', 'month', 'url', 'annotation'],
   conference: [
     'editor',
     'volume',
@@ -26,8 +34,20 @@ const extraEntryFields = {
     'address',
     'organisation',
     'publisher',
+    'month',
+    'url',
+    'annotation',
   ],
-  inBook: ['volime', 'series', 'type', 'address', 'edition'],
+  inBook: [
+    'volime',
+    'series',
+    'type',
+    'address',
+    'edition',
+    'month',
+    'url',
+    'annotation',
+  ],
   inCollection: [
     'editor',
     'volume',
@@ -38,6 +58,9 @@ const extraEntryFields = {
     'pages',
     'edition',
     'organization',
+    'month',
+    'url',
+    'annotation',
   ],
   inProceedings: [
     'editor',
@@ -47,12 +70,15 @@ const extraEntryFields = {
     'address',
     'organization',
     'publisher',
+    'month',
+    'url',
+    'annotation',
   ],
-  manual: ['organization', 'address', 'edititon'],
-  mastersThesis: ['school', 'type', 'address'],
-  misc: ['howpublished'],
+  manual: ['organization', 'address', 'edititon', 'month', 'url', 'annotation'],
+  mastersThesis: ['school', 'type', 'address', 'month', 'url', 'annotation'],
+  misc: ['howpublished', 'month', 'url', 'annotation'],
   online: ['url'],
-  phdThesis: ['type', 'address'],
+  phdThesis: ['type', 'address', 'month', 'url', 'annotation'],
   proceedings: [
     'editor',
     'volume',
@@ -60,6 +86,9 @@ const extraEntryFields = {
     'address',
     'publisher',
     'organization',
+    'month',
+    'url',
+    'annotation',
   ],
 };
 
@@ -69,9 +98,6 @@ for (let [key, value] of Object.entries(requiredEntryFields)) {
   requiredEntryFields[key].push('year');
 }
 
-for (let key of Object.keys(extraEntryFields)) {
-  extraEntryFields[key].push('month');
-}
 const entryFields = {};
 Object.keys(requiredEntryFields).forEach((key) => {
   entryFields[key] = {
