@@ -55,7 +55,7 @@ const extractFile = async (filename) => {
 
   console.log('SENT');
   const res = await fetch(
-    `cloud.science-miner.com/grobid/api/processReferences`,
+    `https://ec2-3-136-41-26.us-east-2.compute.amazonaws.com/processReferences`,
     {
       method: 'POST',
       body: formData,
