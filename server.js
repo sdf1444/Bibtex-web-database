@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const app = express();
+const nodemailer = require('nodemailer');
 
 // models
 const Database = require('./models/Database');

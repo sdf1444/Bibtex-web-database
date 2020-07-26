@@ -6,8 +6,6 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const config = require('../config');
 const { check, validationResult } = require('express-validator');
-const nodemailer = require('nodemailer');
-const smtpTransport = require('nodemailer-smtp-transport');
 
 const User = require('../models/User');
 const { error } = require('console');
