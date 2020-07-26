@@ -222,58 +222,6 @@ router.delete('/:id', auth, async (req, res) => {
     });
 });
 
-router.post('/:email', async (req, res) => {
-  const { email } = req.params;
-  let user;
-  try {
-    user = await User.findOne({ email });
-
-    user.save(function (err) {
-      if (err) {
-        return res.status(500).send({ message: err.message });
-      }
-    });
-
-    const transporter = nodemailer.createTransport(
-      smtpTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        secure: true,
-        auth: {
-          user: 'spencerchief@gmail.com',
-          pass: 'Boggie234!',
-        },
-        tls: {
-          rejectUnauthorized: false,
-        },
-      })
-    );
-
-    const mailOptions = {
-      from: 'bibtexwebdatabase@hotmail.com',
-      to: `${user.email}`,
-      subject: 'Link to Reset Password',
-      text:
-        'You are recieving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
-        'Please click on the following link or paste this into your browser to complete the process:\n\n' +
-        `http://localhost:3000/reset/${user._id}\n\n` +
-        'If you did not request this, please ignore this email and your password will remain unchanged.\n',
-    };
-
-    transporter.sendMail(mailOptions, (err, response) => {
-      if (err) {
-        console.error('there was an error: ', err);
-      } else {
-        console.log('here is the res: ', response);
-        res.status(200).json('recovery email sent');
-      }
-    });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
-  }
-});
-
 router.put('/updatePassword/:id', async (req, res) => {
   let updatePassword = {
     password: bcrypt.hashSync(req.body.password, 10),
