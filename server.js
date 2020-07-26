@@ -32,7 +32,7 @@ mongoose
   });
 
 // routes
-const auth = require('./routes/auth');
+const authentication = require('./routes/authentication');
 const user = require('./routes/user');
 const database = require('./routes/database');
 const papers = require('./routes/papers');
@@ -83,7 +83,7 @@ app.use(
 );
 app.use(cors());
 app.use('/api/user', user);
-app.use('/api/auth', auth);
+app.use('/api/auth', authentication);
 app.use('/api/database', database);
 app.use('/api/papers', papers);
 app.use('/api/group', group);
