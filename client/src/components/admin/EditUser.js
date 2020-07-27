@@ -154,6 +154,7 @@ const EditUser = (props) => {
         <Form.Group controlId='Email'>
           <Form.Label>Email</Form.Label>
           <Form.Control
+            unique
             required
             type='email'
             value={state.email}
@@ -186,6 +187,8 @@ const EditUser = (props) => {
         <Form.Group controlId='Password'>
           <Form.Label>New Password</Form.Label>
           <Form.Control
+            required
+            minLength='6'
             type='password'
             autoComplete='new-password'
             aria-autocomplete='none'
