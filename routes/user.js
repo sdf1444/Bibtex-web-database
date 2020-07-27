@@ -250,7 +250,7 @@ router.post('/:email', async (req, res) => {
       text:
         'You are recieving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
         'Please click on the following link or paste this into your browser to complete the process:\n\n' +
-        `http://localhost:3000/reset/${user._id}\n\n` +
+        `https://peaceful-earth-10434.herokuapp.com/reset/${user._id}\n\n` +
         'If you did not request this, please ignore this email and your password will remain unchanged.\n',
     };
 
