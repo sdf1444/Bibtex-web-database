@@ -238,15 +238,15 @@ router.post('/:email', async (req, res) => {
     const transporter = nodemailer.createTransport({
       service: 'Gmail',
       auth: {
-        user: 'bibtexwebdatabase@gmail.com',
+        user: 'bibtexwebdatabase@googlemail.com',
         pass: 'boggie234',
       },
     });
 
     const mailOptions = {
-      from: 'bibtexwebdatabase@gmail.com',
+      from: 'bibtexwebdatabase@googlemail.com',
       to: `${user.email}`,
-      subject: 'Link to Reset Password',
+      subject: 'Bibtex web database password reset link',
       text:
         'You are recieving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
         'Please click on the following link or paste this into your browser to complete the process:\n\n' +
