@@ -82,6 +82,7 @@
   height: 46px;
   font-style: italic;
   margin-left: 50px;
+  z-index: 1;
 }
 
 .activated {
