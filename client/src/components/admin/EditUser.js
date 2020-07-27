@@ -187,7 +187,6 @@ const EditUser = (props) => {
         <Form.Group controlId='Password'>
           <Form.Label>New Password</Form.Label>
           <Form.Control
-            required
             minLength='6'
             type='password'
             autoComplete='new-password'

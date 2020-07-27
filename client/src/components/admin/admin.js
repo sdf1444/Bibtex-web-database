@@ -130,7 +130,7 @@ const Admin = (props) => {
   console.log(state.searchParam);
   console.log(state.search);
   return (
-    <div>
+    <div className='admin'>
       <div className='buttons'>
         <Link to='/create-users' className='create-btn button-big'>
           Create User
