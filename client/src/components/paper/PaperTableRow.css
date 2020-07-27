@@ -2,7 +2,8 @@
     display: flex;
 }
 
-.paper-buttons button {
+.paper-buttons button,
+.paper-buttons a {
     margin-left: 10px;
     font-size: 15px;
     width: 80px;
@@ -30,4 +31,17 @@
 
 .extract-btn:active {
     background-color: rgb(184, 135, 12);
+}
+
+.download-paper-btn {
+    background-color: rgb(71, 114, 255);
+    color: white;
+}
+
+.download-paper-btn:hover {
+    color: white;
+}
+
+.download-paper-btn:active {
+    background-color: rgb(0, 60, 255);
 }

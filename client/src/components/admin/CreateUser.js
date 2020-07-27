@@ -41,6 +41,7 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
             placeholder='Name'
             name='name'
             value={name}
+            required
             onChange={onChange}
           />
         </div>
@@ -50,6 +51,7 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
             placeholder='Email Address'
             name='email'
             unique
+            required
             value={email}
             onChange={onChange}
           />
@@ -59,6 +61,7 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
             type='text'
             placeholder='Role'
             name='role'
+            required
             value={role}
             onChange={onChange}
           />
@@ -68,6 +71,7 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
             type='text'
             placeholder='Username'
             name='username'
+            required
             value={username}
             onChange={onChange}
           />
@@ -77,6 +81,8 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
             type='password'
             placeholder='Password'
             name='password'
+            required
+            minLength='6'
             value={password}
             onChange={onChange}
           />
@@ -86,6 +92,7 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
             type='password'
             placeholder='Confirm Password'
             name='password2'
+            required
             value={password2}
             onChange={onChange}
           />
