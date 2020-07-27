@@ -11,6 +11,7 @@ const smtpTransport = require('nodemailer-smtp-transport');
 
 const User = require('../models/User');
 const { error } = require('console');
+const { getMaxListeners } = require('../models/User');
 
 // @route     POST api/users/register-user
 // @desc        Register user
@@ -234,20 +235,13 @@ router.post('/:email', async (req, res) => {
       }
     });
 
-    const transporter = nodemailer.createTransport(
-      smtpTransport({
-        host: 'smtp.office365.com',
-        port: 587,
-        secure: false,
-        auth: {
-          user: config.email_address,
-          pass: config.email_password,
-        },
-        tls: {
-          rejectUnauthorized: false,
-        },
-      })
-    );
+    const transporter = nodemailer.createTransport({
+      service: 'Gmail',
+      auth: {
+        user: 'spencerchief@gmail.com',
+        pass: 'Boggie234!',
+      },
+    });
 
     const mailOptions = {
       from: 'bibtexwebdatabase@hotmail.com',
