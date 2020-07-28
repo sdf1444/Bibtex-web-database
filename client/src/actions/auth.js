@@ -8,7 +8,7 @@ import {
   AUTH_ERROR,
   LOGIN_SUCCESS,
   LOGIN_FAIL,
-  LOGOUT,
+  LOGOUT
 } from './types';
 import setAuthToken from '../utils/setAuthToken';
 
@@ -19,15 +19,17 @@ export const loadUser = () => async (dispatch) => {
   }
 
   try {
-    const res = await axios.get('/api/auth');
+    const res = await axios.get(
+      'https://glacial-reaches-39869.herokuapp.com/api/auth'
+    );
 
     dispatch({
       type: USER_LOADED,
-      payload: res.data.response,
+      payload: res.data.response
     });
   } catch (err) {
     dispatch({
-      type: AUTH_ERROR,
+      type: AUTH_ERROR
     });
   }
 };
@@ -38,18 +40,22 @@ export const register = ({ name, email, role, username, password }) => async (
 ) => {
   const config = {
     headers: {
-      'Content-Type': 'application/json',
-    },
+      'Content-Type': 'application/json'
+    }
   };
 
   const body = JSON.stringify({ name, email, role, username, password });
 
   try {
-    const res = await axios.post('/api/user/register-user', body, config);
+    const res = await axios.post(
+      'https://glacial-reaches-39869.herokuapp.com/api/user/register-user',
+      body,
+      config
+    );
     console.log('HERE');
     dispatch({
       type: REGISTER_SUCCESS,
-      payload: res.data,
+      payload: res.data
     });
   } catch (err) {
     const errors = err.response.data.errors;
@@ -59,7 +65,7 @@ export const register = ({ name, email, role, username, password }) => async (
     }
 
     dispatch({
-      type: REGISTER_FAIL,
+      type: REGISTER_FAIL
     });
   }
 };
@@ -68,15 +74,19 @@ export const register = ({ name, email, role, username, password }) => async (
 export const login = (username, password) => async (dispatch) => {
   const config = {
     headers: {
-      'Content-Type': 'application/json',
-    },
+      'Content-Type': 'application/json'
+    }
   };
 
   try {
-    const res = await axios.post('/api/auth', { username, password }, config);
+    const res = await axios.post(
+      'https://glacial-reaches-39869.herokuapp.com/api/auth',
+      { username, password },
+      config
+    );
     dispatch({
       type: LOGIN_SUCCESS,
-      payload: res.data.response,
+      payload: res.data.response
     });
 
     dispatch(loadUser());
@@ -88,7 +98,7 @@ export const login = (username, password) => async (dispatch) => {
     }
 
     dispatch({
-      type: LOGIN_FAIL,
+      type: LOGIN_FAIL
     });
   }
 };

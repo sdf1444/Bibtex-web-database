@@ -3,7 +3,9 @@ import { uploadDatabase } from './editor';
 
 export const getFiles = async () => {
   try {
-    const res = await axios.get('/api/papers/files');
+    const res = await axios.get(
+      'https://glacial-reaches-39869.herokuapp.com/api/papers/files'
+    );
     return res;
   } catch (err) {
     return err.response;
@@ -12,7 +14,9 @@ export const getFiles = async () => {
 
 export const deleteFile = async (id) => {
   try {
-    const res = await axios.delete(`/api/papers/files/${id}`);
+    const res = await axios.delete(
+      `https://glacial-reaches-39869.herokuapp.com/api/papers/files/${id}`
+    );
     return res;
   } catch (err) {
     return err.response;
@@ -23,22 +27,26 @@ export const saveFile = async (file, changeProgress) => {
   const data = new FormData();
   data.append('file', file);
   try {
-    const res = await axios.post('/api/papers/files', data, {
-      onUploadProgress: (progressEvent) => {
-        const totalLength = progressEvent.lengthComputable
-          ? progressEvent.total
-          : progressEvent.target.getResponseHeader('content-length') ||
-            progressEvent.target.getResponseHeader(
-              'x-decompressed-content-length'
+    const res = await axios.post(
+      'https://glacial-reaches-39869.herokuapp.com/api/papers/files',
+      data,
+      {
+        onUploadProgress: (progressEvent) => {
+          const totalLength = progressEvent.lengthComputable
+            ? progressEvent.total
+            : progressEvent.target.getResponseHeader('content-length') ||
+              progressEvent.target.getResponseHeader(
+                'x-decompressed-content-length'
+              );
+          console.log('onUploadProgress', totalLength);
+          if (totalLength !== null) {
+            changeProgress(
+              Math.round((progressEvent.loaded * 100) / totalLength)
             );
-        console.log('onUploadProgress', totalLength);
-        if (totalLength !== null) {
-          changeProgress(
-            Math.round((progressEvent.loaded * 100) / totalLength)
-          );
+          }
         }
-      },
-    });
+      }
+    );
     return res;
   } catch (err) {
     return err.response;
@@ -46,9 +54,9 @@ export const saveFile = async (file, changeProgress) => {
 };
 
 const extractFile = async (filename) => {
-  const blob = await fetch(`/api/papers/files/${filename}`).then((res) =>
-    res.blob()
-  );
+  const blob = await fetch(
+    `https://glacial-reaches-39869.herokuapp.com/api/papers/files/${filename}`
+  ).then((res) => res.blob());
 
   const formData = new FormData();
   formData.append('input', blob);
@@ -60,8 +68,8 @@ const extractFile = async (filename) => {
       method: 'POST',
       body: formData,
       headers: {
-        Accept: 'application/x-bibtex',
-      },
+        Accept: 'application/x-bibtex'
+      }
     }
   );
   if (res.status !== 200) return { ok: false, err: 'No references found' };
@@ -97,6 +105,8 @@ export const extractAndUploadBibtex = async (filename, databaseName, group) => {
 };
 
 export const getDatabases = async () => {
-  const res = await axios.get('/api/database');
+  const res = await axios.get(
+    'https://glacial-reaches-39869.herokuapp.com/api/database'
+  );
   return res.data.response;
 };
