@@ -14,7 +14,7 @@ app.use(express.json());
 mongoose
   .connect(
     process.env.MONGODB_URI ||
-      'mongodb://sdf1444:boggie234@cluster0-wq3gs.mongodb.net/bibtex?retryWrites=true&w=majority',
+      'mongodb+srv://sdf1444:boggie234@cluster0-wq3gs.mongodb.net/bibtex?retryWrites=true&w=majority',
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
@@ -22,12 +22,8 @@ mongoose
       useFindAndModify: false
     }
   )
-  .then(function onSuccess() {
-    console.log('The server connected with MongoDB.');
-  })
-  .catch(function onError() {
-    console.log('Error while connecting with MongoDB.');
-  });
+  .then((connect) => console.log('connected to mongodb..'))
+  .catch((e) => console.log('could not connect to mongodb', e));
 
 // Define Routes
 app.use('/api/user', require('./routes/user'));
