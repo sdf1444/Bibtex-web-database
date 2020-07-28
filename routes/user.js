@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const auth = require('../middleware/auth');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const config = require('../config');
+const config = require('config');
 const { check, validationResult } = require('express-validator');
 const nodemailer = require('nodemailer');
 const smtpTransport = require('nodemailer-smtp-transport');
@@ -70,7 +70,7 @@ router.post(
           id: user.id,
         },
       };
-      jwt.sign(payload, config.jwtSecret, (err, token) => {
+      jwt.sign(payload, config.get('jwtSecret'), (err, token) => {
         if (err) throw err;
         res.json({ token });
       });

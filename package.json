@@ -4,18 +4,15 @@
   "description": "bibtex web database",
   "main": "server.js",
   "scripts": {
-    "build": "cd client && npm run build",
-    "install-client": "cd client && npm install",
-    "heroku-postbuild": "npm run install-client && npm run build",
     "start": "node server.js",
     "server": "nodemon server",
     "client": "npm start --prefix client",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
   },
   "author": "Spencer Du",
   "license": "MIT",
   "dependencies": {
-    "@sendgrid/mail": "^7.2.2",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "config": "^3.3.1",
@@ -35,7 +32,6 @@
     "nodemailer-smtp-transport": "^2.7.4",
     "passport": "^0.4.1",
     "passport-google-oauth20": "^2.0.0",
-    "react-app-polyfill": "^1.0.6",
     "styled-components": "^5.1.1"
   },
   "devDependencies": {

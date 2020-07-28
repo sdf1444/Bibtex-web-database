@@ -3,7 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const auth = require('../middleware/auth');
 const jwt = require('jsonwebtoken');
-const config = require('../config');
+const config = require('config');
 const { check, validationResult } = require('express-validator');
 
 const User = require('../models/User');
@@ -54,7 +54,7 @@ router.post(
         },
       };
       const role = user.role;
-      token = jwt.sign(payload, config.jwtSecret);
+      token = jwt.sign(payload, config.get('jwtSecret'));
       res.data = { token, role };
       return next();
     } catch (err) {

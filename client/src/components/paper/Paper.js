@@ -16,26 +16,26 @@ function paperReducer(state, action) {
         isExtracting: true,
         windowMessage: {
           type: 'loading',
-          message: 'Extracting...',
-        },
+          message: 'Extracting...'
+        }
       };
     }
     case 'changeProgress': {
       return {
         ...state,
-        progress: action.progress,
+        progress: action.progress
       };
     }
     case 'setDatabases': {
       return {
         ...state,
-        databases: action.databases,
+        databases: action.databases
       };
     }
     case 'setGroups': {
       return {
         ...state,
-        groups: action.groups,
+        groups: action.groups
       };
     }
     case 'selectGroup': {
@@ -43,7 +43,7 @@ function paperReducer(state, action) {
         ...state,
         selectedGroup: action.value,
         selected: 'new',
-        windowMessage: {},
+        windowMessage: {}
       };
     }
     case 'selectDatabase': {
@@ -51,20 +51,20 @@ function paperReducer(state, action) {
         ...state,
         selected: action.value,
         inputName: action.value !== 'new' ? action.value : '',
-        windowMessage: {},
+        windowMessage: {}
       };
     }
     case 'inputName': {
       return {
         ...state,
         inputName: action.value,
-        windowMessage: {},
+        windowMessage: {}
       };
     }
     case 'searchName': {
       return {
         ...state,
-        searchName: action.value,
+        searchName: action.value
       };
     }
     case 'uploadFile': {
@@ -72,38 +72,38 @@ function paperReducer(state, action) {
       if (!action.file || action.file.type !== 'application/pdf')
         return {
           ...state,
-          uploadedFile: null,
+          uploadedFile: null
         };
       return {
         ...state,
-        uploadedFile: action.file,
+        uploadedFile: action.file
       };
     }
     case 'closeUploaded': {
       return {
         ...state,
-        uploadedFile: null,
+        uploadedFile: null
       };
     }
     case 'saveFile': {
       return {
         ...state,
         isSaving: true,
-        progress: 0,
+        progress: 0
       };
     }
     case 'deleteFile': {
       return {
         ...state,
         isDeleting: true,
-        deletedFile: action.file,
+        deletedFile: action.file
       };
     }
     case 'openWindow': {
       return {
         ...state,
         windowOpened: true,
-        extractedFile: action.file,
+        extractedFile: action.file
       };
     }
     case 'closeWindow': {
@@ -111,7 +111,7 @@ function paperReducer(state, action) {
       return {
         ...state,
         windowOpened: false,
-        windowMessage: {},
+        windowMessage: {}
       };
     }
     case 'finishLoading': {
@@ -120,7 +120,7 @@ function paperReducer(state, action) {
         ...state,
         isLoading: false,
         files: action.files,
-        windowMessage: {},
+        windowMessage: {}
       };
     }
     case 'finishDeleting': {
@@ -128,7 +128,7 @@ function paperReducer(state, action) {
       return {
         ...state,
         isDeleting: false,
-        isLoading: true,
+        isLoading: true
       };
     }
     case 'finishSaving': {
@@ -137,7 +137,7 @@ function paperReducer(state, action) {
         ...state,
         isSaving: false,
         isLoading: true,
-        progress: null,
+        progress: null
       };
     }
     case 'finishExtracting': {
@@ -146,17 +146,17 @@ function paperReducer(state, action) {
           ...state,
           windowMessage: {
             type: 'err',
-            message: action.err,
+            message: action.err
           },
-          isExtracting: false,
+          isExtracting: false
         };
       return {
         ...state,
         isExtracting: false,
         windowMessage: {
           type: 'success',
-          message: 'File uploaded',
-        },
+          message: 'File uploaded'
+        }
       };
     }
     default:
@@ -182,7 +182,7 @@ const Paper = () => {
     selected: null,
     inputName: '',
     searchName: '',
-    windowMessage: {},
+    windowMessage: {}
   };
 
   const [state, dispatch] = useReducer(paperReducer, initialState);
@@ -192,14 +192,14 @@ const Paper = () => {
       const databases = await utils.getDatabases();
       dispatch({
         type: 'setDatabases',
-        databases,
+        databases
       });
     };
     const setGroups = async () => {
       const groups = await getGroups();
       dispatch({
         type: 'setGroups',
-        groups,
+        groups
       });
     };
     setGroups();
@@ -224,7 +224,7 @@ const Paper = () => {
       await Promise.all(promises);
       dispatch({
         type: 'finishLoading',
-        files,
+        files
       });
     };
     if (state.isLoading) loadFiles();
@@ -234,7 +234,7 @@ const Paper = () => {
       const res = await utils.deleteFile(state.deletedFile._id);
       dispatch({
         type: 'finishDeleting',
-        ok: res.data.ok,
+        ok: res.data.ok
       });
     };
     if (state.isDeleting) deleteFile();
@@ -244,13 +244,13 @@ const Paper = () => {
       const res = await utils.saveFile(state.uploadedFile, (n) => {
         dispatch({
           type: 'changeProgress',
-          progress: n,
+          progress: n
         });
       });
       dispatch({
         type: 'finishSaving',
         ok: res.data.ok,
-        file: res.data.response,
+        file: res.data.response
       });
     };
     if (state.isSaving) saveFile();
@@ -261,7 +261,7 @@ const Paper = () => {
         return dispatch({
           type: 'finishExtracting',
           ok: false,
-          err: 'Database name cannot be empty',
+          err: 'Database name cannot be empty'
         });
       }
       console.log(state.inputName);
@@ -276,7 +276,7 @@ const Paper = () => {
         type: 'finishExtracting',
         ok: res.data.ok,
         err: res.data.err,
-        file: res.data.response,
+        file: res.data.response
       });
     };
     if (state.isExtracting) extractBibtex();
@@ -284,11 +284,11 @@ const Paper = () => {
     state.isExtracting,
     state.extractedFile,
     state.inputName,
-    state.selectedGroup,
+    state.selectedGroup
   ]);
 
   if (state.isLoading || !state.files) {
-    return <div className='Paper'>Loading</div>;
+    return <div className="Paper">Loading</div>;
   }
 
   const fileFilter = (file) => {
@@ -309,7 +309,7 @@ const Paper = () => {
     : 'No file selected';
 
   return (
-    <div className='Paper'>
+    <div className="Paper">
       <div
         className={
           state.windowOpened ? 'paper-layout' : 'paper-layout disabled'
@@ -327,49 +327,49 @@ const Paper = () => {
         selected={state.selected}
         dispatch={dispatch}
       />
-      <div className='w3-light-grey'>
+      <div className="w3-light-grey">
         <div
           className={`w3-container w3-blue w3-center ${
             state.progress ? '' : 'disabled'
           }`}
           style={{
-            width: state.progress || 0 + '%',
+            width: state.progress || 0 + '%'
           }}
         >
           {state.progress || 0}%
         </div>
       </div>
-      <div className='paper-header'>
-        <div className='search-label'>Search by file name: </div>
+      <div className="paper-header">
+        <div className="search-label">Search by file name: </div>
         <input
-          className='search-paper'
+          className="search-paper"
           value={state.searchName}
           onChange={(e) =>
             dispatch({
               type: 'searchName',
-              value: e.target.value,
+              value: e.target.value
             })
           }
         ></input>
         <input
-          type='file'
-          id='paper-file'
-          className='upload-input'
+          type="file"
+          id="paper-file"
+          className="upload-input"
           onChange={(e) =>
             dispatch({
               type: 'uploadFile',
-              file: e.target.files[0],
+              file: e.target.files[0]
             })
           }
         ></input>
-        <label htmlFor='paper-file' className='upload-label'>
+        <label htmlFor="paper-file" className="upload-label">
           Choose a file
         </label>
         <button
           className={`upload-file-btn ${state.uploadedFile ? '' : 'disabled'}`}
           onClick={(e) =>
             dispatch({
-              type: 'saveFile',
+              type: 'saveFile'
             })
           }
         >
@@ -386,15 +386,15 @@ const Paper = () => {
           className={`remove-uploaded ${state.uploadedFile ? '' : 'disabled'}`}
           onClick={(e) =>
             dispatch({
-              type: 'closeUploaded',
+              type: 'closeUploaded'
             })
           }
         >
           x
         </button>
       </div>
-      <div className='paper-wrapper'>
-        <Table className='paper-table' striped bordered hover>
+      <div className="paper-wrapper">
+        <Table className="paper-table" striped bordered hover>
           <thead>
             <tr>
               <th>Paper</th>
