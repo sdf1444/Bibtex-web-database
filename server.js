@@ -15,18 +15,18 @@ const Group = require('./models/Group');
 const Paper = require('./models/Paper');
 
 mongoose
-    .connect(config.db, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        useCreateIndex: true,
-        useFindAndModify: false,
-    })
-    .then(function onSuccess() {
-        console.log('The server connected with MongoDB.');
-    })
-    .catch(function onError() {
-        console.log('Error while connecting with MongoDB.');
-    });
+  .connect(config.db, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    useFindAndModify: false
+  })
+  .then(function onSuccess() {
+    console.log('The server connected with MongoDB.');
+  })
+  .catch(function onError() {
+    console.log('Error while connecting with MongoDB.');
+  });
 
 // routes
 const auth = require('./routes/auth');
@@ -37,23 +37,30 @@ const group = require('./routes/group');
 
 /** Seting up server to accept cross-origin browser requests */
 app.use(function (req, res, next) {
-    //allow cross origin requests
-    res.setHeader(
-        'Access-Control-Allow-Methods',
-        'POST, PUT, OPTIONS, DELETE, GET'
-    );
-    res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
-    res.header(
-        'Access-Control-Allow-Headers',
-        'Origin, X-Requested-With, Content-Type, Accept'
-    );
-    res.header('Access-Control-Allow-Credentials', true);
-    next();
+  //allow cross origin requests
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'POST, PUT, OPTIONS, DELETE, GET'
+  );
+  res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept'
+  );
+  res.header('Access-Control-Allow-Credentials', true);
+  next();
 });
 
 // Serve static files from the React app
-app.use('/public', express.static(path.join(__dirname, 'client/public')));
-app.use(express.static(path.join(__dirname, 'client/build')));
+if (
+  process.env.NODE_ENV === 'production' ||
+  process.env.NODE_ENV === 'staging'
+) {
+  app.use(express.static('client/build'));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname + '/client/build/index.html'));
+  });
+}
 app.use(bodyParser.json());
 app.use(logger('dev'));
 
@@ -64,9 +71,9 @@ app.get('/', (req, res) => res.send('API Running'));
 
 // Define Routes
 app.use(
-    bodyParser.urlencoded({
-        extended: true,
-    })
+  bodyParser.urlencoded({
+    extended: true
+  })
 );
 app.use(cors());
 app.use('/api/user', user);
@@ -83,29 +90,29 @@ app.use('/api/group', group);
 
 // error handler middleware
 app.use((req, res) => {
-    if (!res.data) {
-        return res.status(404).send({
-            ok: false,
-            error: {
-                reason: 'Invalid Endpoint',
-                code: 404
-            }
-        })
-    }
-    if (res.data.err) {
-        return res.status(res.data.status || 400).send({
-            ok: false,
-            error: {
-                reason: res.data.err,
-                code: res.data.status || 400
-            }
-        })
-    }
-    return res.status(200).send({
-        ok: true,
-        response: res.data
-    })
-})
+  if (!res.data) {
+    return res.status(404).send({
+      ok: false,
+      error: {
+        reason: 'Invalid Endpoint',
+        code: 404
+      }
+    });
+  }
+  if (res.data.err) {
+    return res.status(res.data.status || 400).send({
+      ok: false,
+      error: {
+        reason: res.data.err,
+        code: res.data.status || 400
+      }
+    });
+  }
+  return res.status(200).send({
+    ok: true,
+    response: res.data
+  });
+});
 
 const PORT = process.env.PORT || 5000;
 
