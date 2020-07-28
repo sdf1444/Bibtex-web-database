@@ -1,6 +1,0 @@
-{
-  "mongoURI": "mongodb+srv://sdf1444:boggie234@cluster0-wq3gs.mongodb.net/bibtex?retryWrites=true&w=majority",
-  "jwtSecret": "mysecrettoken",
-  "githubClientId": "e3b28a62646cda94c04a",
-  "githubSecret": "84127edd84690c17aacec5da86e78702c897c447"
-}

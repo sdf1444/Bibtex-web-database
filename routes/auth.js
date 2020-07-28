@@ -3,7 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const auth = require('../middleware/auth');
 const jwt = require('jsonwebtoken');
-const config = require('config');
+const config = require('../config');
 const { check, validationResult } = require('express-validator');
 
 const User = require('../models/User');
@@ -29,7 +29,7 @@ router.post(
   '/',
   [
     check('username', 'Username is required').exists(),
-    check('password', 'Password is required').exists(),
+    check('password', 'Password is required').exists()
   ],
   async (req, res, next) => {
     const errors = validationResult(req);
@@ -50,11 +50,11 @@ router.post(
       }
       const payload = {
         user: {
-          id: user.id,
-        },
+          id: user.id
+        }
       };
       const role = user.role;
-      token = jwt.sign(payload, config.get('jwtSecret'));
+      token = jwt.sign(payload, config.jwtSecret);
       res.data = { token, role };
       return next();
     } catch (err) {

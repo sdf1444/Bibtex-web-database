@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const auth = require('../middleware/auth');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const config = require('config');
+const config = require('../config');
 const { check, validationResult } = require('express-validator');
 const nodemailer = require('nodemailer');
 const smtpTransport = require('nodemailer-smtp-transport');
@@ -27,7 +27,7 @@ router.post(
     check(
       'password',
       'Please enter a password with 6 or more characters'
-    ).isLength({ min: 6 }),
+    ).isLength({ min: 6 })
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -56,7 +56,7 @@ router.post(
         email,
         role,
         username,
-        password,
+        password
       });
 
       const salt = await bcrypt.genSalt(10);
@@ -67,10 +67,10 @@ router.post(
 
       const payload = {
         user: {
-          id: user.id,
-        },
+          id: user.id
+        }
       };
-      jwt.sign(payload, config.get('jwtSecret'), (err, token) => {
+      jwt.sign(payload, config.jwtSecret, (err, token) => {
         if (err) throw err;
         res.json({ token });
       });
@@ -110,7 +110,7 @@ router.get('/', async (req, res) => {
     })
     .catch((err) => {
       res.status(500).send({
-        message: err.message || 'Some error occurred while retrieving users',
+        message: err.message || 'Some error occurred while retrieving users'
       });
     });
 });
@@ -139,12 +139,12 @@ router.put('/:id', auth, async (req, res) => {
     name: req.body.name,
     email: req.body.email,
     role: req.body.role,
-    username: req.body.username,
+    username: req.body.username
   };
 
   User.findOneAndUpdate({ _id: req.params.id }, updatedUser, {
     runValidators: true,
-    context: 'query',
+    context: 'query'
   })
     .then((oldResult) => {
       User.findOne({ _id: req.params.id })
@@ -157,8 +157,8 @@ router.put('/:id', auth, async (req, res) => {
               name: newResult.name,
               email: newResult.email,
               role: newResult.role,
-              username: newResult.username,
-            },
+              username: newResult.username
+            }
           });
         })
         .catch((err) => {
@@ -214,8 +214,8 @@ router.delete('/:id', auth, async (req, res) => {
           email: result.email,
           role: result.role,
           username: result.username,
-          password: result.password,
-        },
+          password: result.password
+        }
       });
     })
     .catch((err) => {
@@ -239,8 +239,8 @@ router.post('/:email', async (req, res) => {
       service: 'Gmail',
       auth: {
         user: 'spencerchief@googlemail.com',
-        pass: 'Boggie234!',
-      },
+        pass: 'Boggie234!'
+      }
     });
 
     const mailOptions = {
@@ -251,7 +251,7 @@ router.post('/:email', async (req, res) => {
         'You are recieving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
         'Please click on the following link or paste this into your browser to complete the process:\n\n' +
         `https://peaceful-earth-10434.herokuapp.com/reset/${user._id}\n\n` +
-        'If you did not request this, please ignore this email and your password will remain unchanged.\n',
+        'If you did not request this, please ignore this email and your password will remain unchanged.\n'
     };
 
     transporter.sendMail(mailOptions, (err, response) => {
@@ -270,19 +270,19 @@ router.post('/:email', async (req, res) => {
 
 router.put('/updatePassword/:id', async (req, res) => {
   let updatePassword = {
-    password: bcrypt.hashSync(req.body.password, 10),
+    password: bcrypt.hashSync(req.body.password, 10)
   };
 
   User.findOneAndUpdate({ _id: req.params.id }, updatePassword, {
     runValidators: true,
-    context: 'query',
+    context: 'query'
   })
     .then((oldResult) => {
       User.findOne({ _id: req.params.id })
         .then((newResult) => {
           res.json({
             success: true,
-            msg: `Successfully updated!`,
+            msg: `Successfully updated!`
           });
         })
         .catch((err) => {
