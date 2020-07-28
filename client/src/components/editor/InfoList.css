@@ -64,3 +64,10 @@
     display: flex;
     justify-content: center;
 }
+
+.info-edit-btn {
+    width: 100%;
+    height: 46px;
+    font-size: 18px;
+    margin-top: 10px;
+}

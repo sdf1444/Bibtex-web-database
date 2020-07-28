@@ -13,33 +13,33 @@ function adminReducer(state, action) {
     case 'setCurrentUser': {
       return {
         ...state,
-        currentUser: action.user,
+        currentUser: action.user
       };
     }
     case 'delete': {
       return {
         ...state,
         isDeleting: true,
-        deletedUser: action.user,
+        deletedUser: action.user
       };
     }
     case 'search': {
       return {
         ...state,
-        search: action.value,
+        search: action.value
       };
     }
     case 'searchParam': {
       return {
         ...state,
-        searchParam: action.value,
+        searchParam: action.value
       };
     }
     case 'finishLoading': {
       return {
         ...state,
         isLoading: false,
-        users: action.users,
+        users: action.users
       };
     }
     case 'finishDeleting': {
@@ -50,7 +50,7 @@ function adminReducer(state, action) {
         ...state,
         isDeleting: false,
         isLoading: true,
-        deletedUser: null,
+        deletedUser: null
       };
     }
     default:
@@ -61,7 +61,7 @@ function adminReducer(state, action) {
 const searchParams = [
   { key: 1, text: 'Name', value: 'name' },
   { key: 2, text: 'Email', value: 'email' },
-  { key: 3, text: 'Username', value: 'username' },
+  { key: 3, text: 'Username', value: 'username' }
 ];
 
 const Admin = (props) => {
@@ -72,7 +72,7 @@ const Admin = (props) => {
     deletedUser: null,
     users: null,
     search: '',
-    searchParam: 'name',
+    searchParam: 'name'
   };
 
   const [state, dispatch] = useReducer(adminReducer, initialState);
@@ -92,7 +92,7 @@ const Admin = (props) => {
         dispatch({
           type: 'finishLoading',
           users: res.data,
-          ok: true,
+          ok: true
         });
       });
     if (state.isLoading) fetchUsers();
@@ -103,7 +103,7 @@ const Admin = (props) => {
       dispatch({
         type: 'finishDeleting',
         user: res.data,
-        ok: true,
+        ok: true
       });
     };
     if (state.isDeleting) deleteUser();
@@ -114,7 +114,7 @@ const Admin = (props) => {
   if (state.currentUser.role !== 'admin') {
     return (
       <div>
-        <div className='warning'>You don't have access to this page</div>
+        <div className="warning">You don't have access to this page</div>
       </div>
     );
   }
@@ -130,13 +130,13 @@ const Admin = (props) => {
   console.log(state.searchParam);
   console.log(state.search);
   return (
-    <div className='admin'>
-      <div className='buttons'>
-        <Link to='/create-users' className='create-btn button-big'>
+    <div className="admin">
+      <div className="buttons">
+        <Link to="/create-users" className="create-btn button-big">
           Create User
         </Link>
-        <div className='select-param'>
-          <Menu compact className='select-param'>
+        <div className="select-param">
+          <Menu compact className="select-param">
             <Dropdown
               value={state.searchParam}
               options={searchParams}
@@ -145,25 +145,25 @@ const Admin = (props) => {
               onChange={(e, data) =>
                 dispatch({
                   type: 'searchParam',
-                  value: data.value,
+                  value: data.value
                 })
               }
             ></Dropdown>
           </Menu>
         </div>
         <input
-          className='search'
-          placeholder='Enter a value'
+          className="search"
+          placeholder="Enter a value"
           value={state.search}
           onChange={(e) =>
             dispatch({
               type: 'search',
-              value: e.target.value,
+              value: e.target.value
             })
           }
         ></input>
       </div>
-      <div className='table-wrapper'>
+      <div className="table-wrapper">
         <Table striped bordered hover>
           <thead>
             <tr>

@@ -30,7 +30,7 @@ const InfoList = (props) => {
         </div>
     ))
     entryFields[props.entry.entryType].extra.forEach(tag => infoList.push(
-        <div className="info info-required" key={tag}>
+        <div className="info info-extra" key={tag}>
             <div className="info-key" data-tag={tag}>{tag}:</div>
             <input className="info-value" value={props.entryChanges.entryTags[tag] || ''}
             readOnly={!props.isSelectedAllowed} onChange={e => props.dispatch({ 
@@ -44,6 +44,10 @@ const InfoList = (props) => {
     return (
         <div className="info-div">
             <div className="info-head">@{props.entry.entryType.toLowerCase()}</div>
+            <button className="info-edit-btn"
+            onClick={e => props.dispatch({
+                type: 'openWindow'
+            })}>Open in new window</button>
             <div className="info-body">
                 {infoList}
             </div>

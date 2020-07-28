@@ -1,132 +1,131 @@
 .paper-window {
-  width: 300px;
-  padding-left: 20px;
-  padding-right: 20px;
-  position: absolute;
-  top: 60%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: white;
-  background-color: #f2f2f2;
+    width: 500px;
+    padding-left: 20px;
+    padding-right: 20px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #f2f2f2;
 }
 
 .disabled {
-  display: none;
+    display: none;
 }
 
 .paper-window-file {
-  font-weight: bold;
-  font-size: 24px;
-  margin-top: 10px;
+    font-weight: bold;
+    font-size: 24px;
+    margin-top: 10px;
 }
 
 .select-group-label,
 .select-database-label {
-  font-size: 18px;
-  font-style: italic;
-  margin-top: 10px;
-  font-weight: 600;
+    font-size: 18px;
+    font-style: italic;
+    margin-top: 10px;
+    font-weight: 600;
 }
 
 .select-group-btn {
-  max-height: 400px;
-  width: 200px;
-  overflow: hidden;
+    max-height: 400px;
+    width: 200px;
+    overflow: hidden;
 }
 
 .select-group {
-  width: 200px;
-  height: 46px;
-  padding-left: 5px;
-  font-size: 18px;
-  border: none;
-  outline: none;
+    width: 200px;
+    height: 46px;
+    padding-left: 5px;
+    font-size: 18px;
+    border: none;
+    outline: none;
 }
 
 .select-group option:hover {
-  border: none;
-  background-color: grey;
+    border: none;
+    background-color: grey;
 }
 
 .select-database-btn {
-  max-height: 400px;
-  width: 200px;
-  overflow: hidden;
+    max-height: 400px;
+    width: 200px;
+    overflow: hidden;
 }
 
 .select-database {
-  width: 200px;
-  height: 46px;
-  padding-left: 5px;
-  font-size: 18px;
-  border: none;
-  outline: none;
+    width: 200px;
+    height: 46px;
+    padding-left: 5px;
+    font-size: 18px;
+    border: none;
+    outline: none;
 }
 
 .select-database option:hover {
-  border: none;
-  background-color: grey;
+    border: none;
+    background-color: grey;
 }
 
 .name-label {
-  margin-top: 20px;
-  font-size: 15px;
+    margin-top: 20px;
+    font-size: 15px;
 }
 
 .name-input {
-  width: 100%;
-  padding-left: 5px;
-  font-size: 18px;
-  height: 46px;
-  border: none;
-  outline: none;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  background-color: rgb(255, 255, 255);
+    width: 100%;
+    padding-left: 5px;
+    font-size: 18px;
+    height: 46px;
+    border: none;
+    outline: none;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, .25);
+    background-color: rgb(255, 255, 255);
 }
 
 .name-input:focus {
-  border: 2px solid rgb(255, 155, 62);
-  box-shadow: 0px 4px 4px rgba(255, 94, 0, 0.25);
+    border: 2px solid rgb(255, 155, 62);
+    box-shadow: 0px 4px 4px rgba(255, 94, 0, 0.25);
 }
 
 .paper-extract {
-  margin-top: 20px;
-  margin-bottom: 20px;
-  border: none;
-  outline: none;
-  font-size: 18px;
-  width: 150px;
-  height: 46px;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  background-color: rgb(0, 97, 224);
-  color: white;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border: none;
+    outline: none;
+    font-size: 18px;
+    width: 150px;
+    height: 46px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, .25);
+    background-color: rgb(0, 97, 224);
+    color: white;
 }
 
 .paper-extract:active {
-  outline: none;
-  border: none;
-  background-color: rgb(0, 66, 153);
+    outline: none;
+    border: none;
+    background-color: rgb(0, 66, 153);;
 }
 
 .paper-extract:focus {
-  outline: none;
-  border: none;
+    outline: none;
+    border: none;
 }
 
 .message-div {
-  margin-top: 10px;
-  color: white;
-  text-align: center;
+    margin-top: 10px;
+    color: white;
+    text-align: center;
 }
 
 .loading {
-  background-color: rgb(68, 68, 68);
+    background-color: rgb(68, 68, 68);
 }
 
 .success {
-  background-color: rgb(0, 189, 0);
+    background-color: rgb(0, 189, 0);
 }
 
 .err {
-  background-color: rgb(255, 52, 52);
+    background-color: rgb(255, 52, 52);
 }
