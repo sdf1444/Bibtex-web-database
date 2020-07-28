@@ -56,12 +56,9 @@ app.use(function (req, res, next) {
 
 // Serve static files from the React app
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static('client/build'));
+  app.use('/public', express.static(path.join(__dirname, 'client/public')));
+  app.use(express.static(path.join(__dirname, 'client/build')));
 }
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, './client/build/index.html'));
-});
 
 app.use(bodyParser.json());
 app.use(logger('dev'));
