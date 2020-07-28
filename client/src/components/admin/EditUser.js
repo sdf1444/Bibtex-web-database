@@ -13,13 +13,13 @@ function editUserDispater(state, action) {
       return {
         ...state,
         messages: [],
-        clearing: false,
+        clearing: false
       };
     }
     case 'save': {
       return {
         ...state,
-        isSaving: true,
+        isSaving: true
       };
     }
     case 'finishSaving': {
@@ -36,7 +36,7 @@ function editUserDispater(state, action) {
         ...state,
         isSaving: false,
         clearing: true,
-        isLoading,
+        isLoading
       };
     }
     case 'changePassword': {
@@ -47,7 +47,7 @@ function editUserDispater(state, action) {
       return {
         ...state,
         isLoading: true,
-        password: '',
+        password: ''
       };
     }
     case 'finishLoading': {
@@ -57,7 +57,7 @@ function editUserDispater(state, action) {
         name: action.name,
         email: action.email,
         role: action.role,
-        username: action.username,
+        username: action.username
       };
     }
     case 'name':
@@ -85,7 +85,7 @@ const EditUser = (props) => {
     email: '',
     role: '',
     username: '',
-    password: '',
+    password: ''
   };
   const [state, dispatch] = useReducer(editUserDispater, initialState);
 
@@ -100,7 +100,7 @@ const EditUser = (props) => {
         name: res.data.name,
         email: res.data.email,
         role: res.data.role,
-        username: res.data.username,
+        username: res.data.username
       });
     });
   }, [props.match.params.id]);
@@ -111,7 +111,7 @@ const EditUser = (props) => {
         name: state.name,
         email: state.email,
         role: state.role,
-        username: state.username,
+        username: state.username
       };
       const res = await updateUser(
         userObject,
@@ -120,7 +120,7 @@ const EditUser = (props) => {
       );
       dispatch({
         type: 'finishSaving',
-        ...res,
+        ...res
       });
     };
     if (state.isSaving) saveUser();
@@ -131,7 +131,7 @@ const EditUser = (props) => {
     state.role,
     state.username,
     state.password,
-    props.match.params.id,
+    props.match.params.id
   ]);
 
   const onFormSubmit = (e) => {
@@ -140,32 +140,29 @@ const EditUser = (props) => {
   };
 
   return (
-    <div className='form-wrapper'>
-      <Form onSubmit={onFormSubmit} autoComplete='off'>
-        <Form.Group controlId='Name'>
+    <div className="form-wrapper">
+      <Form onSubmit={onFormSubmit} autoComplete="off">
+        <Form.Group controlId="Name">
           <Form.Label>Name</Form.Label>
           <Form.Control
-            required
-            type='text'
+            type="text"
             value={state.name}
             onChange={(e) => dispatch({ type: 'name', value: e.target.value })}
           />
         </Form.Group>
-        <Form.Group controlId='Email'>
+        <Form.Group controlId="Email">
           <Form.Label>Email</Form.Label>
           <Form.Control
             unique
-            required
-            type='email'
+            type="email"
             value={state.email}
             onChange={(e) => dispatch({ type: 'email', value: e.target.value })}
           />
         </Form.Group>
-        <Form.Group controlId='Role'>
+        <Form.Group controlId="Role">
           <Form.Label>Role</Form.Label>
           <Form.Control
-            required
-            as='select'
+            as="select"
             value={state.role}
             onChange={(e) => dispatch({ type: 'role', value: e.target.value })}
           >
@@ -173,35 +170,34 @@ const EditUser = (props) => {
             <option>admin</option>
           </Form.Control>
         </Form.Group>
-        <Form.Group controlId='Username'>
+        <Form.Group controlId="Username">
           <Form.Label>Username</Form.Label>
           <Form.Control
-            required
-            type='text'
+            type="text"
             value={state.username}
             onChange={(e) =>
               dispatch({ type: 'username', value: e.target.value })
             }
           />
         </Form.Group>
-        <Form.Group controlId='Password'>
+        <Form.Group controlId="Password">
           <Form.Label>New Password</Form.Label>
           <Form.Control
-            minLength='6'
-            type='password'
-            autoComplete='new-password'
-            aria-autocomplete='none'
+            minLength="6"
+            type="password"
+            autoComplete="new-password"
+            aria-autocomplete="none"
             value={state.password}
             onChange={(e) =>
               dispatch({ type: 'password', value: e.target.value })
             }
           />
         </Form.Group>
-        <Button variant='danger' size='lg' block='block' type='submit'>
+        <Button variant="danger" size="lg" block="block" type="submit">
           Update User
         </Button>
       </Form>
-      <Link to='/admin' className='link-back'>
+      <Link to="/admin" className="link-back">
         Back to admin page
       </Link>
       {state.messages.map((message, i) => {
