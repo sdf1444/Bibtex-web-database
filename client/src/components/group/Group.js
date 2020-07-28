@@ -9,7 +9,7 @@ function groupReducer(state, action) {
     case 'setUser': {
       return {
         ...state,
-        user: action.user,
+        user: action.user
       };
     }
     case 'selectType': {
@@ -19,7 +19,7 @@ function groupReducer(state, action) {
         reqType: action.value,
         isLoading: true,
         selectedGroup: null,
-        inputName: '',
+        inputName: ''
       };
     }
     case 'selectGroup': {
@@ -31,14 +31,14 @@ function groupReducer(state, action) {
       return {
         ...state,
         selectedGroup: group,
-        inputName,
+        inputName
       };
     }
     case 'clickGroup': {
       return {
         ...state,
         isGroupClicked: true,
-        clickedGroup: action.group,
+        clickedGroup: action.group
       };
     }
     case 'inputName': {
@@ -55,21 +55,21 @@ function groupReducer(state, action) {
         ...state,
         isReplying: true,
         reply: action.reply,
-        repliedUser: action.user,
+        repliedUser: action.user
       };
     }
     case 'ban': {
       return {
         ...state,
         isBanning: true,
-        bannedUser: action.user,
+        bannedUser: action.user
       };
     }
     case 'finishLoading': {
       return {
         ...state,
         isLoading: false,
-        groups: action.groups,
+        groups: action.groups
       };
     }
     case 'finishClicking': {
@@ -77,39 +77,39 @@ function groupReducer(state, action) {
         return {
           ...state,
           isGroupClicked: false,
-          clickedGroup: null,
+          clickedGroup: null
         };
       return {
         ...state,
         isLoading: true,
         isGroupClicked: false,
         clickedGroup: null,
-        selectedGroup: action.group,
+        selectedGroup: action.group
       };
     }
     case 'finishSaving': {
       if (!action.ok)
         return {
           ...state,
-          isSaving: false,
+          isSaving: false
         };
       return {
         ...state,
         isSaving: false,
-        isLoading: true,
+        isLoading: true
       };
     }
     case 'finishCreating': {
       if (!action.ok)
         return {
           ...state,
-          isCreating: false,
+          isCreating: false
         };
       return {
         ...state,
         isCreating: false,
         isLoading: true,
-        selectedGroup: action.group,
+        selectedGroup: action.group
       };
     }
     case 'finishReplying': {
@@ -118,7 +118,7 @@ function groupReducer(state, action) {
           ...state,
           isReplying: false,
           reply: null,
-          repliedUser: null,
+          repliedUser: null
         };
       return {
         ...state,
@@ -126,7 +126,7 @@ function groupReducer(state, action) {
         isLoading: true,
         reply: null,
         repliedUser: null,
-        selectedGroup: action.group,
+        selectedGroup: action.group
       };
     }
     case 'finishBanning': {
@@ -134,14 +134,14 @@ function groupReducer(state, action) {
         return {
           ...state,
           isBanning: false,
-          bannedUser: null,
+          bannedUser: null
         };
       return {
         ...state,
         isLoading: true,
         isBanning: false,
         bannedUser: null,
-        selectedGroup: action.group,
+        selectedGroup: action.group
       };
     }
     default:
@@ -165,7 +165,7 @@ const Group = () => {
     isSaving: false,
     reply: null,
     reqType: '',
-    inputName: '',
+    inputName: ''
   };
 
   const [state, dispatch] = useReducer(groupReducer, initialState);
@@ -175,7 +175,7 @@ const Group = () => {
       const res = await utils.getUser();
       dispatch({
         type: 'setUser',
-        user: res.data,
+        user: res.data
       });
     };
     setUser();
@@ -187,7 +187,7 @@ const Group = () => {
         type: 'finishLoading',
         isGroupClicked: false,
         clickedGroup: null,
-        groups: res.data.response,
+        groups: res.data.response
       });
     };
     if (state.isLoading) loadGroups();
@@ -201,7 +201,7 @@ const Group = () => {
       dispatch({
         type: 'finishSaving',
         ok: res.data.ok,
-        group: res.data.response,
+        group: res.data.response
       });
     };
     if (state.isSaving) saveGroup();
@@ -212,7 +212,7 @@ const Group = () => {
       dispatch({
         type: 'finishCreating',
         ok: res.data.ok,
-        group: res.data.response,
+        group: res.data.response
       });
     };
     if (state.isCreating) createGroup();
@@ -227,7 +227,7 @@ const Group = () => {
         return dispatch({
           type: 'finishReplying',
           ok: res.data.ok,
-          group: res.data.response,
+          group: res.data.response
         });
       } else {
         const res = await utils.rejectMember(
@@ -237,7 +237,7 @@ const Group = () => {
         return dispatch({
           type: 'finishReplying',
           ok: res.data.ok,
-          group: res.data.response,
+          group: res.data.response
         });
       }
     };
@@ -252,7 +252,7 @@ const Group = () => {
       return dispatch({
         type: 'finishBanning',
         ok: res.data.ok,
-        group: res.data.response,
+        group: res.data.response
       });
     };
     if (state.isBanning) ban();
@@ -264,7 +264,7 @@ const Group = () => {
         return dispatch({
           type: 'finishClicking',
           ok: res.data.ok,
-          group: res.data.response,
+          group: res.data.response
         });
       }
       if (state.reqType === 'own') {
@@ -272,7 +272,7 @@ const Group = () => {
         return dispatch({
           type: 'finishClicking',
           ok: res.data.ok,
-          group: res.data.response,
+          group: res.data.response
         });
       }
       if (state.reqType === 'me') {
@@ -280,7 +280,7 @@ const Group = () => {
         return dispatch({
           type: 'finishClicking',
           ok: res.data.ok,
-          group: res.data.response,
+          group: res.data.response
         });
       }
     };
@@ -288,7 +288,7 @@ const Group = () => {
   }, [state.isGroupClicked, state.clickedGroup, state.reqType]);
 
   return (
-    <div className='Group'>
+    <div className="Group">
       <GroupList
         active={!state.isLoading}
         groups={state.groups}

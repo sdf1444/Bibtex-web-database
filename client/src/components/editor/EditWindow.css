@@ -9,9 +9,9 @@
 
 .edit-window-main {
   position: absolute;
-  width: 600px;
+  width: 350px;
   padding: 15px 20px 15px 20px;
-  top: 50%;
+  top: 450px;
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: #f2f2f2;

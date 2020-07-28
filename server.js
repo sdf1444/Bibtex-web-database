@@ -54,6 +54,7 @@ app.use(function (req, res, next) {
   next();
 });
 
+// This bit fixed my routing problem
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build')); // serve the static react app
   app.get(/^\/(?!api).*/, (req, res) => {

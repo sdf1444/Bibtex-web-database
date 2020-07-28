@@ -12,7 +12,7 @@ const router = express.Router();
 //@desc Get all groups
 router.get('/', auth, async (req, res, next) => {
   const groups = await Group.find({
-    $and: [{ users: { $ne: req.user.id } }, { owner: { $ne: req.user.id } }],
+    $and: [{ users: { $ne: req.user.id } }, { owner: { $ne: req.user.id } }]
   })
     .populate('owner')
     .populate('users')
@@ -50,7 +50,7 @@ router.get('/own', auth, async (req, res, next) => {
 //@desc Get user's own groups all groups he's in
 router.get('/withme', auth, async (req, res, next) => {
   const groups = await Group.find({
-    $or: [{ users: req.user.id }, { owner: req.user.id }],
+    $or: [{ users: req.user.id }, { owner: req.user.id }]
   })
     .populate('owner')
     .populate('users')
@@ -74,7 +74,7 @@ router.post('/', auth, async (req, res, next) => {
   }
   let newGroup = new Group({
     name: req.body.name,
-    owner: req.user.id,
+    owner: req.user.id
   });
   try {
     newGroup = await newGroup.save();
