@@ -14,7 +14,7 @@ app.use(express.json());
 mongoose
   .connect(
     process.env.MONGODB_URI ||
-      'mongodb+srv://sdf1444:boggie234@cluster0-wq3gs.mongodb.net/bibtex?retryWrites=true&w=majority',
+      'mongodb://sdf1444:boggie234@cluster0-wq3gs.mongodb.net/bibtex?retryWrites=true&w=majority',
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
