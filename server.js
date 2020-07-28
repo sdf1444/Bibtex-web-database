@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const connectDB = require('./config/db');
 const path = require('path');
 
@@ -9,6 +10,24 @@ connectDB();
 
 // Init Middleware
 app.use(express.json());
+
+mongoose
+  .connect(
+    process.env.MONGODB_URI ||
+      'mongodb+srv://sdf1444:boggie234@cluster0-wq3gs.mongodb.net/bibtex?retryWrites=true&w=majority',
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useCreateIndex: true,
+      useFindAndModify: false
+    }
+  )
+  .then(function onSuccess() {
+    console.log('The server connected with MongoDB.');
+  })
+  .catch(function onError() {
+    console.log('Error while connecting with MongoDB.');
+  });
 
 // Define Routes
 app.use('/api/user', require('./routes/user'));
