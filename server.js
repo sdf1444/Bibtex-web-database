@@ -27,6 +27,32 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
+// error handler middleware
+app.use((req, res) => {
+  if (!res.data) {
+    return res.status(404).send({
+      ok: false,
+      error: {
+        reason: 'Invalid Endpoint',
+        code: 404
+      }
+    });
+  }
+  if (res.data.err) {
+    return res.status(res.data.status || 400).send({
+      ok: false,
+      error: {
+        reason: res.data.err,
+        code: res.data.status || 400
+      }
+    });
+  }
+  return res.status(200).send({
+    ok: true,
+    response: res.data
+  });
+});
+
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
