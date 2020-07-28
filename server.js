@@ -12,15 +12,18 @@ const Database = require('./models/Database');
 const Entry = require('./models/Entry');
 const User = require('./models/User');
 const Group = require('./models/Group');
-const Paper = require('./models/Paper');
 
 mongoose
-  .connect(config.db, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useCreateIndex: true,
-    useFindAndModify: false
-  })
+  .connect(
+    process.env.MONGODB_URI ||
+      'mongodb+srv://sdf1444:boggie234@cluster0-wq3gs.mongodb.net/bibtex?retryWrites=true&w=majority',
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useCreateIndex: true,
+      useFindAndModify: false
+    }
+  )
   .then(function onSuccess() {
     console.log('The server connected with MongoDB.');
   })
@@ -52,22 +55,16 @@ app.use(function (req, res, next) {
 });
 
 // Serve static files from the React app
-if (
-  process.env.NODE_ENV === 'production' ||
-  process.env.NODE_ENV === 'staging'
-) {
-  app.use(express.static('client/build'));
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname + '/client/build/index.html'));
-  });
+if (process.env.NODE_ENV === 'production') {
+  app.use('/public', express.static(path.join(__dirname, 'client/public')));
+  app.use(express.static(path.join(__dirname, 'client/build')));
 }
+
 app.use(bodyParser.json());
 app.use(logger('dev'));
 
 // Init Middleware
-app.use(express.json({ extended: true }));
-
-app.get('/', (req, res) => res.send('API Running'));
+app.use(express.json({ extended: false }));
 
 // Define Routes
 app.use(
