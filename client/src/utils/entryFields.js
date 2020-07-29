@@ -15,17 +15,17 @@ const requiredEntryFields = {
 };
 
 const extraEntryFields = {
-  article: ['number', 'pages', 'volume', 'month', 'url', 'annotation'],
+  article: ['number', 'pages', 'volume', 'month', 'doi', 'annotation'],
   book: [
     'series',
     'address',
     'edition',
     'volume',
     'month',
-    'url',
+    'doi',
     'annotation',
   ],
-  booklet: ['howpublished', 'address', 'month', 'url', 'annotation'],
+  booklet: ['howpublished', 'address', 'month', 'doi', 'annotation'],
   conference: [
     'editor',
     'volume',
@@ -35,7 +35,7 @@ const extraEntryFields = {
     'organisation',
     'publisher',
     'month',
-    'url',
+    'doi',
     'annotation',
   ],
   inBook: [
@@ -45,7 +45,7 @@ const extraEntryFields = {
     'address',
     'edition',
     'month',
-    'url',
+    'doi',
     'annotation',
   ],
   inCollection: [
@@ -59,7 +59,7 @@ const extraEntryFields = {
     'edition',
     'organization',
     'month',
-    'url',
+    'doi',
     'annotation',
   ],
   inProceedings: [
@@ -71,14 +71,14 @@ const extraEntryFields = {
     'organization',
     'publisher',
     'month',
-    'url',
+    'doi',
     'annotation',
   ],
-  manual: ['organization', 'address', 'edititon', 'month', 'url', 'annotation'],
-  mastersThesis: ['school', 'type', 'address', 'month', 'url', 'annotation'],
-  misc: ['howpublished', 'month', 'url', 'annotation'],
-  online: ['url'],
-  phdThesis: ['type', 'address', 'month', 'url', 'annotation'],
+  manual: ['organization', 'address', 'edititon', 'month', 'doi', 'annotation'],
+  mastersThesis: ['school', 'type', 'address', 'month', 'doi', 'annotation'],
+  misc: ['howpublished', 'month', 'doi', 'annotation'],
+  online: ['month', 'doi', 'annotation'],
+  phdThesis: ['type', 'address', 'month', 'doi', 'annotation'],
   proceedings: [
     'editor',
     'volume',
@@ -87,7 +87,7 @@ const extraEntryFields = {
     'publisher',
     'organization',
     'month',
-    'url',
+    'doi',
     'annotation',
   ],
 };
