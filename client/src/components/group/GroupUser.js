@@ -4,14 +4,14 @@ import './GroupUser.css';
 
 const GroupUser = (props) => {
   return (
-    <div className="group-info-user">
-      <div className="group-info-username">{props.user.name}</div>
+    <div className='group-info-user'>
+      <div className='group-info-username'>{props.user.name}</div>
       <button
         className={`group-info-ban ${props.isOwner ? '' : 'disabled'}`}
         onClick={(e) =>
           props.dispatch({
             type: 'ban',
-            user: props.user
+            user: props.user,
           })
         }
       >
@@ -24,7 +24,7 @@ const GroupUser = (props) => {
 GroupUser.propTypes = {
   user: PropTypes.any.isRequired,
   isOwner: PropTypes.bool,
-  dispatch: PropTypes.any.isRequired
+  dispatch: PropTypes.any.isRequired,
 };
 
 export default GroupUser;

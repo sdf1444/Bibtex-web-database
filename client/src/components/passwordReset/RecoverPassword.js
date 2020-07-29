@@ -68,7 +68,7 @@ class RecoverPassword extends Component {
   sendPasswordResetEmail = (e) => {
     e.preventDefault();
     const { email } = this.state;
-    axios.post(`/api/user/${email}`);
+    axios.post(`http://localhost:5000/api/user/${email}`);
     this.setState({ email: '', submitted: true });
   };
 

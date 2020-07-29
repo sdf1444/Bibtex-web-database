@@ -37,29 +37,29 @@ const App = () => {
       <Router>
         <Fragment>
           <Navbar />
-          <Route exact path="/" component={Home} />
-          <section className="container">
+          <Route exact path='/' component={Home} />
+          <section className='container'>
             <Alert />
             <Switch>
-              <Route exact path="/login" component={Login} />
+              <Route exact path='/login' component={Login} />
               <Route
                 exact
-                path="/recoverPassword"
+                path='/recoverPassword'
                 component={RecoverPassword}
               />
-              <Route exact path="/reset/:id" component={UpdatePassword} />
-              <PrivateRoute exact path="/welcome" component={Welcome} />
-              <PrivateRoute exact path="/admin" component={Admin} />
-              <PrivateRoute exact path="/create-users" component={CreateUser} />
-              <PrivateRoute exact path="/edit-user/:id" component={EditUser} />
-              <PrivateRoute exact path="/editor" component={Editor} />
-              <PrivateRoute exact path="/papers" component={Paper} />
+              <Route exact path='/reset/:id' component={UpdatePassword} />
+              <PrivateRoute exact path='/welcome' component={Welcome} />
+              <PrivateRoute exact path='/admin' component={Admin} />
+              <PrivateRoute exact path='/create-users' component={CreateUser} />
+              <PrivateRoute exact path='/edit-user/:id' component={EditUser} />
+              <PrivateRoute exact path='/editor' component={Editor} />
+              <PrivateRoute exact path='/papers' component={Paper} />
               <PrivateRoute
                 exact
-                path="/publicDatabases"
+                path='/publicDatabases'
                 component={PublicDatabases}
               />
-              <PrivateRoute exact path="/groups" component={Group} />
+              <PrivateRoute exact path='/groups' component={Group} />
             </Switch>
           </section>
         </Fragment>

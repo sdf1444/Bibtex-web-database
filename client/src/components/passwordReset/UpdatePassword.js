@@ -22,9 +22,11 @@ class UpdatePassword extends Component {
     const { password } = this.state;
 
     axios
-      .put('/api/user/updatePassword/' + this.props.match.params.id, {
-        password,
-      })
+      .put(
+        'http://localhost:5000/api/user/updatePassword/' +
+          this.props.match.params.id,
+        { password }
+      )
       .then((res) => res)
       .catch((err) =>
         console.warn('ERROR FROM SERVER UPDATING PASSWORD:', err)

@@ -9,6 +9,7 @@
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
     "axios": "^0.19.2",
+    "axios-progress-bar": "^1.2.0",
     "biblatex-csl-converter": "^1.9.1",
     "bibtex-parser-js": "0.0.2",
     "bootstrap": "^4.5.0",
@@ -23,6 +24,7 @@
     "react-bootstrap": "^1.0.1",
     "react-bootstrap-table-next": "^4.0.3",
     "react-dom": "^16.13.1",
+    "react-input-autosize": "^2.2.2",
     "react-moment": "^0.9.7",
     "react-redux": "^7.2.0",
     "react-router-dom": "^5.2.0",
@@ -52,7 +54,6 @@
       "not op_mini all"
     ],
     "development": [
-      "ie 11",
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"

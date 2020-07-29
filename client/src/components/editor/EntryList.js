@@ -113,7 +113,7 @@ const EntryList = (props) => {
                 {listDivs}
                 {newEntryDiv}
             </div>
-            <a className="download-btn" href={`data:text/x-bibtex, ${bibtexString}`} 
+            <a className="download-btn" href={`data:text/x-bibtex,${bibtexString}`} 
             download={`${props.file.bibtexdatabasename}.bib`}>Download</a>
         </div>
     )

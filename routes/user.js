@@ -11,7 +11,6 @@ const smtpTransport = require('nodemailer-smtp-transport');
 
 const User = require('../models/User');
 const { error } = require('console');
-const { getMaxListeners } = require('../models/User');
 
 // @route     POST api/users/register-user
 // @desc        Register user
@@ -27,7 +26,7 @@ router.post(
     check(
       'password',
       'Please enter a password with 6 or more characters'
-    ).isLength({ min: 6 })
+    ).isLength({ min: 6 }),
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -56,7 +55,7 @@ router.post(
         email,
         role,
         username,
-        password
+        password,
       });
 
       const salt = await bcrypt.genSalt(10);
@@ -67,8 +66,8 @@ router.post(
 
       const payload = {
         user: {
-          id: user.id
-        }
+          id: user.id,
+        },
       };
       jwt.sign(payload, config.jwtSecret, (err, token) => {
         if (err) throw err;
@@ -110,7 +109,7 @@ router.get('/', async (req, res) => {
     })
     .catch((err) => {
       res.status(500).send({
-        message: err.message || 'Some error occurred while retrieving users'
+        message: err.message || 'Some error occurred while retrieving users',
       });
     });
 });
@@ -128,72 +127,88 @@ router.get('/:id', auth, async (req, res, next) => {
 });
 
 // @route     PUT api/user/:id
-// @desc      Update user
+// @desc        Update user
 // @access    Admin access only
-router.put('/:id', auth, async (req, res) => {
-  const admin = await User.findById(req.user.id);
-  if (admin.role !== 'admin') {
-    return res.status(403).json({ error: 'You are not admin' });
-  }
-  let updatedUser = {
-    name: req.body.name,
-    email: req.body.email,
-    role: req.body.role,
-    username: req.body.username
-  };
+router.put(
+  '/:id',
+  auth,
+  [
+    check('name', 'Name is required').not().isEmpty(),
+    check('email', 'Please include a valid email').isEmail(),
+    check('role', 'Role is required').not().isEmpty(),
+    check('username', 'Username is required').not().isEmpty(),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res
+        .status(400)
+        .json({ success: false, msg: errors.array()[0].msg });
+    }
+    const admin = await User.findById(req.user.id);
+    if (admin.role !== 'admin') {
+      return res.status(403).json({ error: 'You are not admin' });
+    }
+    let updatedUser = {
+      name: req.body.name,
+      email: req.body.email,
+      role: req.body.role,
+      username: req.body.username,
+    };
 
-  User.findOneAndUpdate({ _id: req.params.id }, updatedUser, {
-    runValidators: true,
-    context: 'query'
-  })
-    .then((oldResult) => {
-      User.findOne({ _id: req.params.id })
-        .then((newResult) => {
-          res.json({
-            success: true,
-            msg: `Successfully updated!`,
-            result: {
-              _id: newResult._id,
-              name: newResult.name,
-              email: newResult.email,
-              role: newResult.role,
-              username: newResult.username
-            }
-          });
-        })
-        .catch((err) => {
-          res
-            .status(500)
-            .json({ success: false, msg: `Something went wrong. ${err}` });
-          return;
-        });
+    User.findOneAndUpdate({ _id: req.params.id }, updatedUser, {
+      runValidators: true,
+      context: 'query',
     })
-    .catch((err) => {
-      if (err.errors) {
-        if (err.errors.name) {
-          res
-            .status(400)
-            .json({ success: false, msg: error.errors.name.message });
-          return;
+      .then((oldResult) => {
+        User.findOne({ _id: req.params.id })
+          .then((newResult) => {
+            res.json({
+              success: true,
+              msg: `User Successfully updated!`,
+              result: {
+                _id: newResult._id,
+                name: newResult.name,
+                email: newResult.email,
+                role: newResult.role,
+                username: newResult.username,
+              },
+            });
+          })
+          .catch((err) => {
+            res
+              .status(500)
+              .json({ success: false, msg: `Something went wrong. ${err}` });
+            return;
+          });
+      })
+      .catch((err) => {
+        if (err.errors) {
+          if (err.errors.name) {
+            res
+              .status(400)
+              .json({ success: false, msg: error.errors.name.message });
+            return;
+          }
+          if (err.errors.email) {
+            res
+              .status(400)
+              .json({ success: false, msg: err.errors.email.message });
+            return;
+          }
+          if (err.erros.role) {
+            res.status(400).json({ success: false, msg: err.erros.role });
+          }
+          if (err.errors.username) {
+            res.status(400).json({ success: false, msg: err.errors.username });
+          }
+          if (err.errors.password) {
+            res.status(400).json({ success: false, msg: err.errors.password });
+          }
         }
-        if (err.errors.email) {
-          res
-            .status(400)
-            .json({ success: false, msg: err.errors.email.message });
-          return;
-        }
-        if (err.erros.role) {
-          res.status(400).json({ success: false, msg: err.erros.role });
-        }
-        if (err.errors.username) {
-          res.status(400).json({ success: false, msg: err.errors.username });
-        }
-        if (err.errors.password) {
-          res.status(400).json({ success: false, msg: err.errors.password });
-        }
-      }
-    });
-});
+      });
+  }
+);
 
 // @route     DELETE api/user/:id
 // @desc        Delete user
@@ -214,8 +229,8 @@ router.delete('/:id', auth, async (req, res) => {
           email: result.email,
           role: result.role,
           username: result.username,
-          password: result.password
-        }
+          password: result.password,
+        },
       });
     })
     .catch((err) => {
@@ -239,19 +254,19 @@ router.post('/:email', async (req, res) => {
       service: 'Gmail',
       auth: {
         user: 'spencerchief@gmail.com',
-        pass: 'Boggie234!'
-      }
+        pass: 'Boggie234!',
+      },
     });
 
     const mailOptions = {
       from: 'spencerchief@gmail.com',
       to: `${user.email}`,
-      subject: 'Bibtex Password Reset Link',
+      subject: 'Bibtex Web Database Password Reset Link',
       text:
         'You are recieving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
         'Please click on the following link or paste this into your browser to complete the process:\n\n' +
         `https://ancient-mountain-97102.herokuapp.com/reset/${user._id}\n\n` +
-        'If you did not request this, please ignore this email and your password will remain unchanged.\n'
+        'If you did not request this, please ignore this email and your password will remain unchanged.\n',
     };
 
     transporter.sendMail(mailOptions, (err, response) => {
@@ -268,37 +283,29 @@ router.post('/:email', async (req, res) => {
   }
 });
 
-router.put('/updatePassword/:id', async (req, res) => {
-  let updatePassword = {
-    password: bcrypt.hashSync(req.body.password, 10)
-  };
-
-  User.findOneAndUpdate({ _id: req.params.id }, updatePassword, {
-    runValidators: true,
-    context: 'query'
-  })
-    .then((oldResult) => {
-      User.findOne({ _id: req.params.id })
-        .then((newResult) => {
-          res.json({
-            success: true,
-            msg: `Successfully updated!`
-          });
-        })
-        .catch((err) => {
-          res
-            .status(500)
-            .json({ success: false, msg: `Something went wrong. ${err}` });
-          return;
-        });
-    })
-    .catch((err) => {
-      if (err.errors) {
-        if (err.errors.password) {
-          res.status(400).json({ success: false, msg: err.errors.password });
-        }
-      }
+router.put('/updatePassword/:id', auth, async (req, res) => {
+  if (req.body.password.length < 6) {
+    res.status(400).json({
+      success: false,
+      msg: 'Password must contain 6 characters or more',
     });
+  }
+  let updatePassword = {
+    password: bcrypt.hashSync(req.body.password, 10),
+  };
+  console.log(updatePassword);
+  try {
+    await User.findOneAndUpdate({ _id: req.params.id }, updatePassword, {
+      runValidators: true,
+      context: 'query',
+    }).exec();
+    const user = await User.findById(req.params.id);
+    console.log(user.password);
+    res.json({ success: true, msg: 'Password successfuly updated' });
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({ success: false, msg: err.message });
+  }
 });
 
 module.exports = router;
