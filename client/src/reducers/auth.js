@@ -37,9 +37,8 @@ export default function (state = initialState, action) {
         ...payload,
         isAuthenticated: true,
         loading: false,
-        role:payload.role,
+        role: payload.role,
       };
-    case REGISTER_FAIL:
     case AUTH_ERROR:
     case LOGIN_FAIL:
     case LOGOUT:
@@ -50,7 +49,7 @@ export default function (state = initialState, action) {
         token: null,
         isAuthenticated: false,
         loading: false,
-        role:null,
+        role: null,
       };
     default:
       return state;
