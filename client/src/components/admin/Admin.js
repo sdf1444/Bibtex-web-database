@@ -110,72 +110,67 @@ const Admin = (props) => {
   }, [state.isDeleting, state.deletedUser]);
 
   if (state.isLoading) return <div>Loading...</div>;
+
+  const usersFilter = (user) => {
+    if (state.search === '') return true;
+    return user[state.searchParam].includes(state.search);
+  };
+
+  const dataTable = state.users.filter(usersFilter).map((user) => {
+    return <UserTableRow user={user} dispatch={dispatch} key={user._id} />;
+  });
+  console.log(state.searchParam);
+  console.log(state.search);
   return (
     <div>
-      <div className='warning'>You don't have access to this page</div>
+      <div className='buttons'>
+        <Link to='/create-users' className='create-btn button-big'>
+          Create User
+        </Link>
+        <div className='select-param'>
+          <Menu compact className='select-param'>
+            <Dropdown
+              value={state.searchParam}
+              options={searchParams}
+              simple
+              item
+              onChange={(e, data) =>
+                dispatch({
+                  type: 'searchParam',
+                  value: data.value,
+                })
+              }
+            ></Dropdown>
+          </Menu>
+        </div>
+        <input
+          className='search'
+          placeholder='Enter a value'
+          value={state.search}
+          onChange={(e) =>
+            dispatch({
+              type: 'search',
+              value: e.target.value,
+            })
+          }
+        ></input>
+      </div>
+      <div className='table-wrapper'>
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Username</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>{dataTable}</tbody>
+        </Table>
+      </div>
     </div>
   );
 };
-
-const usersFilter = (user) => {
-  if (state.search === '') return true;
-  return user[state.searchParam].includes(state.search);
-};
-
-const dataTable = state.users.filter(usersFilter).map((user) => {
-  return <UserTableRow user={user} dispatch={dispatch} key={user._id} />;
-});
-console.log(state.searchParam);
-console.log(state.search);
-return (
-  <div>
-    <div className='buttons'>
-      <Link to='/create-users' className='create-btn button-big'>
-        Create User
-      </Link>
-      <div className='select-param'>
-        <Menu compact className='select-param'>
-          <Dropdown
-            value={state.searchParam}
-            options={searchParams}
-            simple
-            item
-            onChange={(e, data) =>
-              dispatch({
-                type: 'searchParam',
-                value: data.value,
-              })
-            }
-          ></Dropdown>
-        </Menu>
-      </div>
-      <input
-        className='search'
-        placeholder='Enter a value'
-        value={state.search}
-        onChange={(e) =>
-          dispatch({
-            type: 'search',
-            value: e.target.value,
-          })
-        }
-      ></input>
-    </div>
-    <div className='table-wrapper'>
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Username</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>{dataTable}</tbody>
-      </Table>
-    </div>
-  </div>
-);
 
 export default Admin;
