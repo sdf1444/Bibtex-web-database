@@ -3,25 +3,32 @@ const Database = require('./Database');
 
 const Schema = mongoose.Schema;
 
-const groupSchema = new Schema({
+const groupSchema = new Schema(
+  {
     name: {
-        type: String,
-        unique: true,
-        required: true,
+      type: String,
+      unique: true,
+      required: true,
     },
     owner: {
-        type: Schema.Types.ObjectId,
-        ref: 'user',
-        required: true,
+      type: Schema.Types.ObjectId,
+      ref: 'user',
+      required: true,
     },
-    users: [{
+    users: [
+      {
         type: Schema.Types.ObjectId,
         ref: 'user',
-    }],
-    joinRequests: [{
+      },
+    ],
+    joinRequests: [
+      {
         type: Schema.Types.ObjectId,
         ref: 'user',
-    }]
-}, { timestamps: true })
+      },
+    ],
+  },
+  { timestamps: true }
+);
 
 module.exports = Group = mongoose.model('group', groupSchema);

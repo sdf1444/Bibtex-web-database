@@ -1,5 +1,67 @@
 import axios from 'axios';
 import { uploadDatabase } from './editor';
+import bibtexParse from 'bibtex-parser-js';
+import entryFields from '../utils/entryFields';
+import reference from '@devisle/reference-js';
+import { xmlToBib } from './bibtex';
+
+const typeChange = {
+  ARTICLE: 'article',
+  BOOK: 'book',
+  BOOKLET: 'booklet',
+  CONFERENCE: 'conference',
+  INBOOK: 'inBook',
+  INCOLLECTION: 'inCollection',
+  INPROCEEDINGS: 'inProceedings',
+  MANUAL: 'manual',
+  MASTERSTHESIS: 'mastersThesis',
+  MISC: 'misc',
+  ONLINE: 'online',
+  PHDTHESIS: 'phdThesis',
+  PROCEEDINGS: 'proceedings',
+};
+
+const extractDatabase = async (bibtexFile, name, group) => {
+  console.log('GROUP');
+  console.log(group);
+  const bibtexJSON = bibtexParse.toJSON(bibtexFile);
+  console.log(bibtexJSON);
+  const entries = [];
+  for (let entry of bibtexJSON) {
+    entry.entryType = typeChange[entry.entryType];
+    if (!entryFields[entry.entryType]) {
+      continue;
+    }
+    for (let tag of Object.keys(entry.entryTags)) {
+      if (
+        entryFields[entry.entryType].required.includes(tag.toLowerCase()) ||
+        entryFields[entry.entryType].extra.includes(tag.toLowerCase())
+      ) {
+        entry.entryTags[tag.toLowerCase()] = entry.entryTags[tag];
+      }
+      delete entry.entryTags[tag];
+    }
+    let contains = true;
+    for (let tag of entryFields[entry.entryType].required) {
+      if (!entry.entryTags[tag]) {
+        contains = false;
+      }
+    }
+    if (contains) entries.push(entry);
+  }
+  const database = { bibtexdatabasename: name, entries };
+  try {
+    const res = await axios.post(`/api/database/extract`, {
+      ...database,
+      group: group === 'user' ? null : group,
+    });
+    console.log(res.data);
+    return res;
+  } catch (err) {
+    console.log(err.response);
+    return err.response;
+  }
+};
 
 export const getFiles = async () => {
   try {
@@ -69,6 +131,27 @@ const extractFile = async (fileId) => {
   return { ok: true, blob: bibBlob };
 };
 
+const extractHeader = async (fileId) => {
+  const blob = await fetch(`/api/papers/files/${fileId}`).then((res) =>
+    res.blob()
+  );
+
+  const formData = new FormData();
+  formData.append('input', blob);
+  formData.append('consolidateHeader', '1');
+
+  console.log('SENT');
+  const res = await fetch(
+    `https://ec2-3-136-41-26.us-east-2.compute.amazonaws.com/api/processHeaderDocument`,
+    {
+      method: 'POST',
+      body: formData,
+    }
+  ).then((res) => res.text());
+  const bibtex = xmlToBib(res);
+  return bibtex;
+};
+
 const readUploadedFileAsText = (inputFile) => {
   const temporaryFileReader = new FileReader();
   return new Promise((resolve, reject) => {
@@ -89,9 +172,45 @@ export const extractAndUploadBibtex = async (fileId, databaseName, group) => {
     const blob = await extractFile(fileId);
     if (!blob.ok) return { data: blob };
     const bibtexFile = await readUploadedFileAsText(blob.blob);
-    const res = await uploadDatabase(bibtexFile, databaseName, group);
+    const res = await extractDatabase(bibtexFile, databaseName, group);
     return res;
   } catch (err) {
+    return { data: { ok: false, err: err.message } };
+  }
+};
+
+export const extractAndUploadHeader = async (
+  fileId,
+  databaseName,
+  group,
+  citationKey
+) => {
+  try {
+    const bibtex = await extractHeader(fileId);
+    if (!bibtex.ok) {
+      return { data: { ok: false, err: 'Failed to extract reference' } };
+    }
+    const entries = [
+      {
+        entryType: 'article',
+        entryTags: bibtex.entry,
+        citationKey: citationKey,
+      },
+    ];
+    const database = { bibtexdatabasename: databaseName, entries };
+    try {
+      const res = await axios.post(`/api/database/extract`, {
+        ...database,
+        group: group === 'user' ? null : group,
+      });
+      console.log(res.data);
+      return res;
+    } catch (err) {
+      console.log(err.response);
+      return err.response;
+    }
+  } catch (err) {
+    console.log(err);
     return { data: { ok: false, err: err.message } };
   }
 };

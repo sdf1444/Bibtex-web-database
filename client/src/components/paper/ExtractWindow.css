@@ -20,11 +20,27 @@
 }
 
 .select-group-label,
-.select-database-label {
+.select-database-label,
+.select-method-label {
   font-size: 18px;
   font-style: italic;
   margin-top: 10px;
   font-weight: 600;
+}
+
+.select-method-btn {
+  max-height: 400px;
+  width: 400px;
+  overflow: hidden;
+}
+
+.select-method {
+  width: 400px;
+  height: 46px;
+  padding-left: 5px;
+  font-size: 18px;
+  border: none;
+  outline: none;
 }
 
 .select-group-btn {

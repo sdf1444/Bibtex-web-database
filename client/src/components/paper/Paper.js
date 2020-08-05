@@ -158,6 +158,20 @@ function paperReducer(state, action) {
         },
       };
     }
+    case 'selectMethod': {
+      return {
+        ...state,
+        selectedMethod: action.value,
+        selectedCitationKey: '',
+      };
+    }
+    case 'changeCitationKey': {
+      return {
+        ...state,
+        selectedCitationKey: action.value,
+      };
+    }
+
     default:
       return state;
   }
@@ -177,11 +191,13 @@ const Paper = () => {
     extractedFile: null,
     groups: null,
     databases: null,
+    selectedMethod: 'header',
     selectedGroup: 'personal',
     selected: null,
     inputName: '',
     searchName: '',
     windowMessage: {},
+    selectedCitationKey: '',
   };
 
   const [state, dispatch] = useReducer(paperReducer, initialState);
@@ -265,26 +281,52 @@ const Paper = () => {
         });
       }
       console.log(state.inputName);
-      const res = await utils.extractAndUploadBibtex(
-        state.extractedFile.file._id,
-        state.inputName,
-        state.selectedGroup === 'personal' ? null : state.selectedGroup
-      );
-      console.log(res);
-      console.log(res.data);
-      dispatch({
-        type: 'finishExtracting',
-        ok: res.data.ok,
-        err: res.data.err,
-        file: res.data.response,
-      });
+      if (state.selectedMethod === 'references') {
+        const res = await utils.extractAndUploadBibtex(
+          state.extractedFile.file._id,
+          state.inputName,
+          state.selectedGroup === 'personal' ? null : state.selectedGroup
+        );
+        console.log(res);
+        console.log(res.data);
+        dispatch({
+          type: 'finishExtracting',
+          ok: res.data.ok,
+          err: res.data.err,
+          file: res.data.response,
+        });
+      } else {
+        if (state.selectedCitationKey === '') {
+          return dispatch({
+            type: 'finishExtracting',
+            ok: false,
+            err: 'Citation key cannot be empty',
+          });
+        }
+        const res = await utils.extractAndUploadHeader(
+          state.extractedFile.file._id,
+          state.inputName,
+          state.selectedGroup === 'personal' ? null : state.selectedGroup,
+          state.selectedCitationKey
+        );
+        console.log(res);
+        console.log(res.data);
+        dispatch({
+          type: 'finishExtracting',
+          ok: res.data.ok,
+          err: res.data.err,
+          file: res.data.response,
+        });
+      }
     };
     if (state.isExtracting) extractBibtex();
   }, [
     state.isExtracting,
     state.extractedFile,
+    state.selectedCitationKey,
     state.inputName,
     state.selectedGroup,
+    state.selectedMethod,
   ]);
 
   if (state.isLoading || !state.papers) {
@@ -322,6 +364,8 @@ const Paper = () => {
         active={state.windowOpened}
         file={state.extractedFile}
         groups={state.groups}
+        citationKey={state.selectedCitationKey}
+        method={state.selectedMethod}
         selectedGroup={state.selectedGroup}
         databases={state.databases}
         inputValue={state.inputName}

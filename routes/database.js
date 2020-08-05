@@ -124,6 +124,13 @@ router.post('/', auth, async (req, res, next) => {
     params.user = req.user.id;
   }
   try {
+    const oldDatabase = await Database.findOne({
+      bibtexdatabasename: req.body.bibtexdatabasename,
+    });
+    if (oldDatabase) {
+      res.data = { err: 'Database with this name already exists' };
+      return next();
+    }
     const newDatabase = new Database({
       bibtexdatabasename: req.body.bibtexdatabasename,
       ...params,
@@ -153,6 +160,13 @@ router.put('/', auth, async (req, res, next) => {
     const database = await Database.findById(req.body.id);
     if (!database) {
       res.data = { err: 'Database with this id does not exist' };
+      return next();
+    }
+    const oldDatabase = await Database.findOne({
+      bibtexdatabasename: req.body.bibtexdatabasename,
+    });
+    if (oldDatabase) {
+      res.data = { err: 'Database with this name already exists' };
       return next();
     }
     database.bibtexdatabasename = req.body.bibtexdatabasename;
@@ -224,6 +238,7 @@ router.put('/entry', auth, async (req, res, next) => {
   }
   const database = await Database.findById(req.body.databaseId)
     .populate('group')
+    .populate('entries')
     .exec();
   if (!database) {
     res.data = { err: 'Database with this id does not exist' };
@@ -241,6 +256,17 @@ router.put('/entry', auth, async (req, res, next) => {
   ) {
     res.data = { err: 'Database does not belong to this user', status: 401 };
     return next();
+  }
+  if (req.body.citationKey && req.body.citationKey !== entry.citationKey) {
+    const oldEntry = database.entries.find(
+      (entry) => entry.citationKey === req.body.citationKey
+    );
+    if (oldEntry) {
+      res.data = {
+        err: 'Entry with this citation key already exists in database',
+      };
+      return next();
+    }
   }
   entry.citationKey = req.body.citationKey || entry.citationKey;
   if (req.body.entryTags) {
@@ -289,6 +315,18 @@ router.post('/entry', auth, async (req, res, next) => {
     )
   ) {
     res.data = { err: 'Database does not belong to this user', status: 401 };
+    return next();
+  }
+  const populatedDatabase = await Database.findById(req.body.id)
+    .populate('entries')
+    .exec();
+  const oldEntry = populatedDatabase.entries.find(
+    (entry) => entry.citationKey === req.body.citationKey
+  );
+  if (oldEntry) {
+    res.data = {
+      err: 'Entry with this citation key already exists in database',
+    };
     return next();
   }
   try {
@@ -364,6 +402,213 @@ router.delete('/entry/:databaseId/:entryId', auth, async (req, res, next) => {
     return next();
   } catch (err) {
     res.data = { err: err.message };
+    return next();
+  }
+});
+
+// @route api/database/header
+// @desc Upload reference for pdf to a database or new database
+router.post('/header', auth, async (req, res, next) => {
+  if (!req.body.bibtexdatabasename) {
+    res.data = { err: 'Bibtexdatabasename missing' };
+    return next();
+  }
+  if (!req.body.entry) {
+    res.data = { err: 'Entry missing or invalid' };
+    return next();
+  }
+  const database = await Database.findOne({
+    bibtexdatabasename: req.body.bibtexdatabasename,
+  })
+    .populate('entries')
+    .populate('group');
+  try {
+    if (!database) {
+      const params = {};
+      if (req.body.group) {
+        params.group = req.body.group;
+        const group = await Group.findById(req.body.group);
+        if (!group) {
+          res.data = { err: 'Group with this id does not exist' };
+          return next();
+        }
+        if (
+          group.owner.toString() !== req.user.id.toString() &&
+          !group.users
+            .map((user) => user.toString())
+            .includes(req.user.id.toString())
+        ) {
+          res.data = { err: 'This is not your group' };
+          return next();
+        }
+      } else {
+        params.user = req.user.id;
+      }
+      const newEntry = new Entry({ ...req.body.entry, user: req.user.id });
+      await newEntry.save();
+      const newDatabase = new Database({
+        bibtexdatabasename: req.body.bibtexdatabasename,
+        ...params,
+        entries: [newEntry._id],
+      });
+      await newDatabase.save();
+      res.data = await newDatabase
+        .populate('entries')
+        .populate('user')
+        .populate('group')
+        .execPopulate();
+      return next();
+    } else {
+      if (
+        !(
+          (database.user && database.user.toString() === req.user.id) ||
+          (database.group && database.group.owner.toString() === req.user.id) ||
+          (database.group &&
+            database.group.users
+              .map((user) => user.toString())
+              .includes(req.user.id.toString()))
+        )
+      ) {
+        res.data = {
+          err: 'Database does not belong to this user',
+          status: 401,
+        };
+        return next();
+      }
+      let contains = false;
+      for (const entryDB of database.entries) {
+        if (entryDB.citationKey === req.body.entry.citationKey) {
+          contains = true;
+        }
+      }
+      if (contains) {
+        res.data = { err: 'This citation key is already present in database' };
+        return next();
+      }
+      const newEntry = new Entry({ ...req.body.entry, user: req.user.id });
+      await newEntry.save();
+      database.entries.push(newEntry);
+      await database.save();
+      res.data = await database
+        .populate('entries')
+        .populate('user')
+        .populate('group')
+        .execPopulate();
+      return next();
+    }
+  } catch (err) {
+    res.data = { err: err.message };
+    return next();
+  }
+});
+
+// @route api/database/extract
+// @desc Upload extracted entries to a database or new database
+router.post('/extract', auth, async (req, res, next) => {
+  if (!req.body.bibtexdatabasename) {
+    res.data = { err: 'Bibtexdatabasename missing' };
+    return next();
+  }
+  if (!req.body.entries || !Array.isArray(req.body.entries)) {
+    res.data = { err: 'Entries missing or invalid' };
+    return next();
+  }
+  const database = await Database.findOne({
+    bibtexdatabasename: req.body.bibtexdatabasename,
+  })
+    .populate('entries')
+    .populate('group');
+  try {
+    if (!database) {
+      const params = {};
+      if (req.body.group) {
+        params.group = req.body.group;
+        const group = await Group.findById(req.body.group);
+        if (!group) {
+          res.data = { err: 'Group with this id does not exist' };
+          return next();
+        }
+        if (
+          group.owner.toString() !== req.user.id.toString() &&
+          !group.users
+            .map((user) => user.toString())
+            .includes(req.user.id.toString())
+        ) {
+          res.data = { err: 'This is not your group' };
+          return next();
+        }
+      } else {
+        params.user = req.user.id;
+      }
+      const promises = req.body.entries.map((entry) => {
+        console.log(entry);
+        const newEntry = new Entry({ ...entry, user: req.user.id });
+        return newEntry.save();
+      });
+      const entries = (await Promise.all(promises)).map((entry) => entry._id);
+      const newDatabase = new Database({
+        bibtexdatabasename: req.body.bibtexdatabasename,
+        ...params,
+        entries,
+      });
+      await newDatabase.save();
+      res.data = await newDatabase
+        .populate('entries')
+        .populate('user')
+        .populate('group')
+        .execPopulate();
+      return next();
+    } else {
+      if (
+        !(
+          (database.user && database.user.toString() === req.user.id) ||
+          (database.group && database.group.owner.toString() === req.user.id) ||
+          (database.group &&
+            database.group.users
+              .map((user) => user.toString())
+              .includes(req.user.id.toString()))
+        )
+      ) {
+        res.data = {
+          err: 'Database does not belong to this user',
+          status: 401,
+        };
+        return next();
+      }
+      let contains;
+      let promises = [];
+      for (let entry of req.body.entries) {
+        contains = false;
+        for (let entryDB of database.entries) {
+          if (entryDB.citationKey === entry.citationKey) {
+            contains = true;
+          }
+        }
+        if (!contains) {
+          let newEntry = new Entry({
+            ...entry,
+            user: req.user.id,
+          });
+          newEntry = await newEntry.save();
+          database.entries.push(newEntry);
+        }
+      }
+      try {
+        if (promises.length !== 0) await Promise.all(promises);
+      } catch (err) {
+        console.log(err.message);
+      }
+      await database.save();
+      res.data = await database
+        .populate('entries')
+        .populate('user')
+        .populate('group')
+        .execPopulate();
+      return next();
+    }
+  } catch (err) {
+    res.data = { err: err.message };
+    console.log(err);
     return next();
   }
 });

@@ -41,6 +41,23 @@ const ExtractWindow = (props) => {
   return (
     <div className='paper-window'>
       <div className='paper-window-file'>{props.file.filename}</div>
+      <div className='select-method-label'>Select Extraction Method</div>
+      <div className='select-method-btn'>
+        <select
+          className='select-method'
+          placeholder='Select extraction method'
+          value={props.method}
+          onChange={(e) =>
+            props.dispatch({
+              type: 'selectMethod',
+              value: e.target.value,
+            })
+          }
+        >
+          <option value='header'>Single reference (Header)</option>
+          <option value='references'>All references</option>
+        </select>
+      </div>
       <div className='select-group-label'>Select a group</div>
       <div className='select-group-btn'>
         <select
@@ -96,6 +113,26 @@ const ExtractWindow = (props) => {
           })
         }
       ></input>
+      <div
+        className={`extra-input ${props.method === 'header' ? '' : 'disabled'}`}
+      >
+        <div className='name-label'>Enter Citation Key</div>
+        <input
+          className='name-input'
+          id='citation-key'
+          autoComplete='off'
+          placeholder='Enter new Citation Key'
+          readOnly={props.method !== 'header'}
+          value={props.citationKey}
+          onChange={(e) =>
+            props.dispatch({
+              type: 'changeCitationKey',
+              value: e.target.value,
+            })
+          }
+        ></input>
+      </div>
+
       <div className={`message-div ${props.windowMessage.type || ''}`}>
         {props.windowMessage.message || ''}
       </div>
@@ -118,11 +155,13 @@ ExtractWindow.propTypes = {
   file: PropTypes.object,
   databases: PropTypes.array,
   groups: PropTypes.array,
+  citationKey: PropTypes.string.isRequired,
   selectedGroup: PropTypes.any,
   inputValue: PropTypes.string.isRequired,
   selected: PropTypes.string,
   windowMessage: PropTypes.object.isRequired,
   dispatch: PropTypes.any.isRequired,
+  method: PropTypes.string.isRequired,
 };
 
 export default ExtractWindow;
