@@ -39,7 +39,7 @@ const extraEntryFields = {
     'annotation',
   ],
   inBook: [
-    'volime',
+    'volume',
     'series',
     'type',
     'address',
