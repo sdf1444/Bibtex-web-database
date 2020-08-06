@@ -117,7 +117,7 @@ const extractFile = async (fileId) => {
 
   console.log('SENT');
   const res = await fetch(
-    `https://ec2-3-136-41-26.us-east-2.compute.amazonaws.com/api/processReferences`,
+    `http://cloud.science-miner.com/grobid/api/processReferences`,
     {
       method: 'POST',
       body: formData,
@@ -142,7 +142,7 @@ const extractHeader = async (fileId) => {
 
   console.log('SENT');
   const res = await fetch(
-    `https://ec2-3-136-41-26.us-east-2.compute.amazonaws.com/api/processHeaderDocument`,
+    `http://cloud.science-miner.com/grobid/api/processHeaderDocument`,
     {
       method: 'POST',
       body: formData,
@@ -190,16 +190,14 @@ export const extractAndUploadHeader = async (
     if (!bibtex.ok) {
       return { data: { ok: false, err: 'Failed to extract reference' } };
     }
-    const entries = [
-      {
-        entryType: 'article',
-        entryTags: bibtex.entry,
-        citationKey: citationKey,
-      },
-    ];
-    const database = { bibtexdatabasename: databaseName, entries };
+    const entry = {
+      entryType: 'article',
+      entryTags: bibtex.entry,
+      citationKey: citationKey,
+    };
+    const database = { bibtexdatabasename: databaseName, entry };
     try {
-      const res = await axios.post(`/api/database/extract`, {
+      const res = await axios.post(`/api/database/header`, {
         ...database,
         group: group === 'user' ? null : group,
       });
@@ -207,7 +205,12 @@ export const extractAndUploadHeader = async (
       return res;
     } catch (err) {
       console.log(err.response);
-      return err.response;
+      return {
+        data: {
+          ok: false,
+          err: err.response.data.error.reason,
+        },
+      };
     }
   } catch (err) {
     console.log(err);
