@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bibtex Editor</title>
+    <link rel="stylesheet" href="popup.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/draggable/1.0.0-beta.9/draggable.bundle.js"></script>
+</head>
+<body>
+    <div class="login disabled">
+        <div class="bibtex-title">Bibtex Editor</div>
+        <button>Login to start adding entries</button>
+    </div>
+    <div class="bibtex">
+        <form class="bibtex-form">
+        <div class="bibtex-title">Bibtex Editor</div>
+        <div class="database">
+            <select class="database-select select-elem" required>
+                <option value="" disabled selected>Select a database</option>
+            </select>
+        </div>
+        <div class="entry-type">
+            <select class="entry-type-select select-elem" required>
+                <option value="article">Article</option>
+                <option value="book">Book</option>
+                <option value="booklet">Booklet</option>
+                <option value="conference">Conference</option>
+                <option value="inBook">InBook</option>
+                <option value="inCollection">InCollection</option>
+                <option value="inProceedings">InProceedings</option>
+                <option value="manual">Manual</option>
+                <option value="mastersThesis">Masters Thesis</option>
+                <option value="misc">Misc</option>
+                <option value="online">Online</option>
+                <option value="phdThesis">Phd Thesis</option>
+                <option value="proceedings">Proceedings</option>
+            </select>
+        </div>
+        
+            <div class="entry-citation-key">
+                <div class="input-key-label">Enter a Citation Key</div>
+                <input class="input-key" type="text" required>
+            </div>
+            <div class="entry-hint">
+                <div class="entry-hint-text">Sort entries <br/>by dragging red squares</div>
+                <div class="entry-hint-sample"></div>
+            </div>
+            <div class="entry-tags">
+                <div class="entry-keys"></div>
+                <div class="entry-values"></div>
+            </div>
+            <div class="extra-div disbabled">
+                Select a reference and add it here with right click
+            </div>
+            <div class="footer">
+                <button class="logout-btn" type="button">Logout</button>
+                <button class="save-btn" type="button">Save fields</button>
+                <button class="add-btn" type="submit">Add entry</button>
+            </div>
+        </form>
+    </div>
+    <script src="popup.js"></script>
+</body>
+</html>
