@@ -77,7 +77,7 @@ const extraEntryFields = {
   manual: ['organization', 'address', 'edititon', 'month', 'doi', 'annotation'],
   mastersThesis: ['school', 'type', 'address', 'month', 'doi', 'annotation'],
   misc: ['howpublished', 'month', 'doi', 'annotation'],
-  online: ['month', 'doi', 'annotation'],
+  online: ['url', 'month', 'annotation'],
   phdThesis: ['type', 'address', 'month', 'doi', 'annotation'],
   proceedings: [
     'editor',

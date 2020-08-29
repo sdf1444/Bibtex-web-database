@@ -188,7 +188,9 @@ export const extractAndUploadHeader = async (
   try {
     const bibtex = await extractHeader(fileId);
     if (!bibtex.ok) {
-      return { data: { ok: false, err: 'Failed to extract reference' } };
+      return {
+        data: { ok: false, err: 'Failed to extract citation information' },
+      };
     }
     const entry = {
       entryType: 'article',

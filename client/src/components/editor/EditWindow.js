@@ -64,7 +64,7 @@ const EditWindow = (props) => {
           <div className='edit-window-body'>
             <div className='edit-info edit-window-citation' key='citationKey'>
               <div className='info-label'>
-                <div className='info-label-tag'>citationKey:</div>
+                <div className='info-label-tag'>citation key:</div>
                 <div className='required-div'>Required</div>
               </div>
               <textarea

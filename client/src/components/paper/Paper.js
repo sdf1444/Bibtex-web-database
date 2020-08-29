@@ -154,7 +154,7 @@ function paperReducer(state, action) {
         isExtracting: false,
         windowMessage: {
           type: 'success',
-          message: 'File uploaded',
+          message: 'Reference(s) extracted',
         },
       };
     }

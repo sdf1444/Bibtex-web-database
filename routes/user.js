@@ -42,12 +42,17 @@ router.post(
     const { name, email, role, username, password } = req.body;
 
     try {
-      let user = await User.findOne({ email });
+      let userEmail = await User.findOne({ email });
+      let userUsername = await User.findOne({ username });
 
-      if (user) {
+      if (userEmail) {
         return res
           .status(400)
           .json({ errors: [{ msg: 'Email already registered' }] });
+      }
+
+      if (userUsername) {
+        return res.status(400).json({ errors: [{ msg: 'Username taken' }] });
       }
 
       user = new User({
@@ -250,22 +255,29 @@ router.post('/:email', async (req, res) => {
       }
     });
 
-    const transporter = nodemailer.createTransport({
-      service: 'Gmail',
-      auth: {
-        user: 'spencerchief@gmail.com',
-        pass: 'Boggie234!',
-      },
-    });
+    const transporter = nodemailer.createTransport(
+      smtpTransport({
+        host: 'smtp.office365.com',
+        port: 587,
+        secure: false,
+        auth: {
+          user: config.email_address,
+          pass: config.email_password,
+        },
+        tls: {
+          rejectUnauthorized: false,
+        },
+      })
+    );
 
     const mailOptions = {
-      from: 'spencerchief@gmail.com',
+      from: 'spencerdu@hotmail.co.uk',
       to: `${user.email}`,
       subject: 'Bibtex Web Database Password Reset Link',
       text:
         'You are recieving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
         'Please click on the following link or paste this into your browser to complete the process:\n\n' +
-        `https://ancient-mountain-97102.herokuapp.com/reset/${user._id}\n\n` +
+        `http://localhost:3000/reset/${user._id}\n\n` +
         'If you did not request this, please ignore this email and your password will remain unchanged.\n',
     };
 

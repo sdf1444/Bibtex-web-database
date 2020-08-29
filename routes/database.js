@@ -3,10 +3,8 @@ const auth = require('../middleware/auth');
 const Database = require('../models/Database');
 const Entry = require('../models/Entry');
 const User = require('../models/User');
-const { updateEntry } = require('../services/entry');
-const { param } = require('express-validator');
 const Group = require('../models/Group');
-
+const { param } = require('express-validator');
 const router = express.Router();
 
 // @route GET api/database/me
