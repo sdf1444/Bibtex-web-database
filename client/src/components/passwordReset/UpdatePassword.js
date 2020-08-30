@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { Button, GhostInput } from '../passwordReset/styles/styledComponents';
 import PropTypes from 'prop-types';
+import { setAlert } from '../../actions/alert';
 
 import { RecoverPasswordStyles as UpdatePasswordStyles } from './RecoverPassword';
 
@@ -19,19 +20,23 @@ class UpdatePassword extends Component {
 
   updatePassword = (e) => {
     e.preventDefault();
-    const { password } = this.state;
+    const { password, confirmPassword } = this.state;
 
-    axios
-      .put(
-        'http://localhost:5000/api/user/updatePassword/' +
-          this.props.match.params.id,
-        { password }
-      )
-      .then((res) => res)
-      .catch((err) =>
-        console.warn('ERROR FROM SERVER UPDATING PASSWORD:', err)
-      );
-    this.setState({ submitted: !this.state.submitted });
+    if (password !== confirmPassword) {
+      alert('Passwords do not match');
+    } else {
+      axios
+        .put(
+          'http://localhost:5000/api/user/updatePassword/' +
+            this.props.match.params.id,
+          { password }
+        )
+        .then((res) => res)
+        .catch((err) =>
+          console.warn('ERROR FROM SERVER UPDATING PASSWORD:', err)
+        );
+      this.setState({ submitted: !this.state.submitted });
+    }
   };
 
   render() {
