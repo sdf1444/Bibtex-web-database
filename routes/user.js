@@ -132,88 +132,72 @@ router.get('/:id', auth, async (req, res, next) => {
 });
 
 // @route     PUT api/user/:id
-// @desc        Update user
+// @desc      Update user
 // @access    Admin access only
-router.put(
-  '/:id',
-  auth,
-  [
-    check('name', 'Name is required').not().isEmpty(),
-    check('email', 'Please include a valid email').isEmail(),
-    check('role', 'Role is required').not().isEmpty(),
-    check('username', 'Username is required').not().isEmpty(),
-  ],
-  async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res
-        .status(400)
-        .json({ success: false, msg: errors.array()[0].msg });
-    }
-    const admin = await User.findById(req.user.id);
-    if (admin.role !== 'admin') {
-      return res.status(403).json({ error: 'You are not admin' });
-    }
-    let updatedUser = {
-      name: req.body.name,
-      email: req.body.email,
-      role: req.body.role,
-      username: req.body.username,
-    };
-
-    User.findOneAndUpdate({ _id: req.params.id }, updatedUser, {
-      runValidators: true,
-      context: 'query',
-    })
-      .then((oldResult) => {
-        User.findOne({ _id: req.params.id })
-          .then((newResult) => {
-            res.json({
-              success: true,
-              msg: `User Successfully updated!`,
-              result: {
-                _id: newResult._id,
-                name: newResult.name,
-                email: newResult.email,
-                role: newResult.role,
-                username: newResult.username,
-              },
-            });
-          })
-          .catch((err) => {
-            res
-              .status(500)
-              .json({ success: false, msg: `Something went wrong. ${err}` });
-            return;
-          });
-      })
-      .catch((err) => {
-        if (err.errors) {
-          if (err.errors.name) {
-            res
-              .status(400)
-              .json({ success: false, msg: error.errors.name.message });
-            return;
-          }
-          if (err.errors.email) {
-            res
-              .status(400)
-              .json({ success: false, msg: err.errors.email.message });
-            return;
-          }
-          if (err.erros.role) {
-            res.status(400).json({ success: false, msg: err.erros.role });
-          }
-          if (err.errors.username) {
-            res.status(400).json({ success: false, msg: err.errors.username });
-          }
-          if (err.errors.password) {
-            res.status(400).json({ success: false, msg: err.errors.password });
-          }
-        }
-      });
+router.put('/:id', auth, async (req, res) => {
+  const admin = await User.findById(req.user.id);
+  if (admin.role !== 'admin') {
+    return res.status(403).json({ error: 'You are not admin' });
   }
-);
+  let updatedUser = {
+    name: req.body.name,
+    email: req.body.email,
+    role: req.body.role,
+    username: req.body.username,
+  };
+
+  User.findOneAndUpdate({ _id: req.params.id }, updatedUser, {
+    runValidators: true,
+    context: 'query',
+  })
+    .then((oldResult) => {
+      User.findOne({ _id: req.params.id })
+        .then((newResult) => {
+          res.json({
+            success: true,
+            msg: `Successfully updated!`,
+            result: {
+              _id: newResult._id,
+              name: newResult.name,
+              email: newResult.email,
+              role: newResult.role,
+              username: newResult.username,
+            },
+          });
+        })
+        .catch((err) => {
+          res
+            .status(500)
+            .json({ success: false, msg: `Something went wrong. ${err}` });
+          return;
+        });
+    })
+    .catch((err) => {
+      if (err.errors) {
+        if (err.errors.name) {
+          res
+            .status(400)
+            .json({ success: false, msg: error.errors.name.message });
+          return;
+        }
+        if (err.errors.email) {
+          res
+            .status(400)
+            .json({ success: false, msg: err.errors.email.message });
+          return;
+        }
+        if (err.erros.role) {
+          res.status(400).json({ success: false, msg: err.erros.role });
+        }
+        if (err.errors.username) {
+          res.status(400).json({ success: false, msg: err.errors.username });
+        }
+        if (err.errors.password) {
+          res.status(400).json({ success: false, msg: err.errors.password });
+        }
+      }
+    });
+});
 
 // @route     DELETE api/user/:id
 // @desc        Delete user
@@ -273,7 +257,7 @@ router.post('/:email', async (req, res) => {
     const mailOptions = {
       from: 'spencerdu@hotmail.co.uk',
       to: `${user.email}`,
-      subject: 'Bibtex Web Database Password Reset Link',
+      subject: 'Link to Reset Password',
       text:
         'You are recieving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
         'Please click on the following link or paste this into your browser to complete the process:\n\n' +
@@ -295,29 +279,37 @@ router.post('/:email', async (req, res) => {
   }
 });
 
-router.put('/updatePassword/:id', auth, async (req, res) => {
-  if (req.body.password.length < 6) {
-    res.status(400).json({
-      success: false,
-      msg: 'Password must contain 6 characters or more',
-    });
-  }
+router.put('/updatePassword/:id', async (req, res) => {
   let updatePassword = {
     password: bcrypt.hashSync(req.body.password, 10),
   };
-  console.log(updatePassword);
-  try {
-    await User.findOneAndUpdate({ _id: req.params.id }, updatePassword, {
-      runValidators: true,
-      context: 'query',
-    }).exec();
-    const user = await User.findById(req.params.id);
-    console.log(user.password);
-    res.json({ success: true, msg: 'Password successfuly updated' });
-  } catch (err) {
-    console.log(err);
-    res.status(400).json({ success: false, msg: err.message });
-  }
+
+  User.findOneAndUpdate({ _id: req.params.id }, updatePassword, {
+    runValidators: true,
+    context: 'query',
+  })
+    .then((oldResult) => {
+      User.findOne({ _id: req.params.id })
+        .then((newResult) => {
+          res.json({
+            success: true,
+            msg: `Successfully updated!`,
+          });
+        })
+        .catch((err) => {
+          res
+            .status(500)
+            .json({ success: false, msg: `Something went wrong. ${err}` });
+          return;
+        });
+    })
+    .catch((err) => {
+      if (err.errors) {
+        if (err.errors.password) {
+          res.status(400).json({ success: false, msg: err.errors.password });
+        }
+      }
+    });
 });
 
 module.exports = router;

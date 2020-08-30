@@ -57,6 +57,7 @@ class UpdatePassword extends Component {
                 onChange={this.handleChange('password')}
                 value={this.state.password}
                 placeholder='New password'
+                minLength='6'
                 type='password'
               />
               <GhostInput
@@ -78,7 +79,7 @@ class UpdatePassword extends Component {
                 paddingLeft: '0.5rem',
               }}
             >
-              Make sure it's at least 8 characters including a number and a
+              Make sure it's at least 6 characters including a number and a
               lowercase letter. Read some documentation on{' '}
               <a
                 href='https://help.github.com/articles/creating-a-strong-password/'

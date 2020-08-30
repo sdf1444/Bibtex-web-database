@@ -14,6 +14,7 @@ function adminReducer(state, action) {
       return {
         ...state,
         currentUser: action.user,
+        isFetchingUser: false,
       };
     }
     case 'delete': {
@@ -69,6 +70,7 @@ const Admin = (props) => {
     isLoading: true,
     currentUser: null,
     isDeleting: false,
+    isFetchingUser: true,
     deletedUser: null,
     users: null,
     search: '',
@@ -82,8 +84,8 @@ const Admin = (props) => {
       const user = await getUser();
       dispatch({ type: 'setCurrentUser', user });
     };
-    if (!state.currentUser) fetchCurrentUser();
-  }, [state.currentUser]);
+    if (state.isFetchingUser) fetchCurrentUser();
+  }, [state.currentUser, state.isFetchingUser]);
 
   useEffect(() => {
     const fetchUsers = () =>
@@ -109,7 +111,15 @@ const Admin = (props) => {
     if (state.isDeleting) deleteUser();
   }, [state.isDeleting, state.deletedUser]);
 
-  if (state.isLoading) return <div>Loading...</div>;
+  if (state.isLoading || state.isFetchingUser) return <div>Loading...</div>;
+
+  if (state.currentUser.role !== 'admin') {
+    return (
+      <div>
+        <div className='warning'>You don't have access to this page</div>
+      </div>
+    );
+  }
 
   const usersFilter = (user) => {
     if (state.search === '') return true;
