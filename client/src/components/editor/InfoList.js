@@ -10,7 +10,7 @@ const InfoList = (props) => {
   infoList.push(
     <div className='info info-required info-citation' key='citationKey'>
       <div className='info-key' data-tag='citationKey'>
-        *citation key:
+        *citationKey:
       </div>
       <input
         className='info-value'

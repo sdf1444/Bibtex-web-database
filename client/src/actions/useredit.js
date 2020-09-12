@@ -5,12 +5,14 @@ export const updateUser = async (userObj, password, id) => {
   const updateFields = async () => {
     try {
       const res = await axios.put('/api/user/' + id, userObj);
-      result.fields = { message: res.data.msg, ok: res.data.success };
+      result.fields = { message: 'User updated successfully', ok: res.data.ok };
+      console.log('UPDATE USER')
       console.log(res.data);
     } catch (err) {
+      console.log(err);
       result.fields = {
-        message: err.response.data.msg,
-        ok: err.response.data.success,
+        message: err.response.data.error.reason,
+        ok: err.response.data.ok,
       };
     }
   };

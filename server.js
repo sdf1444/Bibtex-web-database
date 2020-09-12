@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const app = express();
+require('dotenv/config');
 
 // models
 const Database = require('./models/Database');

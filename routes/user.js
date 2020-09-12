@@ -120,7 +120,7 @@ router.get('/', async (req, res) => {
 });
 
 // @route     GET api/user/:id
-// @desc        Get a single user
+// @desc      Get a single user
 // @access    Admin
 router.get('/:id', auth, async (req, res, next) => {
   const admin = await User.findById(req.user.id);
@@ -134,69 +134,46 @@ router.get('/:id', auth, async (req, res, next) => {
 // @route     PUT api/user/:id
 // @desc      Update user
 // @access    Admin access only
-router.put('/:id', auth, async (req, res) => {
+router.put('/:id', auth, async (req, res, next) => {
+  console.log('STARTED UPDATING');
   const admin = await User.findById(req.user.id);
   if (admin.role !== 'admin') {
-    return res.status(403).json({ error: 'You are not admin' });
+    res.data = { err: 'You are not admin' };
+    return next();
   }
-  let updatedUser = {
+  const updatedUser = {
     name: req.body.name,
     email: req.body.email,
     role: req.body.role,
     username: req.body.username,
   };
-
-  User.findOneAndUpdate({ _id: req.params.id }, updatedUser, {
-    runValidators: true,
-    context: 'query',
-  })
-    .then((oldResult) => {
-      User.findOne({ _id: req.params.id })
-        .then((newResult) => {
-          res.json({
-            success: true,
-            msg: `Successfully updated!`,
-            result: {
-              _id: newResult._id,
-              name: newResult.name,
-              email: newResult.email,
-              role: newResult.role,
-              username: newResult.username,
-            },
-          });
-        })
-        .catch((err) => {
-          res
-            .status(500)
-            .json({ success: false, msg: `Something went wrong. ${err}` });
-          return;
-        });
-    })
-    .catch((err) => {
-      if (err.errors) {
-        if (err.errors.name) {
-          res
-            .status(400)
-            .json({ success: false, msg: error.errors.name.message });
-          return;
-        }
-        if (err.errors.email) {
-          res
-            .status(400)
-            .json({ success: false, msg: err.errors.email.message });
-          return;
-        }
-        if (err.erros.role) {
-          res.status(400).json({ success: false, msg: err.erros.role });
-        }
-        if (err.errors.username) {
-          res.status(400).json({ success: false, msg: err.errors.username });
-        }
-        if (err.errors.password) {
-          res.status(400).json({ success: false, msg: err.errors.password });
-        }
-      }
-    });
+  const anotherUser = await User.findOne({ username: updatedUser.username });
+  if (anotherUser && anotherUser._id.toString() !== req.params.id.toString()) {
+    res.data = { err: 'User with this username already exists' };
+    return next();
+  }
+  const emailCheck = await User.findOne({ email: updatedUser.email });
+  if (emailCheck && emailCheck._id.toString() !== req.params.id.toString()) {
+    res.data = { err: 'User with this email already exists' };
+    return next();
+  }
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      res.data = { err: 'User with this id does not exist' };
+      return next();
+    }
+    user.name = updatedUser.name;
+    user.email = updatedUser.email;
+    user.role = updatedUser.role;
+    user.username = updatedUser.username;
+    const newUser = await user.save();
+    res.data = newUser;
+    return next();
+  } catch (err) {
+    res.data = { err: err.message || err.errmsg };
+    return next();
+  }
 });
 
 // @route     DELETE api/user/:id

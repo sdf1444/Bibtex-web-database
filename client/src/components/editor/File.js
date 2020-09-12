@@ -19,11 +19,6 @@ const File = (props) => {
     >
       <div className='file-head'>
         <div className='file-bibtex-name'>{props.file.bibtexdatabasename}</div>
-        <img
-          className={`file-icon ${!props.isAllowed ? '' : 'disabled'}`}
-          src='https://www.pngmart.com/files/12/Corona-Lockdown-PNG-Clipart.png'
-          alt=''
-        ></img>
       </div>
       <div className='file-info'>
         <div className='file-info-label'>{info.label}:</div>
