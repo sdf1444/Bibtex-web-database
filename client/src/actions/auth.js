@@ -19,7 +19,7 @@ export const loadUser = () => async (dispatch) => {
   }
 
   try {
-    const res = await axios.get('/api/auth');
+    const res = await axios.get('https://bibtex-webdatabase.herokuapp.com/api/auth');
 
     dispatch({
       type: USER_LOADED,
@@ -45,7 +45,7 @@ export const register = ({ name, email, role, username, password }) => async (
   const body = JSON.stringify({ name, email, role, username, password });
 
   try {
-    const res = await axios.post('/api/user/register-user', body, config);
+    const res = await axios.post('https://bibtex-webdatabase.herokuapp.com/api/user/register-user', body, config);
     console.log('HERE');
     dispatch({
       type: REGISTER_SUCCESS,
@@ -73,7 +73,7 @@ export const login = (username, password) => async (dispatch) => {
   };
 
   try {
-    const res = await axios.post('/api/auth', { username, password }, config);
+    const res = await axios.post('https://bibtex-webdatabase.herokuapp.com/api/auth', { username, password }, config);
     dispatch({
       type: LOGIN_SUCCESS,
       payload: res.data.response,

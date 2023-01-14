@@ -51,7 +51,7 @@ const extractDatabase = async (bibtexFile, name, group) => {
   }
   const database = { bibtexdatabasename: name, entries };
   try {
-    const res = await axios.post(`/api/database/extract`, {
+    const res = await axios.post(`https://bibtex-webdatabase.herokuapp.com/api/database/extract`, {
       ...database,
       group: group === 'user' ? null : group,
     });
@@ -65,7 +65,7 @@ const extractDatabase = async (bibtexFile, name, group) => {
 
 export const getFiles = async () => {
   try {
-    const res = await axios.get('/api/papers/files');
+    const res = await axios.get('https://bibtex-webdatabase.herokuapp.com/api/papers/files');
     return res;
   } catch (err) {
     return err.response;
@@ -74,7 +74,7 @@ export const getFiles = async () => {
 
 export const deleteFile = async (id) => {
   try {
-    const res = await axios.delete(`/api/papers/files/${id}`);
+    const res = await axios.delete(`https://bibtex-webdatabase.herokuapp.com/api/papers/files/${id}`);
     return res;
   } catch (err) {
     return err.response;
@@ -85,7 +85,7 @@ export const saveFile = async (file, changeProgress) => {
   const data = new FormData();
   data.append('file', file);
   try {
-    const res = await axios.post('/api/papers/files', data, {
+    const res = await axios.post('https://bibtex-webdatabase.herokuapp.com/api/papers/files', data, {
       onUploadProgress: (progressEvent) => {
         const totalLength = progressEvent.lengthComputable
           ? progressEvent.total
@@ -108,7 +108,7 @@ export const saveFile = async (file, changeProgress) => {
 };
 
 const extractFile = async (fileId) => {
-  const blob = await fetch(`/api/papers/files/${fileId}`).then((res) =>
+  const blob = await fetch(`https://bibtex-webdatabase.herokuapp.com/api/papers/files/${fileId}`).then((res) =>
     res.blob()
   );
 
@@ -132,7 +132,7 @@ const extractFile = async (fileId) => {
 };
 
 const extractHeader = async (fileId) => {
-  const blob = await fetch(`/api/papers/files/${fileId}`).then((res) =>
+  const blob = await fetch(`https://bibtex-webdatabase.herokuapp.com/api/papers/files/${fileId}`).then((res) =>
     res.blob()
   );
 
@@ -199,7 +199,7 @@ export const extractAndUploadHeader = async (
     };
     const database = { bibtexdatabasename: databaseName, entry };
     try {
-      const res = await axios.post(`/api/database/header`, {
+      const res = await axios.post(`https://bibtex-webdatabase.herokuapp.com/api/database/header`, {
         ...database,
         group: group === 'user' ? null : group,
       });
@@ -221,6 +221,6 @@ export const extractAndUploadHeader = async (
 };
 
 export const getDatabases = async () => {
-  const res = await axios.get('/api/database/all');
+  const res = await axios.get('https://bibtex-webdatabase.herokuapp.com/api/database/all');
   return res.data.response;
 };
