@@ -156,7 +156,7 @@ const submitEntry = async (e) => {
     for (let tag of entryFields[typeSelect.value].required) {
         if (!entry.entryTags[tag]) return;
     }
-    const res = await fetch('https://super-nougat-7e741e.netlify.app/api/database/entry', {
+    const res = await fetch('https://bibtex-webdatabase.herokuapp.com/api/database/entry', {
         method: 'POST',
         body: JSON.stringify({
             id: databaseSelect.value,

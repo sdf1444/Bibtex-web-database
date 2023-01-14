@@ -140,7 +140,7 @@ const onAuthorClick = (info) => {
 const getData = async () => {
     if (user) {
         const getDatabases = async () => { 
-            const res = await fetch('https://super-nougat-7e741e.netlify.app/api/database/me', {
+            const res = await fetch('https://bibtex-webdatabase.herokuapp.com/api/database/me', {
             method: 'GET',
             headers: {
                 'X-AUTH-TOKEN': user

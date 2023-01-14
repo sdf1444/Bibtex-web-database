@@ -4,7 +4,7 @@ const divError = document.querySelector('.error-div')
 
 document.querySelector('.login-form').onsubmit = async (e) => {
     e.preventDefault();
-    const res = await fetch('https://super-nougat-7e741e.netlify.app/api/auth/', {
+    const res = await fetch('https://bibtex-webdatabase.herokuapp.com/api/auth/', {
         method: 'POST',
         body: JSON.stringify({
             username: inputUsername.value,

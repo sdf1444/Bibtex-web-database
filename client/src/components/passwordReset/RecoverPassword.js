@@ -68,7 +68,7 @@ class RecoverPassword extends Component {
   sendPasswordResetEmail = (e) => {
     e.preventDefault();
     const { email } = this.state;
-    axios.post(`https://super-nougat-7e741e.netlify.app/api/user/${email}`);
+    axios.post(`https://bibtex-webdatabase.herokuapp.com//api/user/${email}`);
     this.setState({ email: '', submitted: true });
   };
 

@@ -27,7 +27,7 @@ class UpdatePassword extends Component {
     } else {
       axios
         .put(
-          'https://super-nougat-7e741e.netlify.app/api/user/updatePassword/' +
+          'https://bibtex-webdatabase.herokuapp.com/api/user/updatePassword/' +
             this.props.match.params.id,
           { password }
         )
