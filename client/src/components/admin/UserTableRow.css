@@ -1,0 +1,19 @@
+.actions {
+    display: flex;
+}
+
+.actions .button-big {
+    width: 70px;
+    background-color: rgb(87, 101, 114);
+    color: white;
+    box-shadow: none;
+    font-size: 15px;
+}
+
+.actions .button-big:hover {
+    color: white;
+}
+
+.delete-btn {
+    margin-left: 10px;
+}
