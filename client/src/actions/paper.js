@@ -117,7 +117,7 @@ const extractFile = async (fileId) => {
 
   console.log('SENT');
   const res = await fetch(
-    `http://cloud.science-miner.com/grobid/api/processReferences`,
+    `https://cloud.science-miner.com/grobid/api/processReferences`,
     {
       method: 'POST',
       body: formData,
@@ -142,7 +142,7 @@ const extractHeader = async (fileId) => {
 
   console.log('SENT');
   const res = await fetch(
-    `http://cloud.science-miner.com/grobid/api/processHeaderDocument`,
+    `https://cloud.science-miner.com/grobid/api/processHeaderDocument`,
     {
       method: 'POST',
       body: formData,

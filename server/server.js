@@ -76,7 +76,7 @@ app.use(
     extended: true,
   })
 );
-app.use(cors({origin: '*'}));
+app.use(cors());
 app.use('/api/user', user);
 app.use('/api/auth', auth);
 app.use('/api/database', database);
